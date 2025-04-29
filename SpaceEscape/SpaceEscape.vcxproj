@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="animatedsprite.h" />
+    <ClInclude Include="corner.h" />
     <ClInclude Include="DDLevelLoad.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameobject.h" />
@@ -158,6 +159,7 @@
     <ClInclude Include="iniparser.h" />
     <ClInclude Include="inlinehelpers.h" />
     <ClInclude Include="inputsystem.h" />
+    <ClInclude Include="Level.h" />
     <ClInclude Include="logmanager.h" />
     <ClInclude Include="matrix4.h" />
     <ClInclude Include="particle.h" />
@@ -177,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp" />
+    <ClCompile Include="corner.cpp" />
     <ClCompile Include="DDLevelLoad.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameobjectpool.cpp" />
@@ -189,6 +192,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="iniparser.cpp" />
     <ClCompile Include="inputsystem.cpp" />
+    <ClCompile Include="Level.cpp" />
     <ClCompile Include="logmanager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="matrix4.cpp" />
