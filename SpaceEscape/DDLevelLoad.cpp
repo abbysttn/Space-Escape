@@ -69,13 +69,11 @@ char DDLevelLoad::GetTileAt(size_t x, size_t y) const
 
 void DDLevelLoad::processLine(string& line)
 {
-	string trimmed = trim(line);
-
-	if (trimmed.empty() || trimmed[0] == ';' || trimmed[0] == '#') {
+	if (line.empty() || line[0] == ';' || line[0] == '#') {
 		return;
 	}
 
-	m_data.push_back(trimmed);
+	m_data.push_back(line);
 }
 
 string DDLevelLoad::trim(string& str) const

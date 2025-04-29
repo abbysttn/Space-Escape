@@ -22,6 +22,7 @@ public:
 	virtual void DebugDraw();
 
 protected:
+	bool InitObjects(Renderer& renderer, char tileType, size_t x, size_t y);
 
 private:
 	Level(const Level& level);
@@ -31,11 +32,16 @@ public:
 
 protected:
 	GameObjectPool* m_cornerPool;
-	GameObjectPool* m_straightPool;
+	GameObjectPool* m_edgeCornerPool;
 	GameObjectPool* m_edgePool;
 	GameObjectPool* m_centerPool;
+	GameObjectPool* m_waterPool;
 
 	float m_tileSize;
+	float screenOffsetX;
+	float screenOffsetY;
+
+	string levelType;
 
 	DDLevelLoad* m_levelParser;
 

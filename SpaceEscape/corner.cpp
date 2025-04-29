@@ -14,12 +14,12 @@ Corner::~Corner()
 	m_sprite = 0;
 }
 
-bool Corner::initialise(Renderer& renderer, string& filename)
+bool Corner::initialise(Renderer& renderer, const char* filename)
 {
-	m_sprite = renderer.CreateSprite(filename.c_str());
+	m_sprite = renderer.CreateSprite(filename);
 
 	m_alive = true;
-	m_sprite->SetScale(1.0);
+	m_sprite->SetScale(3.0);
 
 	m_position.x = 0;
 	m_position.y = 0;

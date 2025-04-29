@@ -3,7 +3,6 @@
 
 #include "vector2.h"
 #include "gameobject.h"
-#include <string>
 
 using namespace std;
 
@@ -11,10 +10,11 @@ class Renderer;
 class Sprite;
 
 class Corner : public GameObject {
+public:
 	Corner();
 	~Corner();
 
-	bool initialise(Renderer& renderer, string& filename);
+	bool initialise(Renderer& renderer, const char* filename);
 	void Process(float deltaTime);
 	void Draw(Renderer& renderer);
 	Vector2& Position();

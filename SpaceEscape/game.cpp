@@ -12,6 +12,8 @@
 #include "animatedsprite.h"
 #include "soundsystem.h"
 
+#include "Level.h"
+
 
 #include <iostream>
 
@@ -68,14 +70,14 @@ bool Game::Initialise() {
 
     m_iLastTime = SDL_GetPerformanceCounter();
 
-    m_pRenderer->SetClearColour(0, 0, 0);
+    m_pRenderer->SetClearColour(71, 171, 169);
 
     m_pInputSystem = new InputSystem();
     m_pInputSystem->Initialise();
 
     
     Scene* pScene = 0;
-    pScene = new SceneSplashFMOD();
+    pScene = new Level();
     pScene->Initialise(*m_pRenderer);
     m_scenes.push_back(pScene);
     m_iCurrentScene = 0;
