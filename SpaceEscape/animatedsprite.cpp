@@ -6,6 +6,10 @@
 #include "vertexarray.h"
 #include "texture.h"
 #include "imgui/imgui.h"
+
+#include "logmanager.h"
+#include <string>
+#include <iostream>
 // Library includes:
 #include <cassert>
 AnimatedSprite::AnimatedSprite()
@@ -119,6 +123,7 @@ AnimatedSprite::Process(float deltaTime)
 	if (m_bAnimating)
 	{
 		m_fTimeElapsed += deltaTime;
+
 		if (m_fTimeElapsed > m_frameDuration)
 		{
 			++m_iCurrentFrame;

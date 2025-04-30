@@ -81,6 +81,7 @@ bool Game::Initialise() {
     pScene->Initialise(*m_pRenderer);
     m_scenes.push_back(pScene);
     m_iCurrentScene = 0;
+    
 
     return true;
 }
@@ -122,8 +123,9 @@ void Game::Process(float deltaTime)
         deltaTime = 0.0f;
 }
 #endif // !DEBUG
-
+    
     m_scenes[m_iCurrentScene]->Process(deltaTime, *m_pInputSystem);
+    
     
     // TODO: Add game objects to process here!
 
@@ -136,6 +138,7 @@ void Game::Draw(Renderer& renderer)
     renderer.Clear();
     // TODO: Add game objects to draw here!
     m_scenes[m_iCurrentScene]->Draw(renderer);
+    
     
     DebugDraw();
 

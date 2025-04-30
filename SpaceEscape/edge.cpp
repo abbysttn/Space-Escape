@@ -6,8 +6,6 @@
 #include <cassert>
 #include <cstdlib>
 
-#include "logmanager.h"
-
 Edge::Edge() : m_sprite(0) {}
 
 Edge::~Edge()

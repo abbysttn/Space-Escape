@@ -52,10 +52,7 @@ public:
 protected:
 	static Game* sm_pInstance;
 	Renderer* m_pRenderer;
-	AnimatedSprite* m_pSprite;
-	Sprite* m_pText;
 	InputSystem* m_pInputSystem;
-	INIParser* config;
 
 	__int64 m_iLastTime;
 	float m_fExecutionTime;

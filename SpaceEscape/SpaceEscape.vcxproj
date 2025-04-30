@@ -167,6 +167,7 @@
     <ClInclude Include="matrix4.h" />
     <ClInclude Include="particle.h" />
     <ClInclude Include="particleemitter.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="quadtree.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="scene.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="matrix4.cpp" />
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="particleemitter.cpp" />
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="quadtree.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="scene.cpp" />

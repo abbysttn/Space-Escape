@@ -4,14 +4,16 @@
 #include "DDLevelLoad.h"
 #include "gameobjectpool.h"
 #include "logmanager.h"
+#include "inputsystem.h"
 
 #include "corner.h"
 #include "edge.h"
 #include "center.h"
 #include "edgeCorner.h"
 #include "water.h"
+#include "player.h"
 
-Level::Level() : m_centerPool(nullptr), m_cornerPool(nullptr), m_edgePool(nullptr), m_edgeCornerPool(nullptr), m_waterPool(nullptr), m_levelParser(0), m_tileSize(48.0f) {}
+Level::Level() : m_playerPosition(800, 500), m_currentPlayer(0), m_playerPool(nullptr), m_centerPool(nullptr), m_cornerPool(nullptr), m_edgePool(nullptr), m_edgeCornerPool(nullptr), m_waterPool(nullptr), m_levelParser(0), m_tileSize(48.0f) {}
 
 Level::~Level()
 {
@@ -21,6 +23,7 @@ Level::~Level()
 	delete m_edgeCornerPool;
 	delete m_waterPool;
 	delete m_levelParser;
+	delete m_playerPool;
 }
 
 bool Level::Initialise(Renderer& renderer)
@@ -34,6 +37,7 @@ bool Level::Initialise(Renderer& renderer)
 	m_centerPool = new GameObjectPool(Center(), 100);
 	m_edgeCornerPool = new GameObjectPool(EdgeCorner(), 100);
 	m_waterPool = new GameObjectPool(Water(), 100);
+	m_playerPool = new GameObjectPool(Player(), 4);
 
 	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool) {
 		return false;
@@ -68,9 +72,66 @@ bool Level::Initialise(Renderer& renderer)
 			}
 		}
 	}
+	
+	for (size_t i = 0; i < m_playerPool->totalCount(); i++) {
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(i)) {
+			Player* player = static_cast<Player*>(obj);
+
+			switch (i) {
+			case 0: // idle
+				if (!player->Initialise(renderer, "..\\assets\\idle.png")) {
+					return false;
+				}
+
+				player->SetActive(true);
+				player->Position().x = m_playerPosition.x;
+				player->Position().y = m_playerPosition.y;
+				player->SetLoop(true);
+				player->SetFrameTime(0.3f);
+
+				break;
+			case 1: // run
+				if (!player->Initialise(renderer, "..\\assets\\run_right.png")) {
+					return false;
+				}
+
+				player->SetActive(false);
+				player->Position().x = m_playerPosition.x;
+				player->Position().y = m_playerPosition.y;
+				player->SetLoop(true);
+				player->SetFrameTime(0.05f);
+				break;
+
+			case 2:
+				if (!player->Initialise(renderer, "..\\assets\\run_left.png")) {
+					return false;
+				}
+
+				player->SetActive(false);
+				player->Position().x = m_playerPosition.x;
+				player->Position().y = m_playerPosition.y;
+				player->SetLoop(true);
+				player->SetFrameTime(0.05f);
+				break;
+
+			case 3: // use
+				if (!player->Initialise(renderer, "..\\assets\\use.png")) {
+					return false;
+				}
+
+				player->SetActive(false);
+				player->Position().x = m_playerPosition.x;
+				player->Position().y = m_playerPosition.y;
+				player->SetLoop(false);
+				player->SetFrameTime(0.3f);
+				break;
+			default:
+				return false;
+			}
+		}
+	}
 
 	LogManager::GetInstance().Log("Initialised all Sprites!");
-
 
 	return true;
 
@@ -81,6 +142,8 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool) {
 		return;
 	}
+
+	PlayerMovement(inputSystem, m_currentPlayer, deltaTime);
 
 	for (size_t i = 0; i < m_cornerPool->totalCount(); i++) {
 		if (GameObject* obj = m_cornerPool->getObjectAtIndex(i)) {
@@ -123,6 +186,17 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 			if (obj && dynamic_cast<Water*>(obj)) {
 				Water* water = static_cast<Water*>(obj);
 				water->Process(deltaTime);
+			}
+		}
+	}
+
+	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+		if (obj && dynamic_cast<Player*>(obj)) {
+			Player* player = static_cast<Player*>(obj);
+			player->Process(deltaTime);
+
+			if (!player->IsRunning()) {
+				m_currentPlayer = 0;
 			}
 		}
 	}
@@ -172,6 +246,13 @@ void Level::Draw(Renderer& renderer)
 				Water* water = static_cast<Water*>(obj);
 				water->Draw(renderer);
 			}
+		}
+	}
+
+	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+		if (obj && obj->isActive()) {
+			Player* player = static_cast<Player*>(obj);
+			player->Draw(renderer);
 		}
 	}
 }
@@ -323,5 +404,93 @@ bool Level::InitObjects(Renderer& renderer, char tileType, size_t x, size_t y)
 
 	default:
 		return false;
+	}
+}
+
+void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime)
+{
+	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_PRESSED) {
+		m_currentPlayer = 1;
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->Position().x = m_playerPosition.x;
+			player->Position().y = m_playerPosition.y;
+			player->Position().x += 80.0f * deltaTime;
+			m_playerPosition.x = player->Position().x;
+			m_playerPosition.y = player->Position().y;
+			player->SetActive(true);
+		}
+	}
+
+	if (inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_PRESSED) {
+		m_currentPlayer = 2;
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->Position().x = m_playerPosition.x;
+			player->Position().y = m_playerPosition.y;
+			player->Position().x -= 80.0f * deltaTime;
+			m_playerPosition.x = player->Position().x;
+			m_playerPosition.y = player->Position().y;
+			player->SetActive(true);
+		}
+	}
+
+	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_RELEASED ||
+		inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_RELEASED) {
+		m_currentPlayer = 0;
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->Position().x = m_playerPosition.x;
+			player->Position().y = m_playerPosition.y;
+			player->SetActive(true);
+		}
+	}
+
+	if (inputSystem.GetKeyState(SDL_SCANCODE_E) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_E) == BS_PRESSED) {
+		m_currentPlayer = 3;
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->Position().x = m_playerPosition.x;
+			player->Position().y = m_playerPosition.y;
+			player->SetActive(true);
+		}
+	}
+
+	if (inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_PRESSED) {
+
+		if (m_currentPlayer != 2) {
+			m_currentPlayer = 1;
+		}
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->Position().x = m_playerPosition.x;
+			player->Position().y = m_playerPosition.y;
+			player->Position().y -= 80.0f * deltaTime;
+			m_playerPosition.x = player->Position().x;
+			m_playerPosition.y = player->Position().y;
+			player->SetActive(true);
+		}
+	}
+
+	if (inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_PRESSED) {
+
+		if (m_currentPlayer != 1) {
+			m_currentPlayer = 2;
+		}
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->Position().x = m_playerPosition.x;
+			player->Position().y = m_playerPosition.y;
+			player->Position().y += 80.0f * deltaTime;
+			m_playerPosition.x = player->Position().x;
+			m_playerPosition.y = player->Position().y;
+			player->SetActive(true);
+		}
 	}
 }

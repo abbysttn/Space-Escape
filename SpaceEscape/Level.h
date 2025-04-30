@@ -2,6 +2,7 @@
 #define _LEVEL_H__
 
 #include "scene.h"
+#include "vector2.h"
 #include <string>
 
 using namespace std;
@@ -10,6 +11,9 @@ class Renderer;
 class GameObjectPool;
 class DDLevelLoad;
 class LogManager;
+class InputSystem;
+
+class Player;
 
 class Level : public Scene {
 public:
@@ -23,6 +27,7 @@ public:
 
 protected:
 	bool InitObjects(Renderer& renderer, char tileType, size_t x, size_t y);
+	void PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime);
 
 private:
 	Level(const Level& level);
@@ -37,9 +42,15 @@ protected:
 	GameObjectPool* m_centerPool;
 	GameObjectPool* m_waterPool;
 
+	GameObjectPool* m_playerPool;
+
+	int m_currentPlayer;
+
 	float m_tileSize;
 	float screenOffsetX;
 	float screenOffsetY;
+
+	Vector2 m_playerPosition;
 
 	string levelType;
 
