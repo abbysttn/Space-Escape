@@ -36,7 +36,7 @@ void SoundSystem::close()
 	}
 }
 
-bool SoundSystem::loadSound(const string& name, char* filePath, bool looping)
+bool SoundSystem::loadSound(const string& name, const char* filePath, bool looping)
 {
 	FMOD_MODE mode = FMOD_DEFAULT;
 	if (looping) {
@@ -52,11 +52,28 @@ bool SoundSystem::loadSound(const string& name, char* filePath, bool looping)
 	return false;
 }
 
-void SoundSystem::playSound(const string& name)
+void SoundSystem::playSound(const string& name, float volume)
 {
 	auto it = m_sounds.find(name);
 
 	if (it != m_sounds.end()) {
-		m_pSystem->playSound(it->second, 0, false, 0);
+		FMOD::Channel* channel = nullptr;
+
+		m_pSystem->playSound(it->second, 0, false, &channel);
+
+		if (channel) {
+			channel->setVolume(volume);
+		}
+	}
+
+}
+
+void SoundSystem::stopSound(const string& name)
+{
+	auto it = m_sounds.find(name);
+
+	if (it != m_sounds.end()) {
+
+		m_pSystem->playSound(it->second, 0, true, 0);
 	}
 }

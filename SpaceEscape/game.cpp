@@ -33,7 +33,7 @@ void Game::DestroyInstance() {
     sm_pInstance = 0;
 }
 
-Game::Game() : m_pRenderer(0), m_bLooping(true) {
+Game::Game() : m_pRenderer(0), m_bLooping(true), m_soundSystem(0) {
     SoundSystem::getInstance().initialise();
 }
 
@@ -81,6 +81,9 @@ bool Game::Initialise() {
     pScene->Initialise(*m_pRenderer);
     m_scenes.push_back(pScene);
     m_iCurrentScene = 0;
+
+    m_soundSystem = new SoundSystem();
+    m_soundSystem->getInstance().loadSound("background", "..\\assets\\background.mp3", true);
     
 
     return true;
@@ -123,7 +126,7 @@ void Game::Process(float deltaTime)
         deltaTime = 0.0f;
 }
 #endif // !DEBUG
-    
+    m_soundSystem->getInstance().playSound("background", 0.1f);
     m_scenes[m_iCurrentScene]->Process(deltaTime, *m_pInputSystem);
     
     

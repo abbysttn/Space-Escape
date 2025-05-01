@@ -114,3 +114,9 @@ bool Player::IsRunning()
 {
     return m_sprite->IsAnimating();
 }
+
+void Player::SetRunning()
+{
+    m_sprite->Animate();
+    m_sprite->Restart();
+}

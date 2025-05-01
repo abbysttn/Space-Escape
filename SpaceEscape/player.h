@@ -31,6 +31,7 @@ public:
 	void SetLoop(bool loop);
 
 	bool IsRunning();
+	void SetRunning();
 
 protected:
 

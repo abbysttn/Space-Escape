@@ -21,6 +21,8 @@ class InputSystem;
 
 class INIParser;
 
+class SoundSystem;
+
 class Game {
 	//member methods:
 public:
@@ -53,6 +55,7 @@ protected:
 	static Game* sm_pInstance;
 	Renderer* m_pRenderer;
 	InputSystem* m_pInputSystem;
+	SoundSystem* m_soundSystem;
 
 	__int64 m_iLastTime;
 	float m_fExecutionTime;

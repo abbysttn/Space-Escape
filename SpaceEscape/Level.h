@@ -4,6 +4,7 @@
 #include "scene.h"
 #include "vector2.h"
 #include <string>
+#include <memory>
 
 using namespace std;
 
@@ -12,8 +13,11 @@ class GameObjectPool;
 class DDLevelLoad;
 class LogManager;
 class InputSystem;
+class QuadTree;
+class SoundSystem;
 
 class Player;
+class Water;
 
 class Level : public Scene {
 public:
@@ -28,6 +32,8 @@ public:
 protected:
 	bool InitObjects(Renderer& renderer, char tileType, size_t x, size_t y);
 	void PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime);
+	bool IsColliding(Player* player, Water* water);
+	bool IsMovingAway(Water* water);
 
 private:
 	Level(const Level& level);
@@ -44,6 +50,8 @@ protected:
 
 	GameObjectPool* m_playerPool;
 
+	unique_ptr<QuadTree> m_collisionTree;
+
 	int m_currentPlayer;
 
 	float m_tileSize;
@@ -51,6 +59,9 @@ protected:
 	float screenOffsetY;
 
 	Vector2 m_playerPosition;
+	Vector2 m_playerPrevPosition;
+
+	SoundSystem* m_soundSystem;
 
 	string levelType;
 

@@ -18,8 +18,10 @@ public:
 	void update();
 	void close();
 
-	bool loadSound(const string& name, char* filePath, bool looping = false);
-	void playSound(const string& name);
+	bool loadSound(const string& name, const char* filePath, bool looping = false);
+	void playSound(const string& name, float volume);
+
+	void stopSound(const string& name);
 
 protected:
 private:

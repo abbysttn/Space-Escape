@@ -18,6 +18,10 @@ bool Water::initialise(Renderer& renderer, const char* filename)
 {
 	m_sprite = renderer.CreateSprite(filename);
 
+	if (!m_sprite) {
+		return false;
+	}
+
 	m_alive = true;
 	m_sprite->SetScale(3.0);
 
