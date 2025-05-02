@@ -15,10 +15,8 @@
 #include "water.h"
 #include "player.h"
 
-Level::Level() : m_soundSystem(0), m_playerPrevPosition(800, 500), m_playerPosition(800, 500), m_currentPlayer(0), m_playerPool(nullptr), 
-m_centerPool(nullptr), m_cornerPool(nullptr), m_edgePool(nullptr), m_edgeCornerPool(nullptr), m_waterPool(nullptr), m_levelParser(0), m_tileSize(48.0f) {
-	SoundSystem::getInstance().initialise();
-}
+Level::Level() : m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr), 
+m_centerPool(nullptr), m_cornerPool(nullptr), m_edgePool(nullptr), m_edgeCornerPool(nullptr), m_waterPool(nullptr), m_levelParser(0), m_tileSize(48.0f) {}
 
 Level::~Level()
 {
@@ -35,9 +33,10 @@ Level::~Level()
 
 bool Level::Initialise(Renderer& renderer)
 {
-	levelType = "summer";
+	levelType = "fall";
 
 	m_soundSystem = new SoundSystem();
+	m_soundSystem->getInstance().initialise();
 	m_soundSystem->getInstance().loadSound("run", "..\\assets\\run.mp3", false);
 
 	m_levelParser = new DDLevelLoad();
@@ -143,7 +142,7 @@ bool Level::Initialise(Renderer& renderer)
 
 	LogManager::GetInstance().Log("Initialised all Sprites!");
 
-	m_collisionTree = make_unique<QuadTree>(Box(0, 0, screenWidth, renderer.GetHeight()));
+	m_collisionTree = make_unique<QuadTree>(Box(0.0f, 0.0f, (float)screenWidth, (float)renderer.GetHeight()));
 
 	return true;
 
@@ -204,8 +203,8 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 				if (water && water->isActive()) {
 					float waterSize = (float)water->GetSpriteWidth();
 					Box waterRange(
-						water->Position().x - waterSize / 2,
-						water->Position().y - waterSize / 2,
+						water->Position().x,
+						water->Position().y,
 						waterSize,
 						waterSize
 					);
@@ -225,10 +224,10 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 				m_currentPlayer = 0;
 			}
 
-			float playerSize = player->GetSpriteWidth();
+			float playerSize = (float)player->GetSpriteWidth();
 			Box playerBox(
-				player->Position().x - playerSize / 2,
-				player->Position().y - playerSize / 2,
+				player->Position().x,
+				player->Position().y,
 				playerSize,
 				playerSize
 			);
@@ -238,7 +237,8 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 			for (auto* obj : potentialCollisions) {
 				Water* water = dynamic_cast<Water*>(obj);
 				if (water) {
-					if (IsColliding(player, water)) {
+					if (IsColliding(player, water, collisionType)) {
+						LogManager::GetInstance().Log("Yes, colliding");
 
 						if (!IsMovingAway(water)) {
 							m_playerPosition = m_playerPrevPosition;
@@ -431,6 +431,10 @@ bool Level::InitObjects(Renderer& renderer, char tileType, size_t x, size_t y)
 				center->Position().x = (x * m_tileSize) + screenOffsetX;
 				center->Position().y = (y * m_tileSize) + screenOffsetY;
 				center->SetActive(true);
+
+				//set player on a center tile
+				m_playerPosition = center->Position();
+				m_playerPrevPosition = m_playerPosition;
 			}
 		}
 		return true;
@@ -440,7 +444,7 @@ bool Level::InitObjects(Renderer& renderer, char tileType, size_t x, size_t y)
 			Water* water = dynamic_cast<Water*>(obj);
 
 			if (water) {
-				string filepath = "..\\assets\\center_" + levelType + ".png";
+				string filepath = "..\\assets\\water_" + levelType + ".png";
 
 				if (!water->initialise(renderer, filepath.c_str())) {
 					return false;
@@ -469,7 +473,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 
 		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 			Player* player = static_cast<Player*>(obj);
-			//m_soundSystem->getInstance().playSound("run", 1.0f);
+			m_soundSystem->getInstance().playSound("run", 1.0f);
 			player->Position() = m_playerPosition;
 			player->Position().x += 80.0f * deltaTime;
 			m_playerPosition = player->Position();
@@ -551,17 +555,23 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 	}
 }
 
-bool Level::IsColliding(Player* player, Water* water)
+bool Level::IsColliding(Player* player, Water* water, string& collisionSide)
 {
 	if (!player || !water) return false;
 
-	float playerHalfWidth = player->GetSpriteWidth() / 2.0f;
-	float tileHalfWidth = water->GetSpriteWidth() / 2.0f;
+	float pX = player->Position().x;
+	float pY = player->Position().y;
+	float wX = water->Position().x;
+	float wY = water->Position().y;
+	float pW = player->GetSpriteWidth();
+	float wW = water->GetSpriteWidth();
 
-	float dx = fabs(player->Position().x - water->Position().x);
-	float dy = fabs(player->Position().y - water->Position().y);
+	bool colliding = pX < wX + wW &&
+		pX + pW > wX &&
+		pY < wY + wW &&
+		pY + pW > wY;
 
-	return (dx < playerHalfWidth + tileHalfWidth) && (dy < playerHalfWidth + tileHalfWidth);
+	return colliding;
 }
 
 bool Level::IsMovingAway(Water* water)

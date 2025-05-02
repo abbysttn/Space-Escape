@@ -73,10 +73,3 @@ vector<GameObject*> QuadTree::queryRange(const Box& range)
 
 	return foundObjects;
 }
-
-/*GameObject QuadTree::GetObject()
-{
-	for (auto& item : objects) {
-		item.
-	}
-}*/

@@ -37,8 +37,6 @@ public:
 	void insert(GameObject* obj, const Box& bounds);
 	vector<GameObject*> queryRange(const Box& range);
 
-	GameObject GetObject();
-
 protected:
 	QuadTree(const QuadTree& quadTree);
 	QuadTree& operator=(const QuadTree& quadTree);

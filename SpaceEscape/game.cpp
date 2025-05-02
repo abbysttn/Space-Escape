@@ -54,16 +54,15 @@ void Game::Quit() {
 }
 
 bool Game::Initialise() {
-    int bbWidth = 1680;
-    int bbHeight = 1050;
+    
+    int bbWidth = 500;
+    int bbHeight = 500;
 
     m_pRenderer = new Renderer();
-    if (!m_pRenderer->Initialise(true, bbWidth, bbHeight)) {
+    if (!m_pRenderer->Initialise(false, bbWidth, bbHeight)) {
         LogManager::GetInstance().Log("Renderer failed to initialise!");
         return false;
     }
-
-    
 
     bbWidth = m_pRenderer->GetWidth();
     bbHeight = m_pRenderer->GetHeight();
@@ -76,10 +75,16 @@ bool Game::Initialise() {
     m_pInputSystem->Initialise();
 
     
-    Scene* pScene = 0;
-    pScene = new Level();
-    pScene->Initialise(*m_pRenderer);
-    m_scenes.push_back(pScene);
+    Scene* level = 0;
+    level = new Level();
+    level->Initialise(*m_pRenderer);
+    m_scenes.push_back(level);
+
+    Scene* fmod = 0;
+    fmod = new SceneSplashFMOD();
+    fmod->Initialise(*m_pRenderer);
+    m_scenes.push_back(fmod);
+
     m_iCurrentScene = 0;
 
     m_soundSystem = new SoundSystem();
