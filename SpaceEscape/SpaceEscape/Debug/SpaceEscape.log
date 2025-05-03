@@ -1,4 +1,3 @@
 ﻿  Level.cpp
-C:\Users\abbys\OneDrive\Documents\GitHub\Space-Escape\SpaceEscape\Level.cpp(566,11): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\abbys\OneDrive\Documents\GitHub\Space-Escape\SpaceEscape\Level.cpp(567,11): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  SpaceEscape.vcxproj -> C:\Users\abbys\OneDrive\Documents\GitHub\Space-Escape\SpaceEscape\Debug\SpaceEscape.exe
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp(536,11): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  SpaceEscape.vcxproj -> C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Debug\SpaceEscape.exe

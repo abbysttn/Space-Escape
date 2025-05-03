@@ -14,6 +14,7 @@ class DDLevelLoad;
 class LogManager;
 class InputSystem;
 class QuadTree;
+struct Box;
 class SoundSystem;
 
 class Player;
@@ -32,7 +33,7 @@ public:
 protected:
 	bool InitObjects(Renderer& renderer, char tileType, size_t x, size_t y);
 	void PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime);
-	bool IsColliding(Player* player, Water* water, string &collisionSide);
+	bool IsColliding(const Box& playerBox, Water* water);
 	bool IsMovingAway(Water* water);
 
 private:
@@ -62,8 +63,6 @@ protected:
 	Vector2 m_playerPrevPosition;
 
 	SoundSystem* m_soundSystem;
-
-	string collisionType;
 
 	string levelType;
 

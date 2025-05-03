@@ -64,7 +64,7 @@ Vector2& Player::Position()
 
 int Player::GetSpriteWidth()
 {
-    return 16;
+    return m_sprite->GetWidth();
 }
 
 void Player::SetColour(float red, float green, float blue)

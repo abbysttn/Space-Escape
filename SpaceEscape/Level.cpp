@@ -156,8 +156,6 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 
 	m_collisionTree->clear();
 
-	PlayerMovement(inputSystem, m_currentPlayer, deltaTime);
-
 	for (size_t i = 0; i < m_cornerPool->totalCount(); i++) {
 		if (GameObject* obj = m_cornerPool->getObjectAtIndex(i)) {
 			if (obj && dynamic_cast<Corner*>(obj)) {
@@ -215,6 +213,8 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
+	PlayerMovement(inputSystem, m_currentPlayer, deltaTime);
+
 	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 		if (obj && dynamic_cast<Player*>(obj)) {
 			Player* player = static_cast<Player*>(obj);
@@ -222,32 +222,6 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 
 			if (!player->IsRunning()) {
 				m_currentPlayer = 0;
-			}
-
-			float playerSize = (float)player->GetSpriteWidth();
-			Box playerBox(
-				player->Position().x,
-				player->Position().y,
-				playerSize,
-				playerSize
-			);
-
-			auto potentialCollisions = m_collisionTree->queryRange(playerBox);
-
-			for (auto* obj : potentialCollisions) {
-				Water* water = dynamic_cast<Water*>(obj);
-				if (water) {
-					if (IsColliding(player, water, collisionType)) {
-						LogManager::GetInstance().Log("Yes, colliding");
-
-						if (!IsMovingAway(water)) {
-							m_playerPosition = m_playerPrevPosition;
-							player->Position() = m_playerPrevPosition;
-						}
-
-						break;
-					}
-				}
 			}
 		}
 	}
@@ -466,29 +440,77 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 {
 	m_playerPrevPosition = m_playerPosition;
 
+	Vector2 updatedPos = m_playerPosition;
+
 	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_PRESSED) {
 		m_currentPlayer = 1;
-
-		
-
-		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
-			Player* player = static_cast<Player*>(obj);
-			m_soundSystem->getInstance().playSound("run", 1.0f);
-			player->Position() = m_playerPosition;
-			player->Position().x += 80.0f * deltaTime;
-			m_playerPosition = player->Position();
-			player->SetActive(true);
-		}
+		updatedPos.x += 80.0f * deltaTime;
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_PRESSED) {
 		m_currentPlayer = 2;
+		updatedPos.x -= 80.0f * deltaTime;
+	}
+
+	if (inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_PRESSED) {
+
+		if (m_currentPlayer != 2) {
+			m_currentPlayer = 1;
+		}
+
+		updatedPos.y -= 80.0f * deltaTime;
+	}
+
+	if (inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_PRESSED) {
+
+		if (m_currentPlayer != 1) {
+			m_currentPlayer = 2;
+		}
+
+		updatedPos.y += 80.0f * deltaTime;
+	}
+
+	bool collision = false;
+
+	Box updatedBox(updatedPos.x, updatedPos.y, 48.0f, 48.0f);
+
+	auto potentialCollisions = m_collisionTree->queryRange(updatedBox);
+
+	for (auto* obj : potentialCollisions) {
+		Water* water = dynamic_cast<Water*>(obj);
+		if (water && IsColliding(updatedBox, water)) {
+			collision = true;
+			break;
+		}
+	}
+
+	if (!collision) {
+		m_playerPosition = updatedPos;
+	}
+	else {
+	}
+
+	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+		Player* player = static_cast<Player*>(obj);
+		player->Position() = m_playerPosition;
+		player->SetActive(true);
+	}
+
+
+	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_RELEASED ||
+		inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_RELEASED) {
+		m_currentPlayer = 3;
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetRunning();
+		}
+
+		m_currentPlayer = 0;
 
 		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 			Player* player = static_cast<Player*>(obj);
 			player->Position() = m_playerPosition;
-			player->Position().x -= 80.0f * deltaTime;
-			m_playerPosition = player->Position();
 			player->SetActive(true);
 		}
 	}
@@ -503,84 +525,18 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			player->SetActive(true);
 		}
 	}
-
-	if (inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_PRESSED) {
-
-		if (m_currentPlayer != 2) {
-			m_currentPlayer = 1;
-		}
-
-		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
-			Player* player = static_cast<Player*>(obj);
-			player->Position() = m_playerPosition;
-			player->Position().y -= 80.0f * deltaTime;
-			m_playerPosition = player->Position();
-			player->SetActive(true);
-		}
-	}
-
-	if (inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_PRESSED) {
-
-		if (m_currentPlayer != 1) {
-			m_currentPlayer = 2;
-		}
-
-		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
-			Player* player = static_cast<Player*>(obj);
-			player->Position() = m_playerPosition;
-			player->Position().y += 80.0f * deltaTime;
-			m_playerPosition = player->Position();
-			player->SetActive(true);
-		}
-	}
-
-	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_RELEASED ||
-		inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_RELEASED) {
-		m_currentPlayer = 3;
-
-		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
-			Player* player = static_cast<Player*>(obj);
-			player->SetRunning();
-		}
-
-		m_currentPlayer = 0;
-
-		//m_soundSystem->stopSound("run");
-
-		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
-			Player* player = static_cast<Player*>(obj);
-			player->Position() = m_playerPosition;
-			player->SetActive(true);
-		}
-	}
 }
 
-bool Level::IsColliding(Player* player, Water* water, string& collisionSide)
+bool Level::IsColliding(const Box& playerBox, Water* water)
 {
-	if (!player || !water) return false;
+	if (!water) return false;
 
-	float pX = player->Position().x;
-	float pY = player->Position().y;
 	float wX = water->Position().x;
 	float wY = water->Position().y;
-	float pW = player->GetSpriteWidth();
 	float wW = water->GetSpriteWidth();
 
-	bool colliding = pX < wX + wW &&
-		pX + pW > wX &&
-		pY < wY + wW &&
-		pY + pW > wY;
-
-	return colliding;
-}
-
-bool Level::IsMovingAway(Water* water)
-{
-	float dx = m_playerPosition.x - m_playerPrevPosition.x;
-	float dy = m_playerPosition.y - m_playerPrevPosition.y;
-
-	float waterDirX = m_playerPosition.x - water->Position().x;
-	float waterDirY = m_playerPosition.y - water->Position().y;
-
-	return (dx * waterDirX + dy * waterDirY) > 0;
+	return playerBox.x < wX + wW &&
+		playerBox.x + playerBox.width > wX &&
+		playerBox.y < wY + wW &&
+		playerBox.y + playerBox.height > wY;
 }
