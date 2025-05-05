@@ -185,6 +185,7 @@
     <ClInclude Include="vector2.h" />
     <ClInclude Include="vertexarray.h" />
     <ClInclude Include="water.h" />
+    <ClInclude Include="weapon.h" />
     <ClInclude Include="xboxcontroller.h" />
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +230,7 @@
     <ClCompile Include="vector2.cpp" />
     <ClCompile Include="vertexarray.cpp" />
     <ClCompile Include="water.cpp" />
+    <ClCompile Include="weapon.cpp" />
     <ClCompile Include="xboxcontroller.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

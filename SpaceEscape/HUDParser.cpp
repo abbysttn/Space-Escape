@@ -34,7 +34,7 @@ bool HUDParser::Initialise(Renderer& renderer)
 	}
 	
 
-	return false;
+	return true;
 }
 
 void HUDParser::Process(float deltaTime, InputSystem& inputSystem)
@@ -85,6 +85,7 @@ bool HUDParser::FileParsed(Renderer& renderer, const char* filepath)
 	screenOffsetXR = screenWidth - levelPixelWidth; // right aligned
 	screenOffsetY = (m_tileSize / 2.0f) + m_tileSize / 2;
 	screenOffsetYR = screenHeight - levelPixelHeight; // bottom aligned
+	screenOffsetCenter = (screenWidth / 2.0f) - (levelPixelWidth / 2.0f); //center of x axis
 
 	for (size_t y = 0; y < m_levelParser->GetHeight(); y++) {
 		for (size_t x = 0; x < m_levelParser->GetWidth(); x++) {
@@ -286,6 +287,74 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 
 				if (tileType == 'Q') {
 					tile->SetRotation(180.0f);
+				}
+
+				tile->SetActive(true);
+			}
+		}
+		return true;
+
+	case 'R':
+	case 'S':
+	case 'T':
+	case 'U':
+		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
+
+			if (tile) {
+				string filepath = "..\\assets\\hud_life_corner.png";
+
+				if (!tile->initialise(renderer, filepath.c_str())) {
+					return false;
+				}
+
+				tile->Position().x = (x * m_tileSize) + screenOffsetCenter;
+				tile->Position().y = (y * m_tileSize) + screenOffsetYR;
+
+				switch (tileType) {
+				case 'S':
+					tile->SetRotation(90.0f);
+					break;
+				case 'T':
+					tile->SetRotation(180.0f);
+					break;
+				case 'U':
+					tile->SetRotation(-90.0f);
+					break;
+				}
+
+				tile->SetActive(true);
+			}
+		}
+		return true;
+
+	case 'V':
+	case 'W':
+	case 'X':
+	case '0':
+		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
+
+			if (tile) {
+				string filepath = "..\\assets\\hud_life_middle.png";
+
+				if (!tile->initialise(renderer, filepath.c_str())) {
+					return false;
+				}
+
+				tile->Position().x = (x * m_tileSize) + screenOffsetCenter;
+				tile->Position().y = (y * m_tileSize) + screenOffsetYR;
+
+				switch (tileType) {
+				case 'W':
+					tile->SetRotation(90.0f);
+					break;
+				case 'X':
+					tile->SetRotation(180.0f);
+					break;
+				case '0':
+					tile->SetRotation(-90.0f);
+					break;
 				}
 
 				tile->SetActive(true);

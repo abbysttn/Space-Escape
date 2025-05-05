@@ -37,6 +37,7 @@ private:
 	float screenOffsetXR;
 	float screenOffsetY;
 	float screenOffsetYR;
+	float screenOffsetCenter;
 
 	float m_tileSize;
 

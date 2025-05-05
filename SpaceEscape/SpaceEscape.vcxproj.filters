@@ -153,6 +153,9 @@
     <ClInclude Include="prop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="weapon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp">
@@ -279,6 +282,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="prop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

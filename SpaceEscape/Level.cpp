@@ -13,9 +13,10 @@
 
 #include "water.h"
 #include "player.h"
+#include "weapon.h"
 
 Level::Level() : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr), 
-m_waterPool(nullptr), m_tileSize(48.0f), m_levelNumber(1), m_layerNumber(0), m_hudParser(0), m_tileParser(0) {}
+m_waterPool(nullptr), m_tileSize(48.0f), m_levelNumber(1), m_layerNumber(0), m_hudParser(0), m_tileParser(0), m_weapon(0) {}
 
 Level::~Level()
 {
@@ -38,6 +39,7 @@ bool Level::Initialise(Renderer& renderer)
 	m_tileParser = new TileParser(levelType, 1);
 
 	m_playerPool = new GameObjectPool(Player(), 4);
+	m_weapon = new Weapon();
 	
 	if (!PlayerInitialised(renderer)) {
 		LogManager::GetInstance().Log("Unable to Initialise Player!");
@@ -51,6 +53,8 @@ bool Level::Initialise(Renderer& renderer)
 
 	m_playerPosition = m_tileParser->GetPlayerStartPosition();
 	m_waterPool = m_tileParser->GetWaterPool();
+	m_weapon->initialise(renderer, "..\\assets\\upgraded_knife.png");
+	m_weapon->SetWeapon(true);
 
 	m_collisionTree = make_unique<QuadTree>(Box(0.0f, 0.0f, (float)renderer.GetWidth(), (float)renderer.GetHeight()));
 
@@ -79,6 +83,11 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
+	m_weapon->Position() = m_playerPosition;
+	m_weapon->Position().y += m_weapon->GetSpriteHeight() * 1.5f;
+	m_weapon->Position().x += m_weapon->GetSpriteWidth() * 0.2f;
+	m_weapon->Process(deltaTime);
+
 	m_hudParser->Process(deltaTime, inputSystem);
 }
 
@@ -92,6 +101,8 @@ void Level::Draw(Renderer& renderer)
 			player->Draw(renderer);
 		}
 	}
+
+	m_weapon->Draw(renderer);
 
 	m_hudParser->Draw(renderer);
 }
@@ -171,11 +182,13 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_PRESSED) {
 		m_currentPlayer = 1;
+		m_weapon->SetRotation(0.0f);
 		updatedPos.x += 80.0f * deltaTime;
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_PRESSED) {
 		m_currentPlayer = 2;
+		m_weapon->SetRotation(180.0f);
 		updatedPos.x -= 80.0f * deltaTime;
 	}
 
@@ -225,10 +238,21 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 		player->SetActive(true);
 	}
 
+	if (inputSystem.GetMouseButtonState(SDL_BUTTON_LEFT) == BS_PRESSED) { // weapon swing
+		m_currentPlayer = 3;
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetRunning();
+			player->Position() = m_playerPosition;
+			player->SetActive(true);
+		}
+		m_weapon->Swing();
+	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_RELEASED ||
 		inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_RELEASED) {
 		m_currentPlayer = 3;
+		m_weapon->SetRotation(0.0f);
 
 		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 			Player* player = static_cast<Player*>(obj);

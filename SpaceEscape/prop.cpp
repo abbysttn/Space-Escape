@@ -8,8 +8,6 @@
 #include <cassert>
 #include <cstdlib>
 
-#include <iostream>
-
 Prop::Prop() : m_sprite(0) {}
 
 Prop::~Prop()
@@ -20,7 +18,7 @@ Prop::~Prop()
 
 bool Prop::initialise(Renderer& renderer, string levelType)
 {
-	int num = GetRandom(1, 9);
+	int num = GetRandom(1, 6);
 
 	m_sprite = renderer.CreateSprite(GetFilePath(num, levelType).c_str());
 
@@ -111,22 +109,10 @@ string Prop::GetFilePath(int num, std::string leveltype)
 		break;
 
 	case 5:
-		filepath += "grass_4_" + leveltype + ".png";
-		break;
-
-	case 6:
-		filepath += "grass_5_" + leveltype + ".png";
-		break;
-
-	case 7:
-		filepath += "grass_6_" + leveltype + ".png";
-		break;
-
-	case 8:
 		filepath += "scar_1.png";
 		break;
 
-	case 9:
+	case 6:
 		filepath += "scar_2.png";
 		break;
 

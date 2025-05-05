@@ -22,6 +22,7 @@ class TileParser;
 
 class Player;
 class Water;
+class Weapon;
 
 class Level : public Scene {
 public:
@@ -51,6 +52,7 @@ protected:
 
 	unique_ptr<QuadTree> m_collisionTree;
 
+	Weapon* m_weapon;
 
 	HUDParser* m_hudParser;
 	TileParser* m_tileParser;
