@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="animatedsprite.h" />
+    <ClInclude Include="bridge.h" />
     <ClInclude Include="center.h" />
     <ClInclude Include="corner.h" />
     <ClInclude Include="DDLevelLoad.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gameobject.h" />
     <ClInclude Include="gameobjectpool.h" />
+    <ClInclude Include="HUDParser.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_opengl3.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="particleemitter.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="prop.h" />
     <ClInclude Include="quadtree.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="scene.h" />
@@ -177,6 +180,8 @@
     <ClInclude Include="sprite.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="texturemanager.h" />
+    <ClInclude Include="TileParser.h" />
+    <ClInclude Include="underlayTiles.h" />
     <ClInclude Include="vector2.h" />
     <ClInclude Include="vertexarray.h" />
     <ClInclude Include="water.h" />
@@ -184,6 +189,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp" />
+    <ClCompile Include="bridge.cpp" />
     <ClCompile Include="center.cpp" />
     <ClCompile Include="corner.cpp" />
     <ClCompile Include="DDLevelLoad.cpp" />
@@ -191,6 +197,7 @@
     <ClCompile Include="edgeCorner.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameobjectpool.cpp" />
+    <ClCompile Include="HUDParser.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -207,6 +214,7 @@
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="particleemitter.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="prop.cpp" />
     <ClCompile Include="quadtree.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="scene.cpp" />
@@ -216,6 +224,8 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TileParser.cpp" />
+    <ClCompile Include="underlayTiles.cpp" />
     <ClCompile Include="vector2.cpp" />
     <ClCompile Include="vertexarray.cpp" />
     <ClCompile Include="water.cpp" />

@@ -17,6 +17,9 @@ class QuadTree;
 struct Box;
 class SoundSystem;
 
+class HUDParser;
+class TileParser;
+
 class Player;
 class Water;
 
@@ -31,10 +34,10 @@ public:
 	virtual void DebugDraw();
 
 protected:
-	bool InitObjects(Renderer& renderer, char tileType, size_t x, size_t y);
+	bool PlayerInitialised(Renderer& renderer);
 	void PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime);
 	bool IsColliding(const Box& playerBox, Water* water);
-	bool IsMovingAway(Water* water);
+	void AddWaterCollision();
 
 private:
 	Level(const Level& level);
@@ -43,21 +46,25 @@ private:
 public:
 
 protected:
-	GameObjectPool* m_cornerPool;
-	GameObjectPool* m_edgeCornerPool;
-	GameObjectPool* m_edgePool;
-	GameObjectPool* m_centerPool;
-	GameObjectPool* m_waterPool;
-
 	GameObjectPool* m_playerPool;
+	GameObjectPool* m_waterPool;
 
 	unique_ptr<QuadTree> m_collisionTree;
 
+
+	HUDParser* m_hudParser;
+	TileParser* m_tileParser;
+
 	int m_currentPlayer;
+	int m_levelNumber;
+	int m_layerNumber;
 
 	float m_tileSize;
+	float m_playerSize;
 	float screenOffsetX;
 	float screenOffsetY;
+
+	bool playerPositioned;
 
 	Vector2 m_playerPosition;
 	Vector2 m_playerPrevPosition;
@@ -65,8 +72,6 @@ protected:
 	SoundSystem* m_soundSystem;
 
 	string levelType;
-
-	DDLevelLoad* m_levelParser;
 
 
 private:

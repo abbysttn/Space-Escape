@@ -5,6 +5,7 @@
 
 #define DEBUG 1
 #define USE_LAG 0
+#define USE_SOUND 0
 
 
 using namespace std;

@@ -1,4 +1,5 @@
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\animatedsprite.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\animatedsprite.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\bridge.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\bridge.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\center.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\center.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\corner.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\corner.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\DDLevelLoad.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\DDLevelLoad.obj
@@ -6,6 +7,7 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\edge.cpp;C:\Users\abb
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\edgeCorner.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\edgeCorner.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\game.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\game.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\gameobjectpool.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\gameobjectpool.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\HUDParser.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\HUDParser.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\imgui.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui_demo.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\imgui_demo.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui_draw.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\imgui_draw.obj
@@ -31,6 +33,8 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\soundsystem.cpp;C:\Us
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Sprite.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\Sprite.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Texture.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\Texture.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\TextureManager.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\TextureManager.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\TileParser.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\TileParser.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\underlayTiles.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\underlayTiles.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\vector2.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\vector2.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\vertexarray.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\vertexarray.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\water.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\water.obj

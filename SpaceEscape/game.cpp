@@ -87,8 +87,10 @@ bool Game::Initialise() {
 
     m_iCurrentScene = 0;
 
+#if USE_SOUND
     m_soundSystem = new SoundSystem();
     m_soundSystem->getInstance().loadSound("background", "..\\assets\\background.mp3", true);
+#endif
     
 
     return true;
