@@ -8,6 +8,8 @@
 #include <cassert>
 #include <cstdlib>
 
+#include <iostream>
+
 Prop::Prop() : m_sprite(0) {}
 
 Prop::~Prop()
@@ -16,9 +18,11 @@ Prop::~Prop()
 	m_sprite = 0;
 }
 
-bool Prop::initialise(Renderer& renderer, const char* filename)
+bool Prop::initialise(Renderer& renderer, string levelType)
 {
-	m_sprite = renderer.CreateSprite(filename);
+	int num = GetRandom(1, 9);
+
+	m_sprite = renderer.CreateSprite(GetFilePath(num, levelType).c_str());
 
 	m_alive = true;
 	m_sprite->SetScale(3.0);
@@ -85,19 +89,51 @@ void Prop::SetRotation(float angle)
 	m_sprite->SetAngle(angle);
 }
 
-const char* Prop::GetFilePath(int num, std::string leveltype)
+string Prop::GetFilePath(int num, std::string leveltype)
 {
+	string filepath = "..\\assets\\";
+
 	switch (num) {
 	case 1:
+		filepath += "rock.png";
+		break;
 
 	case 2:
+		filepath += "grass_1_" + leveltype + ".png";
+		break;
 
 	case 3:
+		filepath += "grass_2_" + leveltype + ".png";
+		break;
 
 	case 4:
+		filepath += "grass_3_" + leveltype + ".png";
+		break;
 
 	case 5:
+		filepath += "grass_4_" + leveltype + ".png";
+		break;
 
 	case 6:
+		filepath += "grass_5_" + leveltype + ".png";
+		break;
+
+	case 7:
+		filepath += "grass_6_" + leveltype + ".png";
+		break;
+
+	case 8:
+		filepath += "scar_1.png";
+		break;
+
+	case 9:
+		filepath += "scar_2.png";
+		break;
+
+	default:
+		filepath += "rock.png";
+		break;
 	}
+
+	return filepath;
 }

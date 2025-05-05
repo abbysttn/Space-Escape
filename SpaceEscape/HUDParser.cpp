@@ -9,7 +9,7 @@
 
 #include <cassert>
 
-HUDParser::HUDParser() : m_HUDUnderlayTiles(nullptr), m_levelParser(0) {}
+HUDParser::HUDParser() : m_HUDUnderlayTiles(nullptr), m_levelParser(0), m_tileSize(48.0f) {}
 
 HUDParser::~HUDParser()
 {
@@ -78,13 +78,13 @@ bool HUDParser::FileParsed(Renderer& renderer, const char* filepath)
 	size_t levelWidth = m_levelParser->GetWidth();
 	size_t levelHeight = m_levelParser->GetHeight();
 
-	float levelPixelWidth = (levelWidth * 48.0f);
-	float levelPixelHeight = (levelHeight * 48.0f);
+	float levelPixelWidth = (levelWidth * m_tileSize);
+	float levelPixelHeight = (levelHeight * m_tileSize);
 
-	screenOffsetX = (48.0f / 2.0f) + 24.0f; //center tile + offset
-	screenOffsetXR = screenWidth - levelPixelWidth + 48.0f; // right aligned
-	screenOffsetY = (48.0f / 2.0f) + 24.0f;
-	screenOffsetXR = screenHeight - levelPixelHeight; // bottom aligned
+	screenOffsetX = (m_tileSize / 2.0f) + (m_tileSize / 2); //center tile + offset
+	screenOffsetXR = screenWidth - levelPixelWidth; // right aligned
+	screenOffsetY = (m_tileSize / 2.0f) + m_tileSize / 2;
+	screenOffsetYR = screenHeight - levelPixelHeight; // bottom aligned
 
 	for (size_t y = 0; y < m_levelParser->GetHeight(); y++) {
 		for (size_t x = 0; x < m_levelParser->GetWidth(); x++) {
@@ -117,8 +117,8 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 					return false;
 				}
 
-				tile->Position().x = (x * 48.0f) + screenOffsetXR;
-				tile->Position().y = (y * 48.0f) + screenOffsetY;
+				tile->Position().x = (x * m_tileSize) + screenOffsetXR;
+				tile->Position().y = (y * m_tileSize) + screenOffsetY;
 
 				switch (tileType) {
 				case 'B':
@@ -151,8 +151,8 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 					return false;
 				}
 
-				tile->Position().x = (x * 48.0f) + screenOffsetXR;
-				tile->Position().y = (y * 48.0f) + screenOffsetY;
+				tile->Position().x = (x * m_tileSize) + screenOffsetXR;
+				tile->Position().y = (y * m_tileSize) + screenOffsetY;
 
 				switch (tileType) {
 				case 'F':
@@ -184,13 +184,13 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 				}
 
 				if (tileType == 'Y') {
-					tile->Position().x = (x * 48.0f) + screenOffsetXR;
+					tile->Position().x = (x * m_tileSize) + screenOffsetXR;
 				}
 				else {
-					tile->Position().x = (x * 48.0f) + screenOffsetX;
+					tile->Position().x = (x * m_tileSize) + screenOffsetX;
 				}
 
-				tile->Position().y = (y * 48.0f) + screenOffsetY;
+				tile->Position().y = (y * m_tileSize) + screenOffsetY;
 
 				tile->SetActive(true);
 			}
@@ -209,8 +209,8 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 					return false;
 				}
 
-				tile->Position().x = (x * 48.0f) + screenOffsetX;
-				tile->Position().y = (y * 48.0f) + screenOffsetY;
+				tile->Position().x = (x * m_tileSize) + screenOffsetX;
+				tile->Position().y = (y * m_tileSize) + screenOffsetY;
 
 				if (tileType == 'K') {
 					tile->SetRotation(180.0f);
@@ -233,8 +233,8 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 					return false;
 				}
 
-				tile->Position().x = (x * 48.0f) + screenOffsetX;
-				tile->Position().y = (y * 48.0f) + screenOffsetY;
+				tile->Position().x = (x * m_tileSize) + screenOffsetX;
+				tile->Position().y = (y * m_tileSize) + screenOffsetY;
 
 				if (tileType == 'M') {
 					tile->SetRotation(180.0f);
@@ -257,8 +257,8 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 					return false;
 				}
 
-				tile->Position().x = (x * 48.0f) + screenOffsetX;
-				tile->Position().y = (y * 48.0f) + screenOffsetY;
+				tile->Position().x = (x * m_tileSize) + screenOffsetX;
+				tile->Position().y = (y * m_tileSize) + screenOffsetY;
 
 				if (tileType == 'O') {
 					tile->SetRotation(180.0f);
@@ -281,8 +281,8 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 					return false;
 				}
 
-				tile->Position().x = (x * 48.0f) + screenOffsetX;
-				tile->Position().y = (y * 48.0f) + screenOffsetY;
+				tile->Position().x = (x * m_tileSize) + screenOffsetX;
+				tile->Position().y = (y * m_tileSize) + screenOffsetY;
 
 				if (tileType == 'Q') {
 					tile->SetRotation(180.0f);
@@ -320,8 +320,8 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 					return false;
 				}
 
-				tile->Position().x = (x * 48.0f) + screenOffsetX + 25.0f;
-				tile->Position().y = (y * 48.0f) + screenOffsetY + 25.0f;
+				tile->Position().x = (x * m_tileSize) + screenOffsetX + 25.0f;
+				tile->Position().y = (y * m_tileSize) + screenOffsetY + 25.0f;
 
 				tile->SetActive(true);
 			}

@@ -28,7 +28,7 @@ Level::~Level()
 
 bool Level::Initialise(Renderer& renderer)
 {
-	levelType = "fall";
+	levelType = "summer";
 
 	m_soundSystem = new SoundSystem();
 	m_soundSystem->getInstance().initialise();

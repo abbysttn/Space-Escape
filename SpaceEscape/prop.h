@@ -15,7 +15,7 @@ public:
 	Prop();
 	~Prop();
 
-	bool initialise(Renderer& renderer, const char* filename);
+	bool initialise(Renderer& renderer, string levelType);
 	void Process(float deltaTime);
 	void Draw(Renderer& renderer);
 	Vector2& Position();
@@ -28,7 +28,7 @@ public:
 	void SetRotation(float angle);
 
 protected:
-	const char* GetFilePath(int num, std::string leveltype);
+	string GetFilePath(int num, std::string leveltype);
 
 private:
 	Prop(const Prop& prop);

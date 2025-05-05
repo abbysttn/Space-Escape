@@ -45,8 +45,9 @@ bool TileParser::Initialise(Renderer& renderer)
 	m_edgeCornerPool = new GameObjectPool(EdgeCorner(), 100);
 	m_waterPool = new GameObjectPool(Water(), 100);
 	m_bridgePool = new GameObjectPool(Bridge(), 100);
+	m_propPool = new GameObjectPool(Prop(), 100);
 
-	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool) {
+	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_bridgePool || !m_propPool) {
 		return false;
 	}
 
@@ -60,7 +61,7 @@ bool TileParser::Initialise(Renderer& renderer)
 
 void TileParser::Process(float deltaTime, InputSystem& inputSystem)
 {
-	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_bridgePool) {
+	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_bridgePool || !m_propPool) {
 		return;
 	}
 
@@ -114,6 +115,24 @@ void TileParser::Process(float deltaTime, InputSystem& inputSystem)
 			if (obj && dynamic_cast<Water*>(obj)) {
 				Water* water = static_cast<Water*>(obj);
 				water->Process(deltaTime);
+			}
+		}
+	}
+
+	for (size_t i = 0; i < m_waterPool->totalCount(); i++) {
+		if (GameObject* obj = m_waterPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<Water*>(obj)) {
+				Water* water = static_cast<Water*>(obj);
+				water->Process(deltaTime);
+			}
+		}
+	}
+
+	for (size_t i = 0; i < m_propPool->totalCount(); i++) {
+		if (GameObject* obj = m_propPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<Prop*>(obj)) {
+				Prop* prop = static_cast<Prop*>(obj);
+				prop->Process(deltaTime);
 			}
 		}
 	}
@@ -174,6 +193,15 @@ void TileParser::Draw(Renderer& renderer)
 			}
 		}
 	}
+
+	for (size_t i = 0; i < m_propPool->totalCount(); i++) {
+		if (GameObject* obj = m_propPool->getObjectAtIndex(i)) {
+			if (obj && obj->isActive()) {
+				Prop* prop = static_cast<Prop*>(obj);
+				prop->Draw(renderer);
+			}
+		}
+	}
 }
 
 void TileParser::DebugDraw()
@@ -192,7 +220,7 @@ GameObjectPool* TileParser::GetWaterPool()
 
 bool TileParser::FileParsed(Renderer& renderer)
 {
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		string levelPath = "..\\assets\\level" + to_string(levelNum);
 
 		string levelPathLayer = levelPath + "_" + to_string(i) + ".txt";
@@ -414,24 +442,17 @@ bool TileParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t
 
 	case '1':
 		if (GameObject* obj = m_propPool->getObject()) {
-			Center* prop = dynamic_cast<Center*>(obj);
+			Prop* prop = dynamic_cast<Prop*>(obj);
 
 			if (prop) {
-				string filepath = "..\\assets\\center_" + levelType + ".png";
 
-				if (!center->initialise(renderer, filepath.c_str())) {
+				if (!prop->initialise(renderer, levelType)) {
 					return false;
 				}
 
 				prop->Position().x = (x * m_tileSize) + screenOffsetX;
 				prop->Position().y = (y * m_tileSize) + screenOffsetY;
 				prop->SetActive(true);
-
-				//set player on a center tile
-				if (!playerPositioned) {
-					m_playerStartPos = center->Position();
-					playerPositioned = true;
-				}
 			}
 		}
 		return true;
