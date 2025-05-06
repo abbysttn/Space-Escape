@@ -22,7 +22,6 @@ class TileParser;
 
 class Player;
 class Water;
-class Weapon;
 
 class Level : public Scene {
 public:
@@ -38,7 +37,14 @@ protected:
 	bool PlayerInitialised(Renderer& renderer);
 	void PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime);
 	bool IsColliding(const Box& playerBox, Water* water);
+	bool WeaponsInitialised(Renderer& renderer);
+	bool BulletsInitialised(Renderer& renderer);
+
 	void AddWaterCollision();
+
+	void SetWeapon(int num);
+
+	void SwitchDirection(char direction);
 
 private:
 	Level(const Level& level);
@@ -49,10 +55,10 @@ public:
 protected:
 	GameObjectPool* m_playerPool;
 	GameObjectPool* m_waterPool;
+	GameObjectPool* m_bulletPool;
+	GameObjectPool* m_weaponPool;
 
 	unique_ptr<QuadTree> m_collisionTree;
-
-	Weapon* m_weapon;
 
 	HUDParser* m_hudParser;
 	TileParser* m_tileParser;
@@ -60,6 +66,8 @@ protected:
 	int m_currentPlayer;
 	int m_levelNumber;
 	int m_layerNumber;
+	int m_currentWeapon;
+	char m_currentDirection = 'R';
 
 	float m_tileSize;
 	float m_playerSize;
@@ -75,6 +83,8 @@ protected:
 
 	string levelType;
 
+	float m_cooldownTime;
+	float m_currentCooldown;
 
 private:
 };

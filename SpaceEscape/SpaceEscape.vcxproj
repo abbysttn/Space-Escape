@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="animatedsprite.h" />
     <ClInclude Include="bridge.h" />
+    <ClInclude Include="bullet.h" />
     <ClInclude Include="center.h" />
     <ClInclude Include="corner.h" />
     <ClInclude Include="DDLevelLoad.h" />
@@ -191,6 +192,7 @@
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp" />
     <ClCompile Include="bridge.cpp" />
+    <ClCompile Include="bullet.cpp" />
     <ClCompile Include="center.cpp" />
     <ClCompile Include="corner.cpp" />
     <ClCompile Include="DDLevelLoad.cpp" />

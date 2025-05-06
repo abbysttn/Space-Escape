@@ -4,17 +4,19 @@
 #include "DDLevelLoad.h"
 #include "gameobjectpool.h"
 #include "logmanager.h"
+#include "weapon.h"
 
 #include "underlayTiles.h"
 
 #include <cassert>
 
-HUDParser::HUDParser() : m_HUDUnderlayTiles(nullptr), m_levelParser(0), m_tileSize(48.0f) {}
+HUDParser::HUDParser() : m_HUDUnderlayTiles(nullptr), m_levelParser(0), m_tileSize(48.0f), m_weaponPool(nullptr) {}
 
 HUDParser::~HUDParser()
 {
 	delete m_HUDUnderlayTiles;
 	delete m_levelParser;
+	delete m_weaponPool;
 }
 
 bool HUDParser::Initialise(Renderer& renderer)
@@ -22,6 +24,7 @@ bool HUDParser::Initialise(Renderer& renderer)
 	m_levelParser = new DDLevelLoad();
 
 	m_HUDUnderlayTiles = new GameObjectPool(UnderlayTiles(), 100);
+	m_weaponPool = new GameObjectPool(Weapon(), 4);
 
 	if (!FileParsed(renderer, "..\\assets\\hud_underlay.txt")) {
 		LogManager::GetInstance().Log("File Failed to Parse!");
@@ -30,6 +33,11 @@ bool HUDParser::Initialise(Renderer& renderer)
 
 	if (!FileParsed(renderer, "..\\assets\\hud_overlay.txt")) {
 		LogManager::GetInstance().Log("File Failed to Parse!");
+		return false;
+	}
+
+	if (!WeaponsInitialised(renderer)) {
+		LogManager::GetInstance().Log("Unable to Initialise Weapons!");
 		return false;
 	}
 	
@@ -47,6 +55,16 @@ void HUDParser::Process(float deltaTime, InputSystem& inputSystem)
 			}
 		}
 	}
+
+	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+		if (obj && dynamic_cast<Weapon*>(obj)) {
+			Weapon* weapon = static_cast<Weapon*>(obj);
+			weapon->Process(deltaTime);
+
+			weapon->Position().y = m_weaponPos.y;
+			weapon->Position().x = m_weaponPos.x - weapon->GetOffset();
+		}
+	}
 }
 
 void HUDParser::Draw(Renderer& renderer)
@@ -59,10 +77,22 @@ void HUDParser::Draw(Renderer& renderer)
 			}
 		}
 	}
+
+	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+		if (obj && obj->isActive()) {
+			Weapon* weapon = static_cast<Weapon*>(obj);
+			weapon->Draw(renderer);
+		}
+	}
 }
 
 void HUDParser::DebugDraw()
 {
+}
+
+void HUDParser::SetWeaponHUD(int num)
+{
+	m_currentWeapon = num;
 }
 
 bool HUDParser::FileParsed(Renderer& renderer, const char* filepath)
@@ -184,14 +214,15 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 					return false;
 				}
 
+				tile->Position().y = (y * m_tileSize) + screenOffsetY;
+
 				if (tileType == 'Y') {
 					tile->Position().x = (x * m_tileSize) + screenOffsetXR;
+					m_weaponPos = tile->Position();
 				}
 				else {
 					tile->Position().x = (x * m_tileSize) + screenOffsetX;
 				}
-
-				tile->Position().y = (y * m_tileSize) + screenOffsetY;
 
 				tile->SetActive(true);
 			}
@@ -404,4 +435,64 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 	default:
 		return false;
 	}
+}
+
+bool HUDParser::WeaponsInitialised(Renderer& renderer)
+{
+	for (size_t i = 0; i < m_weaponPool->totalCount(); i++) {
+		if (GameObject* obj = m_weaponPool->getObjectAtIndex(i)) {
+			Weapon* weapon = static_cast<Weapon*>(obj);
+
+			string filepath = "..\\assets\\";
+
+			switch (i) {
+			case 0:
+				filepath += "basic_knife.png";
+				break;
+			case 1:
+				filepath += "upgraded_knife.png";
+				break;
+			case 2:
+				filepath += "basic_gun.png";
+				break;
+			case 3:
+				filepath += "upgraded_gun.png";
+				break;
+
+			default:
+				filepath += "basic_knife.png";
+				break;
+			}
+
+			weapon->initialise(renderer, filepath.c_str());
+			weapon->SetWeapon(true);
+			weapon->SetSize(3.0f);
+
+			switch (i) {
+			case 0:
+				weapon->SetWeaponType('M');
+				break;
+			case 1:
+				weapon->SetWeaponType('M');
+				break;
+			case 2:
+				weapon->SetWeaponType('G');
+				break;
+			case 3:
+				weapon->SetWeaponType('G');
+				break;
+
+			default:
+				weapon->SetWeaponType('M');
+				break;
+			}
+			
+			//offset the weapons x to center it within the square
+			weapon->SetOffset(weapon->GetSpriteWidth() * 0.25f);
+		}
+	}
+
+	m_currentWeapon = 0;
+
+	return true;
 }

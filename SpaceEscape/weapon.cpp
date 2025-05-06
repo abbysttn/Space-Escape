@@ -37,7 +37,7 @@ void Weapon::Process(float deltaTime)
     }
 
 
-    if (m_isSwinging) {
+    if (m_isSwinging && m_weaponType == 'M') {
         m_swingAngle += m_swingDirection * m_swingSpeed * deltaTime;
 
         if (m_isLeft) {
@@ -66,8 +66,6 @@ void Weapon::Process(float deltaTime)
                 m_swingDirection = 1.0f;
             }
         }
-
-        
 
         m_sprite->SetAngle(m_swingAngle);
     }
@@ -146,4 +144,29 @@ void Weapon::Swing()
         }
         m_swingSpeed = 500.0f;
     }
+}
+
+void Weapon::SetWeaponType(char type)
+{
+    m_weaponType = type;
+}
+
+char Weapon::GetWeaponType()
+{
+    return m_weaponType;
+}
+
+void Weapon::SetSize(float size)
+{
+    m_sprite->SetScale(size);
+}
+
+void Weapon::SetOffset(float offset)
+{
+    weaponOffset = offset;
+}
+
+float Weapon::GetOffset()
+{
+    return weaponOffset;
 }

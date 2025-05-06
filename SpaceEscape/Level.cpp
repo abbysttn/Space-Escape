@@ -8,21 +8,26 @@
 #include "quadtree.h"
 #include "soundsystem.h"
 
+#include "imgui/imgui.h"
+
 #include "HUDParser.h"
 #include "TileParser.h"
 
 #include "water.h"
 #include "player.h"
 #include "weapon.h"
+#include "bullet.h"
 
 Level::Level() : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr), 
-m_waterPool(nullptr), m_tileSize(48.0f), m_levelNumber(1), m_layerNumber(0), m_hudParser(0), m_tileParser(0), m_weapon(0) {}
+m_waterPool(nullptr), m_tileSize(48.0f), m_levelNumber(1), m_layerNumber(0), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr) {}
 
 Level::~Level()
 {
 	delete m_playerPool;
 	delete m_waterPool;
 	delete m_hudParser;
+	delete m_bulletPool;
+	delete m_weaponPool;
 
 	SoundSystem::getInstance().close();
 }
@@ -31,15 +36,25 @@ bool Level::Initialise(Renderer& renderer)
 {
 	levelType = "summer";
 
-	m_soundSystem = new SoundSystem();
-	m_soundSystem->getInstance().initialise();
-	m_soundSystem->getInstance().loadSound("run", "..\\assets\\run.mp3", false);
+	m_cooldownTime = 0.2f;
+	m_currentCooldown = 0.0f;
 
 	m_hudParser = new HUDParser();
 	m_tileParser = new TileParser(levelType, 1);
 
 	m_playerPool = new GameObjectPool(Player(), 4);
-	m_weapon = new Weapon();
+	m_weaponPool = new GameObjectPool(Weapon(), 6);
+	m_bulletPool = new GameObjectPool(Bullet(), 20);
+
+	if (!WeaponsInitialised(renderer)) {
+		LogManager::GetInstance().Log("Unable to Initialise Weapons!");
+		return false;
+	}
+
+	if (!BulletsInitialised(renderer)) {
+		LogManager::GetInstance().Log("Unable to Initialise Bullets!");
+		return false;
+	}
 	
 	if (!PlayerInitialised(renderer)) {
 		LogManager::GetInstance().Log("Unable to Initialise Player!");
@@ -48,13 +63,11 @@ bool Level::Initialise(Renderer& renderer)
 
 	m_tileParser->Initialise(renderer);
 	m_hudParser->Initialise(renderer);
-	
-	LogManager::GetInstance().Log("Initialised all Sprites!");
 
 	m_playerPosition = m_tileParser->GetPlayerStartPosition();
 	m_waterPool = m_tileParser->GetWaterPool();
-	m_weapon->initialise(renderer, "..\\assets\\upgraded_knife.png");
-	m_weapon->SetWeapon(true);
+	
+	LogManager::GetInstance().Log("Initialised all Sprites!");
 
 	m_collisionTree = make_unique<QuadTree>(Box(0.0f, 0.0f, (float)renderer.GetWidth(), (float)renderer.GetHeight()));
 
@@ -65,6 +78,10 @@ bool Level::Initialise(Renderer& renderer)
 void Level::Process(float deltaTime, InputSystem& inputSystem)
 {
 	m_collisionTree->clear();
+
+	if (m_currentCooldown > 0.0f) {
+		m_currentCooldown -= deltaTime;
+	}
 
 	m_tileParser->Process(deltaTime, inputSystem);
 
@@ -83,10 +100,29 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
-	m_weapon->Position() = m_playerPosition;
-	m_weapon->Position().y += m_weapon->GetSpriteHeight() * 1.5f;
-	m_weapon->Position().x += m_weapon->GetSpriteWidth() * 0.2f;
-	m_weapon->Process(deltaTime);
+	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+		if (obj && dynamic_cast<Weapon*>(obj)) {
+			Weapon* weapon = static_cast<Weapon*>(obj);
+			weapon->Process(deltaTime);
+
+			weapon->Position() = m_playerPosition;
+			weapon->Position().y += weapon->GetSpriteHeight() * 1.5f;
+			weapon->Position().x += weapon->GetSpriteWidth() * 0.2f;
+		}
+	}
+
+	for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
+		if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<Bullet*>(obj)) {
+				Bullet* bullet = static_cast<Bullet*>(obj);
+				bullet->Process(deltaTime);
+
+				if (!bullet->isActive()) {
+					m_bulletPool->release(bullet);
+				}
+			}
+		}
+	}
 
 	m_hudParser->Process(deltaTime, inputSystem);
 }
@@ -102,13 +138,36 @@ void Level::Draw(Renderer& renderer)
 		}
 	}
 
-	m_weapon->Draw(renderer);
+	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+		if (obj && obj->isActive()) {
+			Weapon* weapon = static_cast<Weapon*>(obj);
+			weapon->Draw(renderer);
+		}
+	}
+
+	for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
+		if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
+			if (obj && obj->isActive()) {
+				Bullet* bullet = static_cast<Bullet*>(obj);
+				bullet->Draw(renderer);
+			}
+		}
+	}
 
 	m_hudParser->Draw(renderer);
 }
 
 void Level::DebugDraw()
 {
+	if (ImGui::Begin("Weapon Debug")) {
+		if (ImGui::Button("Basic Knife")) SetWeapon(0);
+		if (ImGui::Button("Upgraded Knife")) SetWeapon(1);
+		if (ImGui::Button("Basic Gun")) SetWeapon(2);
+		if (ImGui::Button("Upgraded Gun")) SetWeapon(3);
+
+		// Display current weapon stats
+	}
+	ImGui::End();
 }
 
 bool Level::PlayerInitialised(Renderer& renderer)
@@ -182,13 +241,15 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_PRESSED) {
 		m_currentPlayer = 1;
-		m_weapon->SetRotation(0.0f);
+		m_currentDirection = 'R';
+		SwitchDirection(m_currentDirection);
 		updatedPos.x += 80.0f * deltaTime;
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_PRESSED) {
 		m_currentPlayer = 2;
-		m_weapon->SetRotation(180.0f);
+		m_currentDirection = 'L';
+		SwitchDirection(m_currentDirection);
 		updatedPos.x -= 80.0f * deltaTime;
 	}
 
@@ -246,13 +307,35 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			player->Position() = m_playerPosition;
 			player->SetActive(true);
 		}
-		m_weapon->Swing();
+
+		char weaponType;
+
+		if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+			Weapon* weapon = static_cast<Weapon*>(obj);
+			weaponType = weapon->GetWeaponType();
+
+			if (weaponType == 'M') {
+				weapon->Swing();
+			}
+			else if (weaponType == 'G') {
+				if (m_bulletPool->hasAvailableObjects()) {
+					if (GameObject* obj = m_bulletPool->getObject()) {
+						Bullet* bullet = static_cast<Bullet*>(obj);
+						if (bullet && m_currentCooldown <= 0.0f) {
+							bullet->Fire(weapon->Position(), inputSystem.GetMousePosition());
+							m_currentCooldown = m_cooldownTime;
+						}
+					}
+				}
+			}
+		}		
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_RELEASED ||
 		inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_RELEASED) {
 		m_currentPlayer = 3;
-		m_weapon->SetRotation(0.0f);//
+		m_currentDirection = 'R';
+		SwitchDirection(m_currentDirection);
 
 		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 			Player* player = static_cast<Player*>(obj);
@@ -294,6 +377,88 @@ bool Level::IsColliding(const Box& playerBox, Water* water)
 		playerBox.y + playerBox.height > wY;
 }
 
+bool Level::WeaponsInitialised(Renderer& renderer)
+{
+	for (size_t i = 0; i < m_weaponPool->totalCount(); i++) {
+		if (GameObject* obj = m_weaponPool->getObjectAtIndex(i)) {
+			Weapon* weapon = static_cast<Weapon*>(obj);
+
+			string filepath = "..\\assets\\";
+
+			switch (i) {
+			case 0:
+				filepath += "basic_knife.png";
+				break;
+			case 1:
+				filepath += "upgraded_knife.png";
+				break;
+			case 2:
+				filepath += "basic_gun.png";
+				break;
+			case 3:
+				filepath += "upgraded_gun.png";
+				break;
+			case 4:
+				filepath += "basic_gun_left.png";
+				break;
+			case 5:
+				filepath += "upgraded_gun_left.png";
+				break;
+
+			default:
+				filepath += "basic_knife.png";
+				break;
+			}
+
+			weapon->initialise(renderer, filepath.c_str());
+			weapon->SetWeapon(true);
+
+			switch (i) {
+			case 0:
+				weapon->SetWeaponType('M');
+				break;
+			case 1:
+				weapon->SetWeaponType('M');
+				break;
+			case 2:
+				weapon->SetWeaponType('G');
+				break;
+			case 3:
+				weapon->SetWeaponType('G');
+				break;
+			case 4:
+				weapon->SetWeaponType('G');
+				break;
+			case 5:
+				weapon->SetWeaponType('G');
+				break;
+
+			default:
+				weapon->SetWeaponType('M');
+				break;
+			}
+		}
+	}
+
+	m_currentWeapon = 0;
+
+	return true;
+}
+
+bool Level::BulletsInitialised(Renderer& renderer)
+{
+	for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
+		if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
+			Bullet* bullet = static_cast<Bullet*>(obj);
+			if (!bullet->initialise(renderer)) {
+				return false;
+			}
+			bullet->SetColour(0.2f, 0.5f, 0.5f);
+		}
+	}
+	return true;
+}
+
 void Level::AddWaterCollision()
 {
 	for (size_t i = 0; i < m_waterPool->totalCount(); i++) {
@@ -313,6 +478,44 @@ void Level::AddWaterCollision()
 					m_collisionTree->insert(water, waterRange);
 				}
 			}
+		}
+	}
+}
+
+void Level::SetWeapon(int num)
+{
+	m_currentWeapon = num;
+	m_hudParser->SetWeaponHUD(num);
+}
+
+void Level::SwitchDirection(char direction)
+{
+	if (direction == 'L') {
+		switch (m_currentWeapon) {
+		case 2:
+			m_currentWeapon = 4;
+			break;
+
+		case 3:
+			m_currentWeapon = 5;
+			break;
+
+		default:
+			break;
+		}
+	}
+	else if (direction == 'R') {
+		switch (m_currentWeapon) {
+		case 4: //basic left
+			m_currentWeapon = 2;
+			break;
+
+		case 5: //upgraded left
+			m_currentWeapon = 3;
+			break;
+
+		default:
+			break;
 		}
 	}
 }

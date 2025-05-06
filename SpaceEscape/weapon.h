@@ -19,15 +19,27 @@ public:
 	void Process(float deltaTime);
 	void Draw(Renderer& renderer);
 	Vector2& Position();
+
+
 	int GetSpriteWidth();
 	int GetSpriteHeight();
 	void SetColour(float red, float green, float blue);
+
+
 	GameObject* Create() const override;
 	bool isActive() const override;
 	void reset() override;
+
+
 	void SetRotation(float angle);
 	void SetWeapon(bool isWeapon);
 	void Swing();
+	void SetWeaponType(char type);
+	char GetWeaponType();
+
+	void SetSize(float size);
+	void SetOffset(float offset);
+	float GetOffset();
 
 protected:
 
@@ -45,12 +57,16 @@ protected:
 	bool m_isSwinging;
 	bool m_isLeft;
 
+	char m_weaponType;
+
 	float m_swingSpeed;
 	float m_swingAngle;
 	float m_swingDirection;
 	float m_maxRightSwingAngle;
 	float m_maxLeftSwingAngle;
 	float m_returnSpeed;
+
+	float weaponOffset;
 
 private:
 
