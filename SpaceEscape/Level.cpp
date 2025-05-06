@@ -252,7 +252,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_RELEASED ||
 		inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_RELEASED) {
 		m_currentPlayer = 3;
-		m_weapon->SetRotation(0.0f);
+		m_weapon->SetRotation(0.0f);//
 
 		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 			Player* player = static_cast<Player*>(obj);
