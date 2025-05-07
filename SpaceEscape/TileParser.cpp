@@ -14,11 +14,12 @@
 #include "bridge.h"
 
 #include "prop.h"
+#include "enemyspawner.h"
 
 #include <cassert>
 
 TileParser::TileParser(std::string lType, int lNum) : playerPositioned(false), m_playerStartPos(0,0), m_tileSize(48.0f), m_levelParser(0), m_centerPool(nullptr), m_cornerPool(nullptr), m_edgePool(nullptr), m_edgeCornerPool(nullptr),
-m_waterPool(nullptr), m_bridgePool(nullptr), m_propPool(nullptr) {
+m_waterPool(nullptr), m_bridgePool(nullptr), m_propPool(nullptr), m_spawnerPool(nullptr) {
 	levelType = lType;
 	levelNum = lNum;
 }
@@ -33,6 +34,7 @@ TileParser::~TileParser()
 	delete m_levelParser;
 	delete m_bridgePool;
 	delete m_propPool;
+	delete m_spawnerPool;
 }
 
 bool TileParser::Initialise(Renderer& renderer)
@@ -46,8 +48,9 @@ bool TileParser::Initialise(Renderer& renderer)
 	m_waterPool = new GameObjectPool(Water(), 100);
 	m_bridgePool = new GameObjectPool(Bridge(), 100);
 	m_propPool = new GameObjectPool(Prop(), 100);
+	m_spawnerPool = new GameObjectPool(EnemySpawner(), 3);
 
-	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_bridgePool || !m_propPool) {
+	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_bridgePool || !m_propPool || !m_spawnerPool) {
 		return false;
 	}
 
@@ -61,7 +64,7 @@ bool TileParser::Initialise(Renderer& renderer)
 
 void TileParser::Process(float deltaTime, InputSystem& inputSystem)
 {
-	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_bridgePool || !m_propPool) {
+	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_bridgePool || !m_propPool || !m_spawnerPool) {
 		return;
 	}
 
@@ -136,6 +139,15 @@ void TileParser::Process(float deltaTime, InputSystem& inputSystem)
 			}
 		}
 	}
+
+	for (size_t i = 0; i < m_spawnerPool->totalCount(); i++) {
+		if (GameObject* obj = m_spawnerPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<EnemySpawner*>(obj)) {
+				EnemySpawner* spawner = static_cast<EnemySpawner*>(obj);
+				spawner->Process(deltaTime);
+			}
+		}
+	}
 }
 
 void TileParser::Draw(Renderer& renderer)
@@ -202,6 +214,15 @@ void TileParser::Draw(Renderer& renderer)
 			}
 		}
 	}
+
+	for (size_t i = 0; i < m_spawnerPool->totalCount(); i++) {
+		if (GameObject* obj = m_spawnerPool->getObjectAtIndex(i)) {
+			if (obj && obj->isActive()) {
+				EnemySpawner* spawner = static_cast<EnemySpawner*>(obj);
+				spawner->Draw(renderer);
+			}
+		}
+	}
 }
 
 void TileParser::DebugDraw()
@@ -216,6 +237,11 @@ Vector2 TileParser::GetPlayerStartPosition()
 GameObjectPool* TileParser::GetWaterPool()
 {
 	return m_waterPool;
+}
+
+GameObjectPool* TileParser::GetSpawnerPool()
+{
+	return m_spawnerPool;
 }
 
 bool TileParser::FileParsed(Renderer& renderer)
@@ -453,6 +479,23 @@ bool TileParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t
 				prop->Position().x = (x * m_tileSize) + screenOffsetX;
 				prop->Position().y = (y * m_tileSize) + screenOffsetY;
 				prop->SetActive(true);
+			}
+		}
+		return true;
+
+	case '+':
+		if (GameObject* obj = m_spawnerPool->getObject()) {
+			EnemySpawner* spawner = dynamic_cast<EnemySpawner*>(obj);
+
+			if (spawner) {
+
+				if (!spawner->Initialise(renderer)) {
+					return false;
+				}
+
+				spawner->Position().x = (x * m_tileSize) + screenOffsetX;
+				spawner->Position().y = (y * m_tileSize) + screenOffsetY;
+				spawner->SetActive(true);
 			}
 		}
 		return true;

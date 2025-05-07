@@ -149,6 +149,8 @@
     <ClInclude Include="DDLevelLoad.h" />
     <ClInclude Include="edge.h" />
     <ClInclude Include="edgeCorner.h" />
+    <ClInclude Include="enemy.h" />
+    <ClInclude Include="enemyspawner.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gameobject.h" />
     <ClInclude Include="gameobjectpool.h" />
@@ -198,6 +200,8 @@
     <ClCompile Include="DDLevelLoad.cpp" />
     <ClCompile Include="edge.cpp" />
     <ClCompile Include="edgeCorner.cpp" />
+    <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="enemyspawner.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameobjectpool.cpp" />
     <ClCompile Include="HUDParser.cpp" />

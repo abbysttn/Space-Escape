@@ -170,3 +170,8 @@ float Weapon::GetOffset()
 {
     return weaponOffset;
 }
+
+bool Weapon::IsSwinging()
+{
+    return m_isSwinging;
+}

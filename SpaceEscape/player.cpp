@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cstdlib>
 
-Player::Player() : m_sprite(0) {}
+Player::Player() : m_sprite(0), m_isPushed(false) {}
 
 Player::~Player()
 {
@@ -39,6 +39,7 @@ void Player::Process(float deltaTime)
     }
 
     if (m_alive) {
+        UpdatePushBack(deltaTime);
         m_sprite->SetX(static_cast<int>(m_position.x));
         m_sprite->SetY(static_cast<int>(m_position.y));
     }
@@ -119,4 +120,39 @@ void Player::SetRunning()
 {
     m_sprite->Animate();
     m_sprite->Restart();
+}
+
+void Player::ApplyPushBack(Vector2 direction)
+{
+    float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+
+    if (length != 0) {
+        direction.x /= length;
+        direction.y /= length;
+    }
+
+    m_pushbackVelocity.x = direction.x * 400.0f;
+    m_pushbackVelocity.y = direction.y * 400.0f;
+    m_isPushed = true;
+}
+
+bool Player::IsPushedBack()
+{
+    return m_isPushed;
+}
+
+void Player::UpdatePushBack(float deltaTime)
+{
+    if (m_isPushed) {
+        m_position.x += m_pushbackVelocity.x * deltaTime;
+        m_position.y += m_pushbackVelocity.y * deltaTime;
+
+        m_pushbackVelocity.x *= 0.9f;
+        m_pushbackVelocity.y *= 0.9f;
+
+        if (fabs(m_pushbackVelocity.x) < 0.01f && fabs(m_pushbackVelocity.y) < 0.1f) {
+            m_pushbackVelocity = { 0, 0 };
+            m_isPushed = false;
+        }
+    }
 }

@@ -15,6 +15,8 @@ class GameObjectPool;
 class QuadTree;
 struct Box;
 
+class EnemySpawner;
+
 class TileParser : public Scene {
 public:
 	TileParser(string lType, int lNum);
@@ -26,6 +28,7 @@ public:
 
 	Vector2 GetPlayerStartPosition();
 	GameObjectPool* GetWaterPool();
+	GameObjectPool* GetSpawnerPool();
 
 
 protected:
@@ -48,6 +51,7 @@ private:
 	GameObjectPool* m_propPool;
 
 	GameObjectPool* m_bridgePool;
+	GameObjectPool* m_spawnerPool;
 
 	string levelType;
 	int levelNum;

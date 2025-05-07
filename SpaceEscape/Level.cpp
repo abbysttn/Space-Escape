@@ -9,6 +9,7 @@
 #include "soundsystem.h"
 
 #include "imgui/imgui.h"
+#include "inlinehelpers.h"
 
 #include "HUDParser.h"
 #include "TileParser.h"
@@ -17,9 +18,12 @@
 #include "player.h"
 #include "weapon.h"
 #include "bullet.h"
+#include "enemy.h"
+#include "enemyspawner.h"
 
-Level::Level() : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr), 
-m_waterPool(nullptr), m_tileSize(48.0f), m_levelNumber(1), m_layerNumber(0), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr) {}
+Level::Level() : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
+m_waterPool(nullptr), m_tileSize(48.0f), m_levelNumber(1), m_layerNumber(0), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
+m_enemyPool(nullptr) {}
 
 Level::~Level()
 {
@@ -28,6 +32,8 @@ Level::~Level()
 	delete m_hudParser;
 	delete m_bulletPool;
 	delete m_weaponPool;
+	delete m_spawnerPool;
+	delete m_enemyPool;
 
 	SoundSystem::getInstance().close();
 }
@@ -35,9 +41,14 @@ Level::~Level()
 bool Level::Initialise(Renderer& renderer)
 {
 	levelType = "summer";
+	levelDifficulty = "easy";
 
 	m_cooldownTime = 0.2f;
 	m_currentCooldown = 0.0f;
+	m_enemySpawnTimer = 0.0f;
+	m_enemySpawnTime = 8.0f;
+	m_maxEnemies = 20;
+	m_currentEnemies = 0;
 
 	m_hudParser = new HUDParser();
 	m_tileParser = new TileParser(levelType, 1);
@@ -45,6 +56,14 @@ bool Level::Initialise(Renderer& renderer)
 	m_playerPool = new GameObjectPool(Player(), 4);
 	m_weaponPool = new GameObjectPool(Weapon(), 6);
 	m_bulletPool = new GameObjectPool(Bullet(), 20);
+	m_enemyPool = new GameObjectPool(Enemy(), 20);
+
+	m_tileParser->Initialise(renderer);
+	m_hudParser->Initialise(renderer);
+
+	m_playerPosition = m_tileParser->GetPlayerStartPosition();
+	m_waterPool = m_tileParser->GetWaterPool();
+	m_spawnerPool = m_tileParser->GetSpawnerPool();
 
 	if (!WeaponsInitialised(renderer)) {
 		LogManager::GetInstance().Log("Unable to Initialise Weapons!");
@@ -55,21 +74,21 @@ bool Level::Initialise(Renderer& renderer)
 		LogManager::GetInstance().Log("Unable to Initialise Bullets!");
 		return false;
 	}
-	
+
 	if (!PlayerInitialised(renderer)) {
 		LogManager::GetInstance().Log("Unable to Initialise Player!");
 		return false;
 	}
 
-	m_tileParser->Initialise(renderer);
-	m_hudParser->Initialise(renderer);
-
-	m_playerPosition = m_tileParser->GetPlayerStartPosition();
-	m_waterPool = m_tileParser->GetWaterPool();
+	if (!EnemiesInitialised(renderer)) {
+		LogManager::GetInstance().Log("Unable to Initialise Enemies!");
+		return false;
+	}
 	
 	LogManager::GetInstance().Log("Initialised all Sprites!");
 
-	m_collisionTree = make_unique<QuadTree>(Box(0.0f, 0.0f, (float)renderer.GetWidth(), (float)renderer.GetHeight()));
+	m_boundaryCollisionTree = make_unique<QuadTree>(Box(0.0f, 0.0f, (float)renderer.GetWidth(), (float)renderer.GetHeight()));
+	m_enemyCollisionTree = make_unique<QuadTree>(Box(0.0f, 0.0f, (float)renderer.GetWidth(), (float)renderer.GetHeight()));
 
 	return true;
 
@@ -77,11 +96,23 @@ bool Level::Initialise(Renderer& renderer)
 
 void Level::Process(float deltaTime, InputSystem& inputSystem)
 {
-	m_collisionTree->clear();
+	m_boundaryCollisionTree->clear();
+	m_enemyCollisionTree->clear();
+
+	//timers
 
 	if (m_currentCooldown > 0.0f) {
 		m_currentCooldown -= deltaTime;
 	}
+
+	m_enemySpawnTimer += deltaTime;
+
+	if (m_enemySpawnTimer >= m_enemySpawnTime && m_currentEnemies < m_maxEnemies) {
+		SpawnEnemy();
+		m_enemySpawnTimer = 0.0f;
+	}
+
+	//
 
 	m_tileParser->Process(deltaTime, inputSystem);
 
@@ -111,6 +142,31 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
+	for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
+		if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<Enemy*>(obj)) {
+				Enemy* enemy = static_cast<Enemy*>(obj);
+
+				float enemySize = (float)enemy->GetSpriteWidth();
+				Box enemyRange(
+					enemy->Position().x,
+					enemy->Position().y,
+					enemySize,
+					enemySize
+				);
+
+				m_enemyCollisionTree->insert(enemy, enemyRange);
+
+				enemy->GetUpdatedPosition(deltaTime, m_playerPrevPosition);
+
+				bool colliding = EnemyColliding(enemy);
+				if (!colliding) {
+					enemy->Process(deltaTime, m_playerPrevPosition);
+				}
+			}
+		}
+	}
+
 	for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
 		if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
 			if (obj && dynamic_cast<Bullet*>(obj)) {
@@ -123,6 +179,8 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 			}
 		}
 	}
+
+	DoDamage();
 
 	m_hudParser->Process(deltaTime, inputSystem);
 }
@@ -142,6 +200,15 @@ void Level::Draw(Renderer& renderer)
 		if (obj && obj->isActive()) {
 			Weapon* weapon = static_cast<Weapon*>(obj);
 			weapon->Draw(renderer);
+		}
+	}
+
+	for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
+		if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+			if (obj && obj->isActive()) {
+				Enemy* enemy = static_cast<Enemy*>(obj);
+				enemy->Draw(renderer);
+			}
 		}
 	}
 
@@ -235,25 +302,36 @@ bool Level::PlayerInitialised(Renderer& renderer)
 
 void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime)
 {
+	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+		Player* player = static_cast<Player*>(obj);
+		if (player->IsPushedBack()) {
+			m_playerPosition = player->Position();
+			return;
+		}
+	}
+
 	m_playerPrevPosition = m_playerPosition;
 
 	Vector2 updatedPos = m_playerPosition;
 
-	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_PRESSED) {
+	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_PRESSED
+		|| inputSystem.GetKeyState(SDL_SCANCODE_D) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_D) == BS_PRESSED) {
 		m_currentPlayer = 1;
 		m_currentDirection = 'R';
 		SwitchDirection(m_currentDirection);
 		updatedPos.x += 80.0f * deltaTime;
 	}
 
-	if (inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_PRESSED) {
+	if (inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_PRESSED
+		|| inputSystem.GetKeyState(SDL_SCANCODE_A) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_A) == BS_PRESSED) {
 		m_currentPlayer = 2;
 		m_currentDirection = 'L';
 		SwitchDirection(m_currentDirection);
 		updatedPos.x -= 80.0f * deltaTime;
 	}
 
-	if (inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_PRESSED) {
+	if (inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_PRESSED
+		|| inputSystem.GetKeyState(SDL_SCANCODE_W) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_W) == BS_PRESSED) {
 
 		if (m_currentPlayer != 2) {
 			m_currentPlayer = 1;
@@ -262,7 +340,8 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 		updatedPos.y -= 80.0f * deltaTime;
 	}
 
-	if (inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_PRESSED) {
+	if (inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_PRESSED
+		|| inputSystem.GetKeyState(SDL_SCANCODE_S) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_S) == BS_PRESSED) {
 
 		if (m_currentPlayer != 1) {
 			m_currentPlayer = 2;
@@ -277,7 +356,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 
 	Box updatedBox(updatedPos.x, updatedPos.y, m_playerSize, m_playerSize);
 
-	auto potentialCollisions = m_collisionTree->queryRange(updatedBox);
+	auto potentialCollisions = m_boundaryCollisionTree->queryRange(updatedBox);
 
 	for (auto* obj : potentialCollisions) {
 		Water* water = dynamic_cast<Water*>(obj);
@@ -332,7 +411,9 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_RELEASED ||
-		inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_RELEASED) {
+		inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_RELEASED
+		|| inputSystem.GetKeyState(SDL_SCANCODE_A) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_D) == BS_RELEASED
+		|| inputSystem.GetKeyState(SDL_SCANCODE_W) == BS_RELEASED || inputSystem.GetKeyState(SDL_SCANCODE_S) == BS_RELEASED) {
 		m_currentPlayer = 3;
 		m_currentDirection = 'R';
 		SwitchDirection(m_currentDirection);
@@ -363,7 +444,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 	}
 }
 
-bool Level::IsColliding(const Box& playerBox, Water* water)
+bool Level::IsColliding(const Box& box, Water* water)
 {
 	if (!water) return false;
 
@@ -371,10 +452,10 @@ bool Level::IsColliding(const Box& playerBox, Water* water)
 	float wY = water->Position().y;
 	float wW = (float)water->GetSpriteWidth();
 
-	return playerBox.x < wX + wW &&
-		playerBox.x + playerBox.width > wX &&
-		playerBox.y < wY + wW &&
-		playerBox.y + playerBox.height > wY;
+	return box.x < wX + wW &&
+		box.x + box.width > wX &&
+		box.y < wY + wW &&
+		box.y + box.height > wY;
 }
 
 bool Level::WeaponsInitialised(Renderer& renderer)
@@ -459,6 +540,22 @@ bool Level::BulletsInitialised(Renderer& renderer)
 	return true;
 }
 
+bool Level::EnemiesInitialised(Renderer& renderer)
+{
+	for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
+		if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+			Enemy* enemy = static_cast<Enemy*>(obj);
+
+			string filepath = "..\\assets\\alien_" + levelDifficulty + ".png";
+
+			enemy->Initialise(renderer, filepath.c_str());
+			enemy->SetActive(false);
+		}
+	}
+
+	return true;
+}
+
 void Level::AddWaterCollision()
 {
 	for (size_t i = 0; i < m_waterPool->totalCount(); i++) {
@@ -475,7 +572,7 @@ void Level::AddWaterCollision()
 						waterSize
 					);
 
-					m_collisionTree->insert(water, waterRange);
+					m_boundaryCollisionTree->insert(water, waterRange);
 				}
 			}
 		}
@@ -492,6 +589,20 @@ void Level::SwitchDirection(char direction)
 {
 	if (direction == 'L') {
 		switch (m_currentWeapon) {
+		case 0:
+			if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+				Weapon* weapon = static_cast<Weapon*>(obj);
+				weapon->SetRotation(180.0f);
+			}
+			break;
+
+		case 1:
+			if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+				Weapon* weapon = static_cast<Weapon*>(obj);
+				weapon->SetRotation(180.0f);
+			}
+			break;
+
 		case 2:
 			m_currentWeapon = 4;
 			break;
@@ -506,6 +617,20 @@ void Level::SwitchDirection(char direction)
 	}
 	else if (direction == 'R') {
 		switch (m_currentWeapon) {
+		case 0:
+			if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+				Weapon* weapon = static_cast<Weapon*>(obj);
+				weapon->SetRotation(0.0f);
+			}
+			break;
+
+		case 1:
+			if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+				Weapon* weapon = static_cast<Weapon*>(obj);
+				weapon->SetRotation(0.0f);
+			}
+			break;
+
 		case 4: //basic left
 			m_currentWeapon = 2;
 			break;
@@ -519,3 +644,192 @@ void Level::SwitchDirection(char direction)
 		}
 	}
 }
+
+void Level::SpawnEnemy()
+{
+	if (!m_enemyPool->hasAvailableObjects()) {
+		LogManager::GetInstance().Log("No available enemies in pool!");
+		return;
+	}
+
+	if (GameObject* obj = m_enemyPool->getObject()) {
+		Enemy* enemy = dynamic_cast<Enemy*>(obj);
+		if (enemy) {
+
+			int spawner = GetRandom(0, m_spawnerPool->totalCount() - 1);
+
+			if (GameObject* spawnObj = m_spawnerPool->getObjectAtIndex(spawner)) {
+				if (EnemySpawner* spawner = dynamic_cast<EnemySpawner*>(spawnObj)) {
+					enemy->Position() = spawner->Position();
+				}
+			}
+
+			enemy->SetActive(true);
+		}
+	}
+
+	m_currentEnemies++;
+}
+
+bool Level::EnemyColliding(Enemy* enemy)
+{
+	bool collision = false;
+
+	Box enemyBox(
+		enemy->Position().x, enemy->Position().y,
+		enemy->GetSpriteWidth(), enemy->GetSpriteWidth());
+
+	Box waterBox;
+
+	auto potentialCollisions = m_boundaryCollisionTree->queryRange(enemyBox);
+
+	for (auto* obj : potentialCollisions) {
+		Water* water = dynamic_cast<Water*>(obj);
+		if (water && IsColliding(enemyBox, water)) {
+			collision = true;
+			waterBox = { water->Position().x, water->Position().y,
+				(float)water->GetSpriteWidth(), (float)water->GetSpriteWidth() };
+			break;
+		}
+	}
+
+	if (collision) {
+		HandleAlienCollision(waterBox, enemy);
+	}
+
+	return collision;
+}
+
+void Level::HandleAlienCollision(const Box& collision, Enemy* enemy)
+{
+	Vector2 center(enemy->Position().x + enemy->GetSpriteWidth() / 2.0f, enemy->Position().y + enemy->GetSpriteWidth() / 2.0f);
+	Vector2 waterCenter(collision.x + collision.width / 2.0f, collision.y + collision.height / 2.0f);
+
+	Vector2 direction(center.x - waterCenter.x, center.y - waterCenter.y);
+
+	float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+
+	if (length != 0) {
+		direction.x /= length;
+		direction.y /= length;
+
+		enemy->Position().x += direction.x * 5.0f;
+		enemy->Position().y += direction.y * 5.0f;
+	}
+
+	enemy->ResetWander(direction);
+}
+
+bool Level::DamageCollision(Enemy* enemy, const Box& collision)
+{
+	bool colliding;
+
+	if (!enemy) {
+		return false;
+	}
+
+	float eX = enemy->Position().x;
+	float eY = enemy->Position().y;
+	float eW = (float)enemy->GetSpriteWidth();
+
+	colliding = eX < collision.x + collision.width &&
+		eX + eW > collision.x &&
+		eY < collision.y + collision.width &&
+		eY + eW > collision.y;
+
+	return colliding;
+}
+
+void Level::DoDamage()
+{
+	Box playerBox(m_playerPosition.x, m_playerPosition.y, m_playerSize, m_playerSize);
+
+	char weaponType = 'M';
+	bool isSwinging = false;
+
+	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+		Weapon* weapon = dynamic_cast<Weapon*>(obj);
+		if (weapon) {
+			weaponType = weapon->GetWeaponType();
+			isSwinging = weapon->IsSwinging();
+		}
+	}
+
+	switch (weaponType) {
+	case 'M': {
+		auto potentialCollisions = m_enemyCollisionTree->queryRange(playerBox);
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = dynamic_cast<Player*>(obj);
+
+			for (auto* obj : potentialCollisions) {
+				Enemy* enemy = dynamic_cast<Enemy*>(obj);
+				if (enemy->isActive() && DamageCollision(enemy, playerBox)) {
+					Vector2 pushDirection(enemy->Position().x - player->Position().x,
+						enemy->Position().y - player->Position().y);
+
+					if (isSwinging) {
+						enemy->ApplyPushBack(pushDirection);
+					}
+					else {
+						Vector2 pushDirectionPlayer(player->Position().x - enemy->Position().x,
+							player->Position().y - enemy->Position().y);
+						player->ApplyPushBack(pushDirectionPlayer);
+						enemy->ApplyPushBack(pushDirection);
+
+						m_playerPrevPosition = m_playerPosition;
+						m_playerPosition = player->Position();
+					}
+					break;
+				}
+			}
+			break;
+		}
+	}
+
+	case 'G': {
+		for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
+			if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
+				if (Bullet* bullet = static_cast<Bullet*>(obj)) {
+					if (bullet->isActive()) {
+						float bulletSize = bullet->GetSpriteWidth();
+						Box bulletRange(
+							bullet->Position().x - bulletSize / 2,
+							bullet->Position().y - bulletSize / 2,
+							bulletSize,
+							bulletSize
+						);
+
+						auto potentialCollisions = m_enemyCollisionTree->queryRange(bulletRange);
+
+						for (auto* obj : potentialCollisions) {
+							Enemy* enemy = dynamic_cast<Enemy*>(obj);
+
+							if (enemy->isActive() && DamageCollision(enemy, bulletRange)) {
+								bullet->SetActive(false);
+								Vector2 pushDirection(enemy->Position().x - bullet->Position().x,
+									enemy->Position().y - bullet->Position().y);
+
+								enemy->ApplyPushBack(pushDirection);
+
+								m_bulletPool->release(bullet);
+								break;
+							}
+						}
+
+						if (!bullet->isActive()) {
+							m_bulletPool->release(bullet);
+						}
+					}
+				}
+			}
+		}
+		break;
+	}
+
+	default:
+		LogManager::GetInstance().Log("No weapon type found");
+		break;
+	}
+}
+

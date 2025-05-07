@@ -40,6 +40,7 @@ public:
 	void SetSize(float size);
 	void SetOffset(float offset);
 	float GetOffset();
+	bool IsSwinging();
 
 protected:
 

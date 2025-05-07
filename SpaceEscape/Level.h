@@ -22,6 +22,7 @@ class TileParser;
 
 class Player;
 class Water;
+class Enemy;
 
 class Level : public Scene {
 public:
@@ -39,12 +40,21 @@ protected:
 	bool IsColliding(const Box& playerBox, Water* water);
 	bool WeaponsInitialised(Renderer& renderer);
 	bool BulletsInitialised(Renderer& renderer);
+	bool EnemiesInitialised(Renderer& renderer);
 
 	void AddWaterCollision();
 
 	void SetWeapon(int num);
 
 	void SwitchDirection(char direction);
+
+	void SpawnEnemy();
+
+	bool EnemyColliding(Enemy* enemy);
+	void HandleAlienCollision(const Box& collision, Enemy* enemy);
+
+	bool DamageCollision(Enemy* enemy, const Box& collision);
+	void DoDamage();
 
 private:
 	Level(const Level& level);
@@ -57,8 +67,11 @@ protected:
 	GameObjectPool* m_waterPool;
 	GameObjectPool* m_bulletPool;
 	GameObjectPool* m_weaponPool;
+	GameObjectPool* m_spawnerPool;
+	GameObjectPool* m_enemyPool;
 
-	unique_ptr<QuadTree> m_collisionTree;
+	unique_ptr<QuadTree> m_boundaryCollisionTree;
+	unique_ptr<QuadTree> m_enemyCollisionTree;
 
 	HUDParser* m_hudParser;
 	TileParser* m_tileParser;
@@ -82,9 +95,15 @@ protected:
 	SoundSystem* m_soundSystem;
 
 	string levelType;
+	string levelDifficulty;
 
 	float m_cooldownTime;
 	float m_currentCooldown;
+
+	float m_enemySpawnTimer;
+	float m_enemySpawnTime;
+	int m_maxEnemies;
+	int m_currentEnemies;
 
 private:
 };

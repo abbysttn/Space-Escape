@@ -33,7 +33,11 @@ public:
 	bool IsRunning();
 	void SetRunning();
 
+	void ApplyPushBack(Vector2 direction);
+	bool IsPushedBack();
+
 protected:
+	void UpdatePushBack(float deltaTime);
 
 private:
 	Player(const Player& player);
@@ -44,6 +48,9 @@ public:
 protected:
 	Vector2 m_position;
 	AnimatedSprite* m_sprite;
+
+	Vector2 m_pushbackVelocity;
+	bool m_isPushed;
 
 	bool m_alive;
 
