@@ -175,3 +175,33 @@ bool Weapon::IsSwinging()
 {
     return m_isSwinging;
 }
+
+void Weapon::SetWeaponDamage(int weaponNum)
+{
+    switch (weaponNum) {
+    case 0:
+        m_damage = 2.0f;
+        break;
+
+    case 1:
+        m_damage = 10.0f;
+        break;
+
+    case 2:
+        m_damage = 20.0f;
+        break;
+
+    case 3:
+        m_damage = 30.0f;
+        break;
+
+    default:
+        m_damage = 2.0f;
+        break;
+    }
+}
+
+float Weapon::GetWeaponDamage()
+{
+    return m_damage;
+}

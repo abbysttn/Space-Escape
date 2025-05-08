@@ -38,6 +38,8 @@ public:
 	void ResetWander(Vector2 direction);
 	void ApplyPushBack(Vector2 direction);
 
+	void AddDamage(float weaponDamage);
+
 protected:
 	void UpdatePushBack(float deltaTime);
 
@@ -64,6 +66,8 @@ protected:
 	bool m_alive;
 
 	bool m_canSeePlayer;
+
+	float m_health;
 
 private:
 };

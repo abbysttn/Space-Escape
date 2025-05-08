@@ -10,7 +10,7 @@
 #include <cstdlib>
 #include <math.h>
 
-Enemy::Enemy() : m_sprite(0), m_speed(50.0f), m_wanderDirection(0, 0), m_wanderTime(0), m_wanderDuration(2.0f), m_isPushed(false), m_canSeePlayer(false) {}
+Enemy::Enemy() : m_sprite(0), m_speed(50.0f), m_wanderDirection(0, 0), m_wanderTime(0), m_wanderDuration(2.0f), m_isPushed(false), m_canSeePlayer(false), m_health(100.0f) {}
 
 Enemy::~Enemy()
 {
@@ -46,6 +46,8 @@ void Enemy::Process(float deltaTime, Vector2 playerPos)
         UpdatePushBack(deltaTime);
 
         if (!m_isPushed) {
+            SetColour(1.0f, 1.0f, 1.0f);
+
             Vector2 direction = {
                 playerPos.x - m_position.x, playerPos.y - m_position.y
             };
@@ -82,6 +84,9 @@ void Enemy::Process(float deltaTime, Vector2 playerPos)
                 m_position.x += m_wanderDirection.x * (m_speed * 0.25f) * deltaTime;
                 m_position.y += m_wanderDirection.y * (m_speed * 0.25f) * deltaTime;
             }
+        }
+        else {
+            SetColour(1.0f, 0.0f, 0.0f);
         }
 
         m_sprite->SetX(static_cast<int>(m_position.x));
@@ -228,6 +233,15 @@ void Enemy::ApplyPushBack(Vector2 direction)
     m_pushbackVelocity.x = direction.x * 400.0f;
     m_pushbackVelocity.y = direction.y * 400.0f;
     m_isPushed = true;
+}
+
+void Enemy::AddDamage(float weaponDamage)
+{
+    m_health -= weaponDamage;
+
+    if (m_health <= 0.0f) {
+        m_alive = false;
+    }
 }
 
 void Enemy::UpdatePushBack(float deltaTime)

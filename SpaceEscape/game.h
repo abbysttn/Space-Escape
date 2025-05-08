@@ -65,6 +65,7 @@ protected:
 	int m_iFPS;
 
 #if DEBUG
+	bool m_bShowTextures;
 	bool m_bShowDebugWindow = true;
 	bool m_bPauseSimulation = false;
 #endif // DEBUG

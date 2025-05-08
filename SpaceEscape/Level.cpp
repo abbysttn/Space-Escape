@@ -305,7 +305,14 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 		Player* player = static_cast<Player*>(obj);
 		if (player->IsPushedBack()) {
-			m_playerPosition = player->Position();
+			Vector2 pushbackPos = player->GetUpdatedPushPosition(deltaTime);
+			if (IsPositionValid(pushbackPos)) {
+				m_playerPosition = pushbackPos;
+				player->Position() = pushbackPos;
+			}
+			else {
+				return;
+			}
 			return;
 		}
 	}
@@ -369,7 +376,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 	if (!collision) {
 		m_playerPosition = updatedPos;
 	}
-	else { // sliding so the player doesnt stop abruptly
+	else {
 	}
 
 	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
@@ -497,25 +504,32 @@ bool Level::WeaponsInitialised(Renderer& renderer)
 			switch (i) {
 			case 0:
 				weapon->SetWeaponType('M');
+				weapon->SetWeaponDamage(0);
 				break;
 			case 1:
 				weapon->SetWeaponType('M');
+				weapon->SetWeaponDamage(1);
 				break;
 			case 2:
 				weapon->SetWeaponType('G');
+				weapon->SetWeaponDamage(2);
 				break;
 			case 3:
 				weapon->SetWeaponType('G');
+				weapon->SetWeaponDamage(3);
 				break;
 			case 4:
 				weapon->SetWeaponType('G');
+				weapon->SetWeaponDamage(2);
 				break;
 			case 5:
 				weapon->SetWeaponType('G');
+				weapon->SetWeaponDamage(3);
 				break;
 
 			default:
 				weapon->SetWeaponType('M');
+				weapon->SetWeaponDamage(0);
 				break;
 			}
 		}
@@ -746,12 +760,14 @@ void Level::DoDamage()
 
 	char weaponType = 'M';
 	bool isSwinging = false;
+	float weaponDamage = 0.0f;
 
 	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
 		Weapon* weapon = dynamic_cast<Weapon*>(obj);
 		if (weapon) {
 			weaponType = weapon->GetWeaponType();
 			isSwinging = weapon->IsSwinging();
+			weaponDamage = weapon->GetWeaponDamage();
 		}
 	}
 
@@ -770,6 +786,7 @@ void Level::DoDamage()
 
 					if (isSwinging) {
 						enemy->ApplyPushBack(pushDirection);
+						enemy->AddDamage(weaponDamage);
 					}
 					else {
 						Vector2 pushDirectionPlayer(player->Position().x - enemy->Position().x,
@@ -811,6 +828,7 @@ void Level::DoDamage()
 									enemy->Position().y - bullet->Position().y);
 
 								enemy->ApplyPushBack(pushDirection);
+								enemy->AddDamage(weaponDamage);
 
 								m_bulletPool->release(bullet);
 								break;
@@ -831,5 +849,21 @@ void Level::DoDamage()
 		LogManager::GetInstance().Log("No weapon type found");
 		break;
 	}
+}
+
+bool Level::IsPositionValid(Vector2& position)
+{
+	Box testBox(position.x, position.y, m_playerSize, m_playerSize);
+
+	auto potentialCollisions = m_boundaryCollisionTree->queryRange(testBox);
+
+	for (auto* obj : potentialCollisions) {
+		Water* water = dynamic_cast<Water*>(obj);
+		if (water && IsColliding(testBox, water)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 

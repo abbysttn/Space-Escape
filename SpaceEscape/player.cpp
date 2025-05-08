@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cstdlib>
 
-Player::Player() : m_sprite(0), m_isPushed(false) {}
+Player::Player() : m_sprite(0), m_isPushed(false), m_health(100.0f), m_lives(3) {}
 
 Player::~Player()
 {
@@ -40,6 +40,14 @@ void Player::Process(float deltaTime)
 
     if (m_alive) {
         UpdatePushBack(deltaTime);
+
+        if (m_isPushed) {
+            SetColour(1.0f, 0.0f, 0.0f);
+        }
+        else {
+            SetColour(1.0f, 1.0f, 1.0f);
+        }
+
         m_sprite->SetX(static_cast<int>(m_position.x));
         m_sprite->SetY(static_cast<int>(m_position.y));
     }
@@ -141,9 +149,21 @@ bool Player::IsPushedBack()
     return m_isPushed;
 }
 
+Vector2 Player::GetUpdatedPushPosition(float deltaTime)
+{
+    Vector2 updatedPos = m_position;
+
+    updatedPos.x += m_pushbackVelocity.x * deltaTime;
+    updatedPos.y += m_pushbackVelocity.y * deltaTime;
+
+    return updatedPos;
+}
+
 void Player::UpdatePushBack(float deltaTime)
 {
     if (m_isPushed) {
+        Vector2 originalPos = m_position;
+
         m_position.x += m_pushbackVelocity.x * deltaTime;
         m_position.y += m_pushbackVelocity.y * deltaTime;
 

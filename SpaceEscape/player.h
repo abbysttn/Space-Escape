@@ -36,6 +36,9 @@ public:
 	void ApplyPushBack(Vector2 direction);
 	bool IsPushedBack();
 
+	Vector2 GetUpdatedPushPosition(float deltaTime);
+
+	
 protected:
 	void UpdatePushBack(float deltaTime);
 
@@ -53,6 +56,9 @@ protected:
 	bool m_isPushed;
 
 	bool m_alive;
+
+	float m_health;
+	int m_lives;
 
 private:
 };

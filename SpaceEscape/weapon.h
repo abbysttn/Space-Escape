@@ -42,6 +42,9 @@ public:
 	float GetOffset();
 	bool IsSwinging();
 
+	void SetWeaponDamage(int weaponNum);
+	float GetWeaponDamage();
+
 protected:
 
 private:
@@ -68,6 +71,8 @@ protected:
 	float m_returnSpeed;
 
 	float weaponOffset;
+
+	float m_damage;
 
 private:
 

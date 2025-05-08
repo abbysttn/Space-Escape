@@ -56,6 +56,8 @@ protected:
 	bool DamageCollision(Enemy* enemy, const Box& collision);
 	void DoDamage();
 
+	bool IsPositionValid(Vector2& position);
+
 private:
 	Level(const Level& level);
 	Level& operator=(const Level& level);

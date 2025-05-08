@@ -181,6 +181,7 @@
     <ClInclude Include="shader.h" />
     <ClInclude Include="soundsystem.h" />
     <ClInclude Include="sprite.h" />
+    <ClInclude Include="startscene.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="texturemanager.h" />
     <ClInclude Include="TileParser.h" />
@@ -229,6 +230,7 @@
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="soundsystem.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="startscene.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="TileParser.cpp" />

@@ -13,6 +13,7 @@
 #include "soundsystem.h"
 
 #include "Level.h"
+#include "startscene.h"
 
 
 #include <iostream>
@@ -84,6 +85,11 @@ bool Game::Initialise() {
     fmod = new SceneSplashFMOD();
     fmod->Initialise(*m_pRenderer);
     m_scenes.push_back(fmod);
+
+    Scene* start = 0;
+    start = new StartScene();
+    start->Initialise(*m_pRenderer);
+    m_scenes.push_back(start);
 
     m_iCurrentScene = 0;
 
@@ -186,7 +192,13 @@ void Game::DebugDraw
         ImGui::Separator();
         LogManager::GetInstance().DebugDraw();
         ImGui::Separator();
-        m_pRenderer->DebugDraw();
+
+
+        ImGui::Checkbox("Show Loaded Textures", &m_bShowTextures);
+        if (m_bShowTextures)
+        {
+            m_pRenderer->DebugDraw();
+        }
 
         ImGui::SliderInt("Active scene", &m_iCurrentScene, 0, m_scenes.size() - 1, "%d");
 
