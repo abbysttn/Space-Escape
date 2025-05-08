@@ -41,6 +41,8 @@ public:
 
 	void SetPushedBack(bool pushed);
 
+	void AddDamage(float damage);
+
 	
 protected:
 	void UpdatePushBack(float deltaTime);

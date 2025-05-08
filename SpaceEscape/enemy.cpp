@@ -33,6 +33,8 @@ bool Enemy::Initialise(Renderer& renderer, const char* filename)
     SetLoop(true);
     m_sprite->Animate();
 
+    m_gameDifficulty = 'E';
+
     return true;
 }
 
@@ -244,6 +246,16 @@ void Enemy::AddDamage(float weaponDamage)
     }
 }
 
+void Enemy::SetEnemyType(char type)
+{
+    m_enemyType = type;
+}
+
+float Enemy::GetDamageDealt()
+{
+    return m_attackDamage;
+}
+
 void Enemy::UpdatePushBack(float deltaTime)
 {
     if (m_isPushed) {
@@ -258,4 +270,48 @@ void Enemy::UpdatePushBack(float deltaTime)
             m_isPushed = false;
         }
     }
+}
+
+void Enemy::SetAttackDamage(char type, char difficulty)
+{
+    float damage;
+    float multiplier;
+
+    switch (type) {
+    case 'E':
+        damage = 5.0f;
+        break;
+
+    case 'M':
+        damage = 10.0f;
+        break;
+
+    case 'H':
+        damage = 20.0f;
+        break;
+
+    default:
+        damage = 5.0f;
+        break;
+    }
+
+    switch (difficulty) {
+    case 'E':
+        multiplier = 0.5f;
+        break;
+
+    case 'N':
+        multiplier = 1.0f;
+        break;
+
+    case 'H':
+        multiplier = 1.5f;
+        break;
+
+    default:
+        multiplier = 0.5f;
+        break;
+    }
+
+    m_attackDamage = damage * multiplier;
 }

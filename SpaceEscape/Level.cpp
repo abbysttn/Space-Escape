@@ -23,7 +23,7 @@
 
 Level::Level() : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
 m_waterPool(nullptr), m_tileSize(48.0f), m_levelNumber(1), m_layerNumber(0), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
-m_enemyPool(nullptr), m_playerPushed(false) {}
+m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_pauseGame(false) {}
 
 Level::~Level()
 {
@@ -99,6 +99,10 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 	m_boundaryCollisionTree->clear();
 	m_enemyCollisionTree->clear();
 
+	if (m_pauseGame) {
+		deltaTime = 0.0f;
+	}
+
 	//timers
 
 	if (m_currentCooldown > 0.0f) {
@@ -123,16 +127,22 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 		if (obj && dynamic_cast<Player*>(obj)) {
 			Player* player = static_cast<Player*>(obj);
+			if (player->isActive()) {
 
-			bool colliding = PlayerColliding(player);
-			if (!colliding) {
-				player->Process(deltaTime);
+				bool colliding = PlayerColliding(player);
+				if (!colliding) {
+					player->Process(deltaTime);
+				}
+
+				m_playerPushed = player->IsPushedBack();
+
+				if (!player->IsRunning()) {
+					m_currentPlayer = 0;
+				}
 			}
-
-			m_playerPushed = player->IsPushedBack();
-
-			if (!player->IsRunning()) {
-				m_currentPlayer = 0;
+			else {
+				m_playerAlive = false;
+				GameOver();
 			}
 		}
 	}
@@ -267,7 +277,7 @@ bool Level::PlayerInitialised(Renderer& renderer)
 					return false;
 				}
 
-				player->SetActive(false);
+				player->SetActive(true);
 				player->Position().x = m_playerPosition.x;
 				player->Position().y = m_playerPosition.y;
 				player->SetLoop(true);
@@ -279,7 +289,7 @@ bool Level::PlayerInitialised(Renderer& renderer)
 					return false;
 				}
 
-				player->SetActive(false);
+				player->SetActive(true);
 				player->Position().x = m_playerPosition.x;
 				player->Position().y = m_playerPosition.y;
 				player->SetLoop(true);
@@ -291,7 +301,7 @@ bool Level::PlayerInitialised(Renderer& renderer)
 					return false;
 				}
 
-				player->SetActive(false);
+				player->SetActive(true);
 				player->Position().x = m_playerPosition.x;
 				player->Position().y = m_playerPosition.y;
 				player->SetLoop(false);
@@ -386,7 +396,6 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 		Player* player = static_cast<Player*>(obj);
 		player->Position() = m_playerPosition;
-		player->SetActive(true);
 	}
 
 	if (inputSystem.GetMouseButtonState(SDL_BUTTON_LEFT) == BS_PRESSED) { // weapon swing
@@ -395,7 +404,6 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			Player* player = static_cast<Player*>(obj);
 			player->SetRunning();
 			player->Position() = m_playerPosition;
-			player->SetActive(true);
 		}
 
 		char weaponType;
@@ -439,7 +447,6 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 			Player* player = static_cast<Player*>(obj);
 			player->Position() = m_playerPosition;
-			player->SetActive(true);
 		}
 	}
 
@@ -450,7 +457,6 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			Player* player = static_cast<Player*>(obj);
 			player->SetRunning();
 			player->Position() = m_playerPosition;
-			player->SetActive(true);
 		}
 	}
 }
@@ -568,6 +574,7 @@ bool Level::EnemiesInitialised(Renderer& renderer)
 
 			enemy->Initialise(renderer, filepath.c_str());
 			enemy->SetActive(false);
+			enemy->SetAttackDamage('M', 'H');
 		}
 	}
 
@@ -849,6 +856,7 @@ void Level::DoDamage()
 						Vector2 pushDirectionPlayer(player->Position().x - enemy->Position().x,
 							player->Position().y - enemy->Position().y);
 						player->ApplyPushBack(pushDirectionPlayer);
+						player->AddDamage(enemy->GetDamageDealt());
 						enemy->ApplyPushBack(pushDirection);
 					}
 					break;
@@ -919,5 +927,28 @@ bool Level::IsPositionValid(Vector2& position)
 	}
 
 	return false;
+}
+
+void Level::GameOver()
+{
+	m_pauseGame = true;
+
+	for (size_t i = 0; i < m_playerPool->totalCount(); i++) {
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<Player*>(obj)) {
+				Player* player = static_cast<Player*>(obj);
+				player->SetActive(false);
+			}
+		}
+	}
+
+	for (size_t i = 0; i < m_weaponPool->totalCount(); i++) {
+		if (GameObject* obj = m_weaponPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<Weapon*>(obj)) {
+				Weapon* weapon = static_cast<Weapon*>(obj);
+				weapon->SetWeapon(false);
+			}
+		}
+	}
 }
 

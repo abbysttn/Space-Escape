@@ -6,6 +6,12 @@
 #include <cassert>
 #include <cstdlib>
 
+
+
+
+
+#include "logmanager.h"
+
 Player::Player() : m_sprite(0), m_isPushed(false), m_health(100.0f), m_lives(3), m_pushbackComplete(true) {}
 
 Player::~Player()
@@ -167,6 +173,21 @@ Vector2 Player::GetUpdatedPushPosition(float deltaTime)
 void Player::SetPushedBack(bool pushed)
 {
     m_isPushed = pushed;
+}
+
+void Player::AddDamage(float damage)
+{
+    m_health -= damage;
+
+    if (m_health <= 0.0f) {
+        m_lives--;
+        m_health = 100.0f;
+        LogManager::GetInstance().Log("Lost A Life!");
+        if (m_lives <= 0) {
+            LogManager::GetInstance().Log("All Lives Lost!");
+            m_alive = false;
+        }
+    }
 }
 
 void Player::UpdatePushBack(float deltaTime)

@@ -60,6 +60,8 @@ protected:
 
 	bool IsPositionValid(Vector2& position);
 
+	void GameOver();
+
 private:
 	Level(const Level& level);
 	Level& operator=(const Level& level);
@@ -110,6 +112,9 @@ protected:
 	float m_enemySpawnTime;
 	int m_maxEnemies;
 	int m_currentEnemies;
+
+	bool m_playerAlive;
+	bool m_pauseGame;
 
 private:
 };

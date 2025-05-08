@@ -39,9 +39,17 @@ public:
 	void ApplyPushBack(Vector2 direction);
 
 	void AddDamage(float weaponDamage);
+	void SetEnemyType(char type);
+
+	float GetDamageDealt();
+
+
+	//temp
+	void SetAttackDamage(char type, char difficulty);
 
 protected:
 	void UpdatePushBack(float deltaTime);
+	
 
 private:
 	Enemy(const Enemy& enemy);
@@ -68,6 +76,9 @@ protected:
 	bool m_canSeePlayer;
 
 	float m_health;
+	char m_enemyType;
+	float m_attackDamage;
+	char m_gameDifficulty;
 
 private:
 };
