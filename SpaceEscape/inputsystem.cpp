@@ -6,7 +6,7 @@
 #include "logmanager.h"
 #include "scene.h"
 #include "game.h"
-//#include "xboxcontroller.h"
+#include "xboxcontroller.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_sdl2.h"
 // Library includes:
@@ -24,8 +24,8 @@ InputSystem::InputSystem()
 
 InputSystem::~InputSystem()
 {
-	//delete[] m_pXboxController;
-	//m_pXboxController = 0;
+	delete[] m_pXboxController;
+	m_pXboxController = 0;
 }
 
 bool InputSystem::Initialise
@@ -44,12 +44,12 @@ bool InputSystem::Initialise
 	}
 	ShowMouseCursor(false);
 	m_iNumAttachedControllers = SDL_NumJoysticks();
-	//m_pXboxController = new XboxController[m_iNumAttachedControllers];
+	m_pXboxController = new XboxController[m_iNumAttachedControllers];
 	for (int k = 0; k < m_iNumAttachedControllers; ++k)
 	{
 		if (SDL_IsGameController(k))
 		{
-			//m_pXboxController[k].Initialise(k);
+			m_pXboxController[k].Initialise(k);
 		}
 	}
 	return true;
@@ -79,7 +79,7 @@ void InputSystem::ProcessInput
 	m_mousePosition.Set(static_cast<float>(mouseX), static_cast<float>(mouseY));
 	for (int k = 0; k < m_iNumAttachedControllers; ++k)
 	{
-		//m_pXboxController[k].ProcessInput();
+		m_pXboxController[k].ProcessInput();
 	}
 
 	SDL_Event event;
@@ -215,8 +215,8 @@ InputSystem::GetNumberOfControllersAttached() const
 	return m_iNumAttachedControllers;
 }
 
-//XboxController*
-//InputSystem::GetController(int controllerIndex)
-//{
-	//return &m_pXboxController[controllerIndex];
-//}
+XboxController*
+InputSystem::GetController(int controllerIndex)
+{
+	return &m_pXboxController[controllerIndex];
+}

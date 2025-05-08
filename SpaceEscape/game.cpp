@@ -6,6 +6,7 @@
 #include "iniparser.h"
 
 #include "scenesplashfmod.h"
+#include "scenesplashaut.h"
 
 #include "imgui/imgui_impl_sdl2.h"
 #include "inputsystem.h"
@@ -70,8 +71,6 @@ bool Game::Initialise() {
 
     m_iLastTime = SDL_GetPerformanceCounter();
 
-    m_pRenderer->SetClearColour(71, 171, 169);
-
     m_pInputSystem = new InputSystem();
     m_pInputSystem->Initialise();
 
@@ -85,6 +84,11 @@ bool Game::Initialise() {
     fmod = new SceneSplashFMOD();
     fmod->Initialise(*m_pRenderer);
     m_scenes.push_back(fmod);
+
+    Scene* aut = 0;
+    aut = new SceneSplashAUT();
+    aut->Initialise(*m_pRenderer);
+    m_scenes.push_back(aut);
 
     Scene* start = 0;
     start = new StartScene();

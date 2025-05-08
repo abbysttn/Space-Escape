@@ -8,6 +8,7 @@ using namespace std;
 
 class Renderer;
 class AnimatedSprite;
+class PlayerState;
 
 class Player : public GameObject {
 public:
@@ -62,9 +63,6 @@ protected:
 	bool m_pushbackComplete;
 
 	bool m_alive;
-
-	float m_health;
-	int m_lives;
 
 private:
 };

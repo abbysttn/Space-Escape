@@ -6,13 +6,10 @@
 #include <cassert>
 #include <cstdlib>
 
+#include "playerstate.h"
 
 
-
-
-#include "logmanager.h"
-
-Player::Player() : m_sprite(0), m_isPushed(false), m_health(100.0f), m_lives(3), m_pushbackComplete(true) {}
+Player::Player() : m_sprite(0), m_isPushed(false), m_pushbackComplete(true) {}
 
 Player::~Player()
 {
@@ -177,17 +174,8 @@ void Player::SetPushedBack(bool pushed)
 
 void Player::AddDamage(float damage)
 {
-    m_health -= damage;
-
-    if (m_health <= 0.0f) {
-        m_lives--;
-        m_health = 100.0f;
-        LogManager::GetInstance().Log("Lost A Life!");
-        if (m_lives <= 0) {
-            LogManager::GetInstance().Log("All Lives Lost!");
-            m_alive = false;
-        }
-    }
+    PlayerState::GetInstance().TakeDamage(damage);
+    m_alive = PlayerState::GetInstance().IsPlayerAlive();
 }
 
 void Player::UpdatePushBack(float deltaTime)

@@ -168,6 +168,12 @@
     <ClInclude Include="startscene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="playerstate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scenesplashaut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp">
@@ -309,6 +315,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="startscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="playerstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scenesplashaut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

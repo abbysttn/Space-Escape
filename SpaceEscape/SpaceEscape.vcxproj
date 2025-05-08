@@ -173,10 +173,12 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="particleemitter.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="playerstate.h" />
     <ClInclude Include="prop.h" />
     <ClInclude Include="quadtree.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="scene.h" />
+    <ClInclude Include="scenesplashaut.h" />
     <ClInclude Include="scenesplashfmod.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="soundsystem.h" />
@@ -222,10 +224,12 @@
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="particleemitter.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="playerstate.cpp" />
     <ClCompile Include="prop.cpp" />
     <ClCompile Include="quadtree.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="scene.cpp" />
+    <ClCompile Include="scenesplashaut.cpp" />
     <ClCompile Include="scenesplashfmod.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="soundsystem.cpp" />

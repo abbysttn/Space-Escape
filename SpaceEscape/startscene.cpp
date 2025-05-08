@@ -53,6 +53,7 @@ void StartScene::Process(float deltaTime, InputSystem& inputSystem)
 
 void StartScene::Draw(Renderer& renderer)
 {
+	renderer.SetClearColour(71, 171, 169);
 	m_pText->Draw(renderer);
 	m_button->Draw(renderer);
 }

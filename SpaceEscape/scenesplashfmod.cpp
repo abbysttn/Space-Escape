@@ -11,6 +11,7 @@ SceneSplashFMOD::SceneSplashFMOD() : m_pFMOD(0), m_alpha(0.0f) {}
 SceneSplashFMOD::~SceneSplashFMOD()
 {
 	delete m_pFMOD;
+	m_pFMOD = 0;
 }
 
 bool SceneSplashFMOD::Initialise(Renderer& renderer)
@@ -42,7 +43,6 @@ void SceneSplashFMOD::Process(float deltaTime, InputSystem& inputSystem)
 		m_alpha -= 0.3f * deltaTime;
 		if (m_alpha <= 0.0f) {
 			m_alpha = 0.0f;
-			//increase = true;
 			done = true;
 		}
 	}
@@ -53,6 +53,7 @@ void SceneSplashFMOD::Process(float deltaTime, InputSystem& inputSystem)
 
 void SceneSplashFMOD::Draw(Renderer& renderer)
 {
+	renderer.SetClearColour(0, 0, 0);
 	m_pFMOD->Draw(renderer);
 }
 

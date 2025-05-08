@@ -34,7 +34,7 @@ public:
 	void SetRelativeMode(bool relative);
 	// Xbox Controllers:
 	int GetNumberOfControllersAttached() const;
-	//XboxController* GetController(int controllerIndex);
+	XboxController* GetController(int controllerIndex);
 protected:
 	void ProcessMouseWheel(SDL_Event& event);
 private:

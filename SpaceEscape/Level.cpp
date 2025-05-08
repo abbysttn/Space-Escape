@@ -5,6 +5,7 @@
 #include "gameobjectpool.h"
 #include "logmanager.h"
 #include "inputsystem.h"
+#include "xboxcontroller.h"
 #include "quadtree.h"
 #include "soundsystem.h"
 
@@ -203,6 +204,7 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 
 void Level::Draw(Renderer& renderer)
 {
+	renderer.SetClearColour(71, 171, 169);
 	m_tileParser->Draw(renderer);
 
 	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
@@ -341,6 +343,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 	}
 
 	Vector2 updatedPos = m_playerPosition;
+	XboxController* controller = inputSystem.GetController(0);
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_PRESSED
 		|| inputSystem.GetKeyState(SDL_SCANCODE_D) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_D) == BS_PRESSED) {
@@ -880,6 +883,8 @@ void Level::DoDamage()
 						);
 
 						auto potentialCollisions = m_enemyCollisionTree->queryRange(bulletRange);
+
+						//add player pushback
 
 						for (auto* obj : potentialCollisions) {
 							Enemy* enemy = dynamic_cast<Enemy*>(obj);
