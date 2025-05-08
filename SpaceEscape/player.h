@@ -35,8 +35,11 @@ public:
 
 	void ApplyPushBack(Vector2 direction);
 	bool IsPushedBack();
+	bool IsPushBackComplete();
 
 	Vector2 GetUpdatedPushPosition(float deltaTime);
+
+	void SetPushedBack(bool pushed);
 
 	
 protected:
@@ -54,6 +57,7 @@ protected:
 
 	Vector2 m_pushbackVelocity;
 	bool m_isPushed;
+	bool m_pushbackComplete;
 
 	bool m_alive;
 

@@ -230,8 +230,8 @@ void Enemy::ApplyPushBack(Vector2 direction)
         direction.y /= length;
     }
 
-    m_pushbackVelocity.x = direction.x * 400.0f;
-    m_pushbackVelocity.y = direction.y * 400.0f;
+    m_pushbackVelocity.x = direction.x * 600.0f;
+    m_pushbackVelocity.y = direction.y * 600.0f;
     m_isPushed = true;
 }
 

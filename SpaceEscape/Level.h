@@ -51,7 +51,9 @@ protected:
 	void SpawnEnemy();
 
 	bool EnemyColliding(Enemy* enemy);
-	void HandleAlienCollision(const Box& collision, Enemy* enemy);
+	void HandleEnemyCollision(const Box& collision, Enemy* enemy);
+	bool PlayerColliding(Player* player);
+	void HandlePlayerCollision(const Box& collision, Player* player);
 
 	bool DamageCollision(Enemy* enemy, const Box& collision);
 	void DoDamage();
@@ -93,6 +95,8 @@ protected:
 
 	Vector2 m_playerPosition;
 	Vector2 m_playerPrevPosition;
+
+	bool m_playerPushed;
 
 	SoundSystem* m_soundSystem;
 

@@ -6,7 +6,7 @@
 #include <cassert>
 #include <cstdlib>
 
-Player::Player() : m_sprite(0), m_isPushed(false), m_health(100.0f), m_lives(3) {}
+Player::Player() : m_sprite(0), m_isPushed(false), m_health(100.0f), m_lives(3), m_pushbackComplete(true) {}
 
 Player::~Player()
 {
@@ -39,9 +39,8 @@ void Player::Process(float deltaTime)
     }
 
     if (m_alive) {
-        UpdatePushBack(deltaTime);
-
         if (m_isPushed) {
+            UpdatePushBack(deltaTime);
             SetColour(1.0f, 0.0f, 0.0f);
         }
         else {
@@ -142,11 +141,17 @@ void Player::ApplyPushBack(Vector2 direction)
     m_pushbackVelocity.x = direction.x * 400.0f;
     m_pushbackVelocity.y = direction.y * 400.0f;
     m_isPushed = true;
+    m_pushbackComplete = false;
 }
 
 bool Player::IsPushedBack()
 {
     return m_isPushed;
+}
+
+bool Player::IsPushBackComplete()
+{
+    return m_pushbackComplete;
 }
 
 Vector2 Player::GetUpdatedPushPosition(float deltaTime)
@@ -157,6 +162,11 @@ Vector2 Player::GetUpdatedPushPosition(float deltaTime)
     updatedPos.y += m_pushbackVelocity.y * deltaTime;
 
     return updatedPos;
+}
+
+void Player::SetPushedBack(bool pushed)
+{
+    m_isPushed = pushed;
 }
 
 void Player::UpdatePushBack(float deltaTime)
@@ -173,6 +183,7 @@ void Player::UpdatePushBack(float deltaTime)
         if (fabs(m_pushbackVelocity.x) < 0.01f && fabs(m_pushbackVelocity.y) < 0.1f) {
             m_pushbackVelocity = { 0, 0 };
             m_isPushed = false;
+            m_pushbackComplete = true;
         }
     }
 }
