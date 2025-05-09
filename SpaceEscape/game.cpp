@@ -95,7 +95,7 @@ bool Game::Initialise() {
     start->Initialise(*m_pRenderer);
     m_scenes.push_back(start);
 
-    m_iCurrentScene = 0;
+    m_iCurrentScene = 3;
 
 #if USE_SOUND
     m_soundSystem = new SoundSystem();

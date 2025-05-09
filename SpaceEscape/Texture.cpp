@@ -96,7 +96,7 @@ void Texture::LoadTextTexture(const char* text, const char* fontname, int points
 	color.r = 255;
 	color.g = 255;
 	color.b = 255;
-	color.a = 100;
+	color.a = 255;
 	SDL_Surface* pSurface = TTF_RenderText_Blended(pFont, text, color);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, pSurface->pitch / pSurface->format->BytesPerPixel);
 	LoadSurfaceIntoTexture(pSurface);

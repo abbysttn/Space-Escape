@@ -284,7 +284,7 @@ Renderer::DrawAnimatedSprite(AnimatedSprite& sprite, int frame)
 void Renderer::CreateStaticText(const char* pText, int pointsize)
 {
 	Texture* pTexture = new Texture();
-	pTexture->LoadTextTexture(pText, "..\\assets\\PixeloidSans-Bold.ttf", pointsize);
+	pTexture->LoadTextTexture(pText, "..\\assets\\Bore Blasters 21.ttf", pointsize);
 	m_pTextureManager->AddTexture(pText, pTexture);
 }
 

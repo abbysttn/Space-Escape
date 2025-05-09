@@ -1,0 +1,137 @@
+commit da082af4a93f69ca02796dac02062c318f43735f
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Thu May 8 23:11:23 2025 +1200
+
+    Added damage to all entities
+
+commit 349dbf79873deea7984f1ae7ef6212a3bc22945e
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Thu May 8 22:24:48 2025 +1200
+
+    Fixed pushback player collisions
+
+commit 8a8d87a808cd1ee60f4ed54dada585ead945c2cf
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Thu May 8 17:58:46 2025 +1200
+
+    Fixed enemy and player colouring
+    
+    Added colouring when hit and health for both the enemy and player. Damage is now done based on the weapon type
+
+commit 8ac5beb28d6d232ba3cf54576330ed48505dcbbd
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Wed May 7 22:16:15 2025 +1200
+
+    Added enemies
+
+commit 0961906e638b8e202d4a5b53fcf384bdee56b209
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Tue May 6 15:42:07 2025 +1200
+
+    Weapons fully implemented
+
+commit 5e576d20f830c495bb66bb1f7ac6691070f0821d
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Tue May 6 13:08:56 2025 +1200
+
+    Fixed weapon error
+
+commit 0e9781d666f8e4b0024c831b8977760e1b547c4f
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Tue May 6 11:19:03 2025 +1200
+
+    Weapons added
+    
+    Melee weapons added, to add: guns
+
+commit 32bfb649b44b7020f7cb038c41dac6dcfb96f623
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Mon May 5 23:39:39 2025 +1200
+
+    Added Props to the Parser
+
+commit 3242f9be863151258a882411056e89796a6bc908
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Mon May 5 20:08:20 2025 +1200
+
+    Tile and HUD Parser fixed
+
+commit 70dc0f35b17fca73e17b01460564e639f6c1e5e2
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Sat May 3 13:41:25 2025 +1200
+
+    Fixed collision detector
+    
+    Changed how the box was being added, and implemented it in the playerMovement function, not the process function.
+
+commit 569f4034557450e6d42040cba8d0dd5bb1d7d94d
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Fri May 2 17:34:16 2025 +1200
+
+    Collision Detector changed
+    
+    Still not working properly
+
+commit 69d8a6e3a750435b01115798862967469dd22056
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Fri May 2 10:31:35 2025 +1200
+
+    Sound and colliders added
+
+commit 7b0f2c6225a2a9df4a816a6127c4e6e0f75baac8
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Wed Apr 30 12:39:41 2025 +1200
+
+    Implemented Player class and added input settings
+
+commit 076b4cb530424f3b23edb6158e77984ba6f52dd3
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Tue Apr 29 21:33:55 2025 +1200
+
+    Implemented base level sprites with level parser
+
+commit b5a1226ff9aeee1da6ab19bc18303c1760459a74
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Tue Apr 29 14:15:32 2025 +1200
+
+    Added level class
+    
+    Started implementation of level class with the corner tile implemented
+
+commit ca476a709fa7abb742971f2cdba2ef499a569bc6
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Tue Apr 29 13:01:57 2025 +1200
+
+    Updated TDD and game framework
+
+commit d93518a08a0489384a45b941c80293465c1655f4
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Tue Apr 22 10:04:54 2025 +1200
+
+    Updated GDD
+    
+    Finalised most sections with sample screens and references to be added
+
+commit 7c389053907438bc8a824d57304e0e4fae999e93
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Sun Apr 20 17:28:25 2025 +1200
+
+    Created Game Design Document
+
+commit c52fb68507f018b255cbb0a170f994d71f46fca5
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Wed Apr 16 21:03:46 2025 +1200
+
+    Game Ideas added
+
+commit 0d70fad192dcd4c843abbd757c053e97f3aa4045
+Author: Abby Sutton <abbysutton09@gmail.com>
+Date:   Tue Apr 15 11:44:56 2025 +1200
+
+    Game Pitch Added
+
+commit e07dec07cb33248770da3af3f6a8f27df6391adc
+Author: Abby Sutton <108248386+abbysttn@users.noreply.github.com>
+Date:   Tue Apr 15 10:44:22 2025 +1200
+
+    Initial commit

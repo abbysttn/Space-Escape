@@ -8,6 +8,7 @@ using namespace std;
 class Renderer;
 class InputSystem;
 class Sprite;
+class GameObjectPool;
 
 class StartScene : public Scene {
 public:
@@ -28,7 +29,7 @@ private:
 public:
 
 protected:
-	Sprite* m_pText;
+	GameObjectPool* m_textPool;
 	Sprite* m_button;
 
 private:
