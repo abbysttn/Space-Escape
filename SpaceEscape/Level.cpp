@@ -24,7 +24,7 @@
 
 Level::Level() : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
 m_waterPool(nullptr), m_tileSize(48.0f), m_levelNumber(1), m_layerNumber(0), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
-m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_pauseGame(false) {}
+m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_pauseGame(false), m_invulnerability(false) {}
 
 Level::~Level()
 {
@@ -46,7 +46,7 @@ bool Level::Initialise(Renderer& renderer)
 
 	m_cooldownTime = 0.2f;
 	m_currentCooldown = 0.0f;
-	m_enemySpawnTimer = 7.0f;
+	m_enemySpawnTimer = 0.0f;
 	m_enemySpawnTime = 8.0f;
 	m_maxEnemies = 20;
 	m_currentEnemies = 0;
@@ -253,6 +253,21 @@ void Level::DebugDraw()
 		// Display current weapon stats
 	}
 	ImGui::End();
+
+	ImGui::Checkbox("Invulnerability", &m_invulnerability);
+	if (m_invulnerability)
+	{
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetDamageTaken(false);
+		}
+	}
+	else {
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetDamageTaken(true);
+		}
+	}
 }
 
 bool Level::PlayerInitialised(Renderer& renderer)

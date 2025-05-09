@@ -168,6 +168,7 @@
     <ClInclude Include="inlinehelpers.h" />
     <ClInclude Include="inputsystem.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="life.h" />
     <ClInclude Include="logmanager.h" />
     <ClInclude Include="matrix4.h" />
     <ClInclude Include="particle.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="iniparser.cpp" />
     <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="life.cpp" />
     <ClCompile Include="logmanager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="matrix4.cpp" />

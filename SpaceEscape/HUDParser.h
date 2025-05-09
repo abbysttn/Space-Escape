@@ -24,6 +24,7 @@ protected:
 	bool FileParsed(Renderer& renderer, const char* filepath);
 	bool InitObjects(Renderer& renderer, char tileType, size_t x, size_t y);
 	bool WeaponsInitialised(Renderer& renderer);
+	bool LivesInitialised(Renderer& renderer);
 private:
 	HUDParser(const HUDParser& hudParser);
 	HUDParser& operator=(const HUDParser& hudParser);
@@ -33,12 +34,14 @@ public:
 protected:
 
 private:
-	GameObjectPool* m_HUDUnderlayTiles;
+	GameObjectPool* m_HUDTiles;
+	GameObjectPool* m_playerLivesPool;
 
 	GameObjectPool* m_weaponPool;
 
 	DDLevelLoad* m_levelParser;
 
+	Vector2 m_livesStartPos;
 	Vector2 m_weaponPos;
 	float weaponOffset;
 

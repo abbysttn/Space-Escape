@@ -9,7 +9,7 @@
 #include "playerstate.h"
 
 
-Player::Player() : m_sprite(0), m_isPushed(false), m_pushbackComplete(true) {}
+Player::Player() : m_sprite(0), m_isPushed(false), m_pushbackComplete(true), m_canTakeDamage(true) {}
 
 Player::~Player()
 {
@@ -134,17 +134,19 @@ void Player::SetRunning()
 
 void Player::ApplyPushBack(Vector2 direction)
 {
-    float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (m_canTakeDamage) {
+        float length = sqrt(direction.x * direction.x + direction.y * direction.y);
 
-    if (length != 0) {
-        direction.x /= length;
-        direction.y /= length;
+        if (length != 0) {
+            direction.x /= length;
+            direction.y /= length;
+        }
+
+        m_pushbackVelocity.x = direction.x * 400.0f;
+        m_pushbackVelocity.y = direction.y * 400.0f;
+        m_isPushed = true;
+        m_pushbackComplete = false;
     }
-
-    m_pushbackVelocity.x = direction.x * 400.0f;
-    m_pushbackVelocity.y = direction.y * 400.0f;
-    m_isPushed = true;
-    m_pushbackComplete = false;
 }
 
 bool Player::IsPushedBack()
@@ -174,13 +176,20 @@ void Player::SetPushedBack(bool pushed)
 
 void Player::AddDamage(float damage)
 {
-    PlayerState::GetInstance().TakeDamage(damage);
-    m_alive = PlayerState::GetInstance().IsPlayerAlive();
+    if (m_canTakeDamage) {
+        PlayerState::GetInstance().TakeDamage(damage);
+        m_alive = PlayerState::GetInstance().IsPlayerAlive();
+    }
+}
+
+void Player::SetDamageTaken(bool taken)
+{
+    m_canTakeDamage = taken;
 }
 
 void Player::UpdatePushBack(float deltaTime)
 {
-    if (m_isPushed) {
+    if (m_isPushed && m_canTakeDamage) {
         Vector2 originalPos = m_position;
 
         m_position.x += m_pushbackVelocity.x * deltaTime;

@@ -115,6 +115,7 @@ protected:
 
 	bool m_playerAlive;
 	bool m_pauseGame;
+	bool m_invulnerability;
 
 private:
 };

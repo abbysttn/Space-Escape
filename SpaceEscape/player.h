@@ -44,6 +44,8 @@ public:
 
 	void AddDamage(float damage);
 
+	void SetDamageTaken(bool taken);
+
 	
 protected:
 	void UpdatePushBack(float deltaTime);
@@ -63,6 +65,8 @@ protected:
 	bool m_pushbackComplete;
 
 	bool m_alive;
+
+	bool m_canTakeDamage;
 
 private:
 };

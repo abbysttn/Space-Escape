@@ -5,26 +5,31 @@
 #include "gameobjectpool.h"
 #include "logmanager.h"
 #include "weapon.h"
+#include "life.h"
+
+#include "playerstate.h"
 
 #include "underlayTiles.h"
 
 #include <cassert>
 
-HUDParser::HUDParser() : m_HUDUnderlayTiles(nullptr), m_levelParser(0), m_tileSize(48.0f), m_weaponPool(nullptr) {}
+HUDParser::HUDParser() : m_HUDTiles(nullptr), m_levelParser(0), m_tileSize(48.0f), m_weaponPool(nullptr), m_playerLivesPool(nullptr) {}
 
 HUDParser::~HUDParser()
 {
-	delete m_HUDUnderlayTiles;
+	delete m_HUDTiles;
 	delete m_levelParser;
 	delete m_weaponPool;
+	delete m_playerLivesPool;
 }
 
 bool HUDParser::Initialise(Renderer& renderer)
 {
 	m_levelParser = new DDLevelLoad();
 
-	m_HUDUnderlayTiles = new GameObjectPool(UnderlayTiles(), 100);
+	m_HUDTiles = new GameObjectPool(UnderlayTiles(), 100);
 	m_weaponPool = new GameObjectPool(Weapon(), 4);
+	m_playerLivesPool = new GameObjectPool(Life(), 3);
 
 	if (!FileParsed(renderer, "..\\assets\\hud_underlay.txt")) {
 		LogManager::GetInstance().Log("File Failed to Parse!");
@@ -40,18 +45,38 @@ bool HUDParser::Initialise(Renderer& renderer)
 		LogManager::GetInstance().Log("Unable to Initialise Weapons!");
 		return false;
 	}
-	
+
+	if (!LivesInitialised(renderer)) {
+		LogManager::GetInstance().Log("Unable to Initialise Lives!");
+		return false;
+	}
 
 	return true;
 }
 
 void HUDParser::Process(float deltaTime, InputSystem& inputSystem)
 {
-	for (size_t i = 0; i < m_HUDUnderlayTiles->totalCount(); i++) {
-		if (GameObject* obj = m_HUDUnderlayTiles->getObjectAtIndex(i)) {
+	for (size_t i = 0; i < m_HUDTiles->totalCount(); i++) {
+		if (GameObject* obj = m_HUDTiles->getObjectAtIndex(i)) {
 			if (obj && dynamic_cast<UnderlayTiles*>(obj)) {
 				UnderlayTiles* tile = static_cast<UnderlayTiles*>(obj);
 				tile->Process(deltaTime);
+			}
+		}
+	}
+
+	for (size_t i = 0; i < m_playerLivesPool->totalCount(); i++) {
+		if (GameObject* obj = m_playerLivesPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<Life*>(obj)) {
+				Life* life = static_cast<Life*>(obj);
+				int livesLeft = PlayerState::GetInstance().GetLives();
+
+				size_t reverseIndex = m_playerLivesPool->totalCount() - 1 - i;
+
+				if (livesLeft <= reverseIndex) life->SetColour(0.0f, 0.0f, 0.0f);
+				else life->SetColour(1.0f, 1.0f, 1.0f);
+
+				life->Process(deltaTime);
 			}
 		}
 	}
@@ -69,11 +94,20 @@ void HUDParser::Process(float deltaTime, InputSystem& inputSystem)
 
 void HUDParser::Draw(Renderer& renderer)
 {
-	for (size_t i = 0; i < m_HUDUnderlayTiles->totalCount(); i++) {
-		if (GameObject* obj = m_HUDUnderlayTiles->getObjectAtIndex(i)) {
+	for (size_t i = 0; i < m_HUDTiles->totalCount(); i++) {
+		if (GameObject* obj = m_HUDTiles->getObjectAtIndex(i)) {
 			if (obj && obj->isActive()) {
 				UnderlayTiles* tile = static_cast<UnderlayTiles*>(obj);
 				tile->Draw(renderer);
+			}
+		}
+	}
+
+	for (size_t i = 0; i < m_playerLivesPool->totalCount(); i++) {
+		if (GameObject* obj = m_playerLivesPool->getObjectAtIndex(i)) {
+			if (obj && obj->isActive()) {
+				Life* life = static_cast<Life*>(obj);
+				life->Draw(renderer);
 			}
 		}
 	}
@@ -138,7 +172,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 	case 'B':
 	case 'C':
 	case 'D':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -172,7 +206,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 	case 'F':
 	case 'G':
 	case 'H':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -204,7 +238,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 
 	case 'Z':
 	case 'Y':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -231,7 +265,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 
 	case 'J':
 	case 'K':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -255,7 +289,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 
 	case 'L':
 	case 'M':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -279,7 +313,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 
 	case 'N':
 	case 'O':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -303,7 +337,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 
 	case 'P':
 	case 'Q':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -329,7 +363,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 	case 'S':
 	case 'T':
 	case 'U':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -363,7 +397,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 	case 'W':
 	case 'X':
 	case '0':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -379,6 +413,8 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 				switch (tileType) {
 				case 'W':
 					tile->SetRotation(90.0f);
+					m_livesStartPos = tile->Position();
+					m_livesStartPos.x += tile->GetSpriteWidth();
 					break;
 				case 'X':
 					tile->SetRotation(180.0f);
@@ -397,7 +433,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 	case '2':
 	case '3':
 	case '4':
-		if (GameObject* obj = m_HUDUnderlayTiles->getObject()) {
+		if (GameObject* obj = m_HUDTiles->getObject()) {
 			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
 
 			if (tile) {
@@ -427,6 +463,38 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 			}
 		}
 		return true;
+
+	case '+':
+	case '|':
+	case '\\':
+		if (GameObject* obj = m_HUDTiles->getObject()) {
+			UnderlayTiles* tile = dynamic_cast<UnderlayTiles*>(obj);
+
+			if (tile) {
+				string filepath;
+
+				if (tileType == '+') {
+					filepath = "..\\assets\\health_middle.png";
+				}
+				else if (tileType == '|') {
+					filepath = "..\\assets\\health_start.png";
+				}
+				else if (tileType == '\\') {
+					filepath = "..\\assets\\health_end.png";
+				}
+
+				if (!tile->initialise(renderer, filepath.c_str())) {
+					return false;
+				}
+
+				tile->Position().x = (x * m_tileSize) + screenOffsetX;
+				tile->Position().y = (y * m_tileSize) + screenOffsetY;
+
+				tile->SetActive(true);
+			}
+		}
+		return true;
+
 
 	case ' ':
 		return true;
@@ -493,6 +561,25 @@ bool HUDParser::WeaponsInitialised(Renderer& renderer)
 	}
 
 	m_currentWeapon = 0;
+
+	return true;
+}
+
+bool HUDParser::LivesInitialised(Renderer& renderer)
+{
+	for (size_t i = 0; i < m_playerLivesPool->totalCount(); i++) {
+		if (GameObject* obj = m_playerLivesPool->getObjectAtIndex(i)) {
+			Life* life = static_cast<Life*>(obj);
+			life->initialise(renderer);
+			
+			int multiplier = i * 4;
+
+			life->Position() = m_livesStartPos;
+
+			if (i > 0) life->Position().x -= life->GetSpriteWidth() * multiplier;
+
+		}
+	}
 
 	return true;
 }
