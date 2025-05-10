@@ -2,6 +2,7 @@
 #define _STARTSCENE_H__
 
 #include "scene.h"
+#include <memory>
 
 using namespace std;
 
@@ -9,6 +10,9 @@ class Renderer;
 class InputSystem;
 class Sprite;
 class GameObjectPool;
+class QuadTree;
+struct Box;
+class Button;
 
 class StartScene : public Scene {
 public:
@@ -21,6 +25,8 @@ public:
 	virtual void DebugDraw();
 
 protected:
+	bool IsColliding(const Box& box, Button* button);
+	bool CheckMousePos(InputSystem* inputSystem);
 
 private:
 	StartScene(const StartScene& startScene);
@@ -30,7 +36,11 @@ public:
 
 protected:
 	GameObjectPool* m_textPool;
-	Sprite* m_button;
+	GameObjectPool* m_buttonPool;
+	GameObjectPool* m_arrowPool;
+	Sprite* m_backgroundPlanet;
+
+	unique_ptr<QuadTree> m_collisionTree;
 
 private:
 };

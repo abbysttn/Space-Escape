@@ -24,6 +24,8 @@ class INIParser;
 
 class SoundSystem;
 
+class GameStateManager;
+
 class Game {
 	//member methods:
 public:
@@ -63,6 +65,10 @@ protected:
 	float m_fElapsedSeconds;
 	int m_iFrameCount;
 	int m_iFPS;
+
+
+	GameStateManager m_stateManager;
+
 
 #if DEBUG
 	bool m_bShowTextures;

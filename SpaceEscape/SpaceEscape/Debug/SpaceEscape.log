@@ -1,4 +1,9 @@
-﻿  startscene.cpp
-C:\Users\abbys\OneDrive\Documents\GitHub\Space-Escape\SpaceEscape\startscene.cpp(50,17): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\abbys\OneDrive\Documents\GitHub\Space-Escape\SpaceEscape\startscene.cpp(51,17): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-  SpaceEscape.vcxproj -> C:\Users\abbys\OneDrive\Documents\GitHub\Space-Escape\SpaceEscape\Debug\SpaceEscape.exe
+﻿  Level.cpp
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp(723,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp(723,24): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp(753,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp(772,51): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp(772,25): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp(804,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp(892,24): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  SpaceEscape.vcxproj -> C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Debug\SpaceEscape.exe

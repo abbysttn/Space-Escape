@@ -5,19 +5,13 @@
 #include "sprite.h"
 #include "iniparser.h"
 
-#include "scenesplashfmod.h"
-#include "scenesplashaut.h"
-
 #include "imgui/imgui_impl_sdl2.h"
 #include "inputsystem.h"
 #include "animatedsprite.h"
 #include "soundsystem.h"
 
-#include "Level.h"
-#include "startscene.h"
+#include "gamestatemanager.h"
 
-
-#include <iostream>
 
 Game* Game::sm_pInstance = 0;
 
@@ -74,28 +68,9 @@ bool Game::Initialise() {
     m_pInputSystem = new InputSystem();
     m_pInputSystem->Initialise();
 
-    
-    Scene* level = 0;
-    level = new Level();
-    level->Initialise(*m_pRenderer);
-    m_scenes.push_back(level);
+    m_stateManager = GameStateManager(*m_pRenderer);
 
-    Scene* fmod = 0;
-    fmod = new SceneSplashFMOD();
-    fmod->Initialise(*m_pRenderer);
-    m_scenes.push_back(fmod);
 
-    Scene* aut = 0;
-    aut = new SceneSplashAUT();
-    aut->Initialise(*m_pRenderer);
-    m_scenes.push_back(aut);
-
-    Scene* start = 0;
-    start = new StartScene();
-    start->Initialise(*m_pRenderer);
-    m_scenes.push_back(start);
-
-    m_iCurrentScene = 3;
 
 #if USE_SOUND
     m_soundSystem = new SoundSystem();

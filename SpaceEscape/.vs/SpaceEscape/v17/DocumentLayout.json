@@ -1,86 +1,78 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\",
+  "WorkspaceRootPath": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\startscene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:startscene.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\gamestatemanager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:gamestatemanager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\enemy.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:enemy.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\gamestate.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:gamestate.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\textrenderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:textrenderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\splashautstate.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:splashautstate.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\life.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:life.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\splashautstate.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:splashautstate.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\life.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:life.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\gamestatemanager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:gamestatemanager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\textrenderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:textrenderer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\Level.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:Level.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\HUDParser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:HUDParser.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\startscene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:startscene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\playerstate.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:playerstate.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:game.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\Level.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:Level.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\scenesplashaut.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:scenesplashaut.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\player.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:player.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\HUDParser.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:HUDParser.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\weapon.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:weapon.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:player.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\logmanager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:logmanager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\playerstate.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:playerstate.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\xboxcontroller.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:xboxcontroller.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:game.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\scenesplashaut.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:scenesplashaut.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\Level.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:Level.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\textrenderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:textrenderer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\selectionarrow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:selectionarrow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\startscene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:startscene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\selectionarrow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:selectionarrow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\button.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:button.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\button.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:button.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\animatedsprite.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:animatedsprite.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\quadtree.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{BD487FCE-55E6-48E6-945F-57FA416E9131}|SpaceEscape.vcxproj|solutionrelative:quadtree.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -90,8 +82,125 @@
       "DocumentGroups": [
         {
           "DockedWidth": 223,
-          "SelectedChildIndex": 15,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "gamestatemanager.cpp",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\gamestatemanager.cpp",
+              "RelativeDocumentMoniker": "gamestatemanager.cpp",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\gamestatemanager.cpp",
+              "RelativeToolTip": "gamestatemanager.cpp",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAABoAAAAeAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-10T05:39:01.28Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "gamestatemanager.h",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\gamestatemanager.h",
+              "RelativeDocumentMoniker": "gamestatemanager.h",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\gamestatemanager.h",
+              "RelativeToolTip": "gamestatemanager.h",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAABsAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-10T05:35:01.578Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "scenesplashaut.cpp",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\scenesplashaut.cpp",
+              "RelativeDocumentMoniker": "scenesplashaut.cpp",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\scenesplashaut.cpp",
+              "RelativeToolTip": "scenesplashaut.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEIAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-10T05:33:20.593Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "scenesplashaut.h",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\scenesplashaut.h",
+              "RelativeDocumentMoniker": "scenesplashaut.h",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\scenesplashaut.h",
+              "RelativeToolTip": "scenesplashaut.h",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAABEAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-10T05:33:13.305Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "splashautstate.cpp",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\splashautstate.cpp",
+              "RelativeDocumentMoniker": "splashautstate.cpp",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\splashautstate.cpp",
+              "RelativeToolTip": "splashautstate.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-10T05:30:33.318Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "gamestate.h",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\gamestate.h",
+              "RelativeDocumentMoniker": "gamestate.h",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\gamestate.h",
+              "RelativeToolTip": "gamestate.h",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAwBoAAABIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-10T05:04:26.05Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "splashautstate.h",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\splashautstate.h",
+              "RelativeDocumentMoniker": "splashautstate.h",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\splashautstate.h",
+              "RelativeToolTip": "splashautstate.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-10T05:27:14.727Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "game.h",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\game.h",
+              "RelativeDocumentMoniker": "game.h",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\game.h",
+              "RelativeToolTip": "game.h",
+              "ViewState": "AQIAADYAAAAAAAAAAAAAAEUAAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-10T05:20:53.61Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Level.cpp",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\Level.cpp",
+              "RelativeDocumentMoniker": "Level.cpp",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\Level.cpp",
+              "RelativeToolTip": "Level.cpp",
+              "ViewState": "AQIAAJoDAAAAAAAAAAAAwKgDAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-10T04:45:35.257Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -102,256 +211,120 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
+              "Title": "game.cpp",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\game.cpp",
+              "RelativeDocumentMoniker": "game.cpp",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\game.cpp",
+              "RelativeToolTip": "game.cpp",
+              "ViewState": "AQIAADMAAAAAAAAAAAAAAEgAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-10T03:23:37.052Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "selectionarrow.h",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\selectionarrow.h",
+              "RelativeDocumentMoniker": "selectionarrow.h",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\selectionarrow.h",
+              "RelativeToolTip": "selectionarrow.h",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAAB4AAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-10T03:10:44.599Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "selectionarrow.cpp",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\selectionarrow.cpp",
+              "RelativeDocumentMoniker": "selectionarrow.cpp",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\selectionarrow.cpp",
+              "RelativeToolTip": "selectionarrow.cpp",
+              "ViewState": "AQIAABQAAAAAAAAAAAAUwCIAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-10T02:38:23.6Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "animatedsprite.cpp",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\animatedsprite.cpp",
+              "RelativeDocumentMoniker": "animatedsprite.cpp",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\animatedsprite.cpp",
+              "RelativeToolTip": "animatedsprite.cpp",
+              "ViewState": "AQIAAJYAAAAAAAAAAAAAAK4AAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-10T03:07:22.834Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "quadtree.h",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\quadtree.h",
+              "RelativeDocumentMoniker": "quadtree.h",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\quadtree.h",
+              "RelativeToolTip": "quadtree.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-10T02:42:07.815Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "button.cpp",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\button.cpp",
+              "RelativeDocumentMoniker": "button.cpp",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\button.cpp",
+              "RelativeToolTip": "button.cpp",
+              "ViewState": "AQIAABMAAAAAAAAAAAAUwCAAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-05-10T01:34:46.138Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "button.h",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\button.h",
+              "RelativeDocumentMoniker": "button.h",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\button.h",
+              "RelativeToolTip": "button.h",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAALAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-05-10T01:33:46.899Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "textrenderer.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\textrenderer.cpp",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\textrenderer.cpp",
               "RelativeDocumentMoniker": "textrenderer.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\textrenderer.cpp",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\textrenderer.cpp",
               "RelativeToolTip": "textrenderer.cpp",
-              "ViewState": "AQIAAAUAAAAAAAAAAADwvxIAAAAXAAAA",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAAAgAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-09T05:04:17.284Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "textrenderer.h",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\textrenderer.h",
-              "RelativeDocumentMoniker": "textrenderer.h",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\textrenderer.h",
-              "RelativeToolTip": "textrenderer.h",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAAABIAAAAVAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-09T05:01:19.576Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "enemy.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\enemy.cpp",
-              "RelativeDocumentMoniker": "enemy.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\enemy.cpp",
-              "RelativeToolTip": "enemy.cpp",
-              "ViewState": "AQIAABMBAAAAAAAAAABAPSEBAAAXAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-09T02:31:46.78Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "life.h",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\life.h",
-              "RelativeDocumentMoniker": "life.h",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\life.h",
-              "RelativeToolTip": "life.h",
-              "ViewState": "AQIAABUAAAAAAAAAAAAAACIAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-09T00:49:26.881Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "life.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\life.cpp",
-              "RelativeDocumentMoniker": "life.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\life.cpp",
-              "RelativeToolTip": "life.cpp",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAAB4AAAABAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-09T00:52:28.385Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "HUDParser.h",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\HUDParser.h",
-              "RelativeDocumentMoniker": "HUDParser.h",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\HUDParser.h",
-              "RelativeToolTip": "HUDParser.h",
-              "ViewState": "AQIAABsAAAAAAAAAAAAAACAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-09T00:49:15.798Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "HUDParser.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\HUDParser.cpp",
-              "RelativeDocumentMoniker": "HUDParser.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\HUDParser.cpp",
-              "RelativeToolTip": "HUDParser.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAWAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-09T00:49:11.424Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "playerstate.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\playerstate.cpp",
-              "RelativeDocumentMoniker": "playerstate.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\playerstate.cpp",
-              "RelativeToolTip": "playerstate.cpp",
-              "ViewState": "AQIAACQAAAAAAAAAAAAAADAAAAAiAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-08T22:27:56.077Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "logmanager.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\logmanager.cpp",
-              "RelativeDocumentMoniker": "logmanager.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\logmanager.cpp",
-              "RelativeToolTip": "logmanager.cpp",
-              "ViewState": "AQIAABUAAAAAAAAAAAAAACkAAAAFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-08T22:23:19.144Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "playerstate.h",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\playerstate.h",
-              "RelativeDocumentMoniker": "playerstate.h",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\playerstate.h",
-              "RelativeToolTip": "playerstate.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACUAAAAbAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-08T22:21:42.772Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "xboxcontroller.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\xboxcontroller.cpp",
-              "RelativeDocumentMoniker": "xboxcontroller.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\xboxcontroller.cpp",
-              "RelativeToolTip": "xboxcontroller.cpp",
-              "ViewState": "AQIAAEUAAAAAAAAAAAAAAFsAAAAOAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-08T22:17:11.509Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "game.h",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\game.h",
-              "RelativeDocumentMoniker": "game.h",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\game.h",
-              "RelativeToolTip": "game.h",
-              "ViewState": "AQIAADAAAAAAAAAAAAAAAEIAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-08T00:17:27.541Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "game.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\game.cpp",
-              "RelativeDocumentMoniker": "game.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\game.cpp",
-              "RelativeToolTip": "game.cpp",
-              "ViewState": "AQIAAEoAAAAAAAAAAAAAwGEAAAAXAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-08T00:06:53.392Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "startscene.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\startscene.cpp",
-              "RelativeDocumentMoniker": "startscene.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\startscene.cpp",
-              "RelativeToolTip": "startscene.cpp",
-              "ViewState": "AQIAABcAAAAAAAAAAAAAwB8AAAA/AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-07T23:12:01.421Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 12,
               "Title": "startscene.h",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\startscene.h",
+              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\startscene.h",
               "RelativeDocumentMoniker": "startscene.h",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\startscene.h",
+              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\Space-Escape\\SpaceEscape\\startscene.h",
               "RelativeToolTip": "startscene.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAVAAAA",
+              "ViewState": "AQIAABAAAAAAAAAAAAAAwDAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-05-07T23:09:42.946Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Level.h",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\Level.h",
-              "RelativeDocumentMoniker": "Level.h",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\Level.h",
-              "RelativeToolTip": "Level.h",
-              "ViewState": "AQIAACMAAAAAAAAAAAAAADoAAAARAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-29T01:44:24.043Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Level.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\Level.cpp",
-              "RelativeDocumentMoniker": "Level.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\Level.cpp",
-              "RelativeToolTip": "Level.cpp",
-              "ViewState": "AQIAACQAAAAAAAAAAAAAAMwAAAAkAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-29T01:50:20.164Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "player.h",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\player.h",
-              "RelativeDocumentMoniker": "player.h",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\player.h",
-              "RelativeToolTip": "player.h",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAiwBIAAAAfAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-07T02:08:29.416Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "player.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\player.cpp",
-              "RelativeDocumentMoniker": "player.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\player.cpp",
-              "RelativeToolTip": "player.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAASAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-07T08:05:45.508Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "weapon.cpp",
-              "DocumentMoniker": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\weapon.cpp",
-              "RelativeDocumentMoniker": "weapon.cpp",
-              "ToolTip": "C:\\Users\\abbys\\OneDrive\\Documents\\GitHub\\Space-Escape\\SpaceEscape\\weapon.cpp",
-              "RelativeToolTip": "weapon.cpp",
-              "ViewState": "AQIAAIoAAAAAAAAAAAAAALoAAAAZAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-05T21:47:32.522Z"
             }
           ]
         }

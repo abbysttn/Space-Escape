@@ -899,8 +899,6 @@ void Level::DoDamage()
 
 						auto potentialCollisions = m_enemyCollisionTree->queryRange(bulletRange);
 
-						//add player pushback
-
 						for (auto* obj : potentialCollisions) {
 							Enemy* enemy = dynamic_cast<Enemy*>(obj);
 
@@ -923,6 +921,28 @@ void Level::DoDamage()
 					}
 				}
 			}
+		}
+
+		auto potentialPlayerCollisions = m_enemyCollisionTree->queryRange(playerBox);
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = dynamic_cast<Player*>(obj);
+
+			for (auto* obj : potentialPlayerCollisions) {
+				Enemy* enemy = dynamic_cast<Enemy*>(obj);
+				if (enemy->isActive() && DamageCollision(enemy, playerBox)) {
+					Vector2 pushDirection(enemy->Position().x - player->Position().x,
+						enemy->Position().y - player->Position().y);
+					Vector2 pushDirectionPlayer(player->Position().x - enemy->Position().x,
+						player->Position().y - enemy->Position().y);
+					player->ApplyPushBack(pushDirectionPlayer);
+					player->AddDamage(enemy->GetDamageDealt());
+					enemy->ApplyPushBack(pushDirection);
+
+					break;
+				}
+			}
+			break;
 		}
 		break;
 	}

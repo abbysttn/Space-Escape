@@ -180,6 +180,24 @@
     <ClInclude Include="textrenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="selectionarrow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="difficultyscene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamestate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="splashautstate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gamestatemanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp">
@@ -333,6 +351,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="textrenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="selectionarrow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="difficultyscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="splashautstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gamestatemanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
