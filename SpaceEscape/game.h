@@ -67,7 +67,7 @@ protected:
 	int m_iFPS;
 
 
-	GameStateManager m_stateManager;
+	GameStateManager* m_stateManager;
 
 
 #if DEBUG
@@ -75,9 +75,6 @@ protected:
 	bool m_bShowDebugWindow = true;
 	bool m_bPauseSimulation = false;
 #endif // DEBUG
-
-	vector<Scene*> m_scenes;
-	int m_iCurrentScene;
 
 #if USE_LAG
 	float m_fLag;

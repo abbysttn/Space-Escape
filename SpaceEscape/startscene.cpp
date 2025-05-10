@@ -13,7 +13,7 @@
 
 #include "quadtree.h"
 
-StartScene::StartScene() : m_textPool(nullptr), m_buttonPool(nullptr), m_arrowPool(nullptr), m_backgroundPlanet(0) {}
+StartScene::StartScene() : m_textPool(nullptr), m_buttonPool(nullptr), m_arrowPool(nullptr), m_backgroundPlanet(0), m_sceneDone(false) {}
 
 StartScene::~StartScene()
 {
@@ -210,6 +210,43 @@ void StartScene::DebugDraw()
 {
 }
 
+char StartScene::GetSelection()
+{
+	int index = 0;
+
+	for (size_t i = 0; i < m_buttonPool->totalCount(); i++) {
+		if (GameObject* obj = m_buttonPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<Button*>(obj)) {
+				Button* button = static_cast<Button*>(obj);
+
+				if (m_selectedButton.x == button->Position().x && m_selectedButton.y == button->Position().y) {
+					index = i;
+					break;
+				}
+			}
+		}
+	}
+
+	switch (index) {
+	case 0:
+		m_selectedOption = 'S';
+		break;
+	case 1:
+		m_selectedOption = 'I';
+		break;
+	case 2:
+		m_selectedOption = 'E';
+		break;
+	}
+
+	return m_selectedOption;
+}
+
+bool StartScene::GetStatus()
+{
+	return m_sceneDone;
+}
+
 bool StartScene::IsColliding(const Box& box, Button* button)
 {
 	if (!button) return false;
@@ -248,6 +285,8 @@ bool StartScene::CheckMousePos(InputSystem* inputSystem)
 						if (mouseClicked) {
 							button->Pressed();
 							arrow->Pressed();
+							m_selectedButton = button->Position();
+							m_sceneDone = true;
 						}
 					}
 				}

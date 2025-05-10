@@ -5,6 +5,7 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\button.cpp;C:\Users\a
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\center.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\center.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\corner.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\corner.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\DDLevelLoad.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\DDLevelLoad.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\difficultymenustate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\difficultymenustate.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\difficultyscene.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\difficultyscene.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\edge.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\edge.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\edgeCorner.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\edgeCorner.obj
@@ -12,6 +13,7 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\enemy.cpp;C:\Users\ab
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\enemyspawner.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\enemyspawner.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\game.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\game.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\gameobjectpool.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\gameobjectpool.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\gamestatemanager.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\gamestatemanager.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\HUDParser.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\HUDParser.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\imgui.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui_demo.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\imgui_demo.obj
@@ -40,7 +42,10 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\scenesplashfmod.cpp;C
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\selectionarrow.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\selectionarrow.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\shader.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\shader.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\soundsystem.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\soundsystem.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\splashautstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\splashautstate.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\splashfmodstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\splashfmodstate.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Sprite.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\Sprite.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\startmenustate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\startmenustate.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\startscene.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\startscene.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\textrenderer.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\textrenderer.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Texture.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\Texture.obj

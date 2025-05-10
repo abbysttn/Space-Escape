@@ -29,8 +29,8 @@ public:
 protected:
 	Sprite* m_pFMOD;
 	float m_alpha;
-	bool increase = true;
-	bool done = false;
+	bool m_increase = true;
+	bool m_done = false;
 
 private:
 };

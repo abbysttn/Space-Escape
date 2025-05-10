@@ -3,12 +3,16 @@
 
 #include "gamestate.h"
 
-class SceneSplashFMOD;
+class SceneSplashAUT;
 
 class SplashAUTState : public GameState {
 public:
+	SplashAUTState();
+
 	void Enter() override;
-	void Update() override;
+	void Update(float deltatime) override;
+	void Draw() override;
+	void DebugDraw() override;
 	void Exit() override;
 
 	GameStates GetNextState() const override;
@@ -16,11 +20,13 @@ public:
 protected:
 
 private:
+	SplashAUTState(const SplashAUTState& splashAUTState);
+	SplashAUTState& operator=(const SplashAUTState& splashAUTState);
 
 public:
 
 protected:
-	SceneSplashFMOD* m_scene;
+	SceneSplashAUT* m_scene;
 	GameStates m_nextState;
 
 private:

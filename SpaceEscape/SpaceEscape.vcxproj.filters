@@ -198,6 +198,15 @@
     <ClInclude Include="gamestatemanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="splashfmodstate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="startmenustate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="difficultymenustate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp">
@@ -366,6 +375,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gamestatemanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="splashfmodstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="startmenustate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="difficultymenustate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -29,18 +29,13 @@ void Game::DestroyInstance() {
     sm_pInstance = 0;
 }
 
-Game::Game() : m_pRenderer(0), m_bLooping(true), m_soundSystem(0) {
+Game::Game() : m_pRenderer(0), m_bLooping(true), m_soundSystem(0), m_pInputSystem(nullptr) {
     SoundSystem::getInstance().initialise();
 }
 
 Game::~Game() {
     delete m_pRenderer;
     m_pRenderer = 0;
-
-    for (Scene* scene : m_scenes) {
-        delete scene;
-        scene = 0;
-    }
 
     SoundSystem::getInstance().close();
 }
@@ -68,7 +63,7 @@ bool Game::Initialise() {
     m_pInputSystem = new InputSystem();
     m_pInputSystem->Initialise();
 
-    m_stateManager = GameStateManager(*m_pRenderer);
+    m_stateManager = new GameStateManager(*m_pRenderer, *m_pInputSystem);
 
 
 
@@ -119,10 +114,9 @@ void Game::Process(float deltaTime)
 }
 #endif // !DEBUG
     m_soundSystem->getInstance().playSound("background", 0.1f);
-    m_scenes[m_iCurrentScene]->Process(deltaTime, *m_pInputSystem);
     
-    
-    // TODO: Add game objects to process here!
+    m_stateManager->Update(deltaTime);
+    m_bLooping = m_stateManager->GetGameStatus();
 
     SoundSystem::getInstance().update();
 }
@@ -131,10 +125,7 @@ void Game::Draw(Renderer& renderer)
 {
     ++m_iFrameCount;
     renderer.Clear();
-    // TODO: Add game objects to draw here!
-    m_scenes[m_iCurrentScene]->Draw(renderer);
-    
-    
+    m_stateManager->Draw();
     DebugDraw();
 
     renderer.Present();
@@ -179,9 +170,9 @@ void Game::DebugDraw
             m_pRenderer->DebugDraw();
         }
 
-        ImGui::SliderInt("Active scene", &m_iCurrentScene, 0, m_scenes.size() - 1, "%d");
+        //ImGui::SliderInt("Active scene", &m_iCurrentScene, 0, m_scenes.size() - 1, "%d");
 
-        m_scenes[m_iCurrentScene]->DebugDraw();
+        m_stateManager->DebugDraw();
 
         if (ImGui::Button("Pause simulation"))
         {

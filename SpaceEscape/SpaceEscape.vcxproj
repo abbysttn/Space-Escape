@@ -148,6 +148,7 @@
     <ClInclude Include="center.h" />
     <ClInclude Include="corner.h" />
     <ClInclude Include="DDLevelLoad.h" />
+    <ClInclude Include="difficultymenustate.h" />
     <ClInclude Include="difficultyscene.h" />
     <ClInclude Include="edge.h" />
     <ClInclude Include="edgeCorner.h" />
@@ -189,7 +190,9 @@
     <ClInclude Include="shader.h" />
     <ClInclude Include="soundsystem.h" />
     <ClInclude Include="splashautstate.h" />
+    <ClInclude Include="splashfmodstate.h" />
     <ClInclude Include="sprite.h" />
+    <ClInclude Include="startmenustate.h" />
     <ClInclude Include="startscene.h" />
     <ClInclude Include="textrenderer.h" />
     <ClInclude Include="Texture.h" />
@@ -210,6 +213,7 @@
     <ClCompile Include="center.cpp" />
     <ClCompile Include="corner.cpp" />
     <ClCompile Include="DDLevelLoad.cpp" />
+    <ClCompile Include="difficultymenustate.cpp" />
     <ClCompile Include="difficultyscene.cpp" />
     <ClCompile Include="edge.cpp" />
     <ClCompile Include="edgeCorner.cpp" />
@@ -247,7 +251,9 @@
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="soundsystem.cpp" />
     <ClCompile Include="splashautstate.cpp" />
+    <ClCompile Include="splashfmodstate.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="startmenustate.cpp" />
     <ClCompile Include="startscene.cpp" />
     <ClCompile Include="textrenderer.cpp" />
     <ClCompile Include="Texture.cpp" />

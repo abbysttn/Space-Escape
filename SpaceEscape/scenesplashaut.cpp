@@ -32,18 +32,18 @@ bool SceneSplashAUT::Initialise(Renderer& renderer)
 
 void SceneSplashAUT::Process(float deltaTime, InputSystem& inputSystem)
 {
-	if (increase) {
+	if (m_increase) {
 		m_alpha += 0.3f * deltaTime;
 		if (m_alpha >= 1.0f) {
 			m_alpha = 1.0f;
-			increase = false;
+			m_increase = false;
 		}
 	}
 	else {
 		m_alpha -= 0.3f * deltaTime;
 		if (m_alpha <= 0.0f) {
 			m_alpha = 0.0f;
-			done = true;
+			m_done = true;
 		}
 	}
 
@@ -64,5 +64,5 @@ void SceneSplashAUT::DebugDraw()
 
 bool SceneSplashAUT::getStatus()
 {
-	return done;
+	return m_done;
 }
