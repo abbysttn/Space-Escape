@@ -26,13 +26,16 @@ class Enemy;
 
 class Level : public Scene {
 public:
-	Level();
+	Level(string levelType, char levelDifficulty, int levelNumber, char gameDifficulty);
 	virtual ~Level();
 
 	virtual bool Initialise(Renderer& renderer);
 	virtual void Process(float deltaTime, InputSystem& inputSystem);
 	virtual void Draw(Renderer& renderer);
 	virtual void DebugDraw();
+
+	void GameOver();
+	void NextLevel();
 
 protected:
 	bool PlayerInitialised(Renderer& renderer);
@@ -58,8 +61,6 @@ protected:
 	bool DamageCollision(Enemy* enemy, const Box& collision);
 	void DoDamage();
 
-	void GameOver();
-
 private:
 	Level(const Level& level);
 	Level& operator=(const Level& level);
@@ -81,8 +82,6 @@ protected:
 	TileParser* m_tileParser;
 
 	int m_currentPlayer;
-	int m_levelNumber;
-	int m_layerNumber;
 	int m_currentWeapon;
 	char m_currentDirection = 'R';
 
@@ -100,9 +99,6 @@ protected:
 
 	SoundSystem* m_soundSystem;
 
-	string levelType;
-	string levelDifficulty;
-
 	float m_cooldownTime;
 	float m_currentCooldown;
 
@@ -112,8 +108,16 @@ protected:
 	int m_currentEnemies;
 
 	bool m_playerAlive;
-	bool m_pauseGame;
 	bool m_invulnerability;
+
+	string m_levelType;
+	char m_levelDifficulty;
+	int m_levelNumber;
+	char m_gameDifficulty;
+
+	bool m_levelDone;
+	bool m_gameOver;
+	
 
 private:
 };

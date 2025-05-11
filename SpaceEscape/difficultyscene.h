@@ -2,6 +2,7 @@
 #define _DIFFICULTYSCENE_H__
 
 #include "scene.h"
+#include "vector2.h"
 #include <memory>
 
 using namespace std;
@@ -24,6 +25,9 @@ public:
 	virtual void Draw(Renderer& renderer);
 	virtual void DebugDraw();
 
+	char GetSelection();
+	bool GetStatus();
+
 protected:
 	bool IsColliding(const Box& box, Button* button);
 	bool CheckMousePos(InputSystem* inputSystem);
@@ -41,6 +45,11 @@ protected:
 	Sprite* m_backgroundPlanet;
 
 	unique_ptr<QuadTree> m_collisionTree;
+
+	bool m_sceneDone;
+
+	Vector2 m_selectedButton;
+	char m_selectedOption;
 
 private:
 };

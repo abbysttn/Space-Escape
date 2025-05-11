@@ -207,6 +207,15 @@
     <ClInclude Include="difficultymenustate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="levelstate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="leveltransitionstate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="leveltransition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp">
@@ -384,6 +393,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="difficultymenustate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="levelstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="leveltransitionstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="leveltransition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

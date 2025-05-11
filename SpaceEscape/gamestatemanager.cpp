@@ -8,6 +8,8 @@
 #include "splashfmodstate.h"
 #include "startmenustate.h"
 #include "difficultymenustate.h"
+#include "levelstate.h"
+#include "leveltransitionstate.h"
 
 GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem) : m_renderer(renderer), m_inputSystem(inputSystem)
 , m_currentState(nullptr), m_gameLooping(true)
@@ -16,6 +18,8 @@ GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem)
 	m_states[GameStates::DIFFICULTY_MENU] = std::make_unique<DifficultyMenuState>();
 	m_states[GameStates::SPLASH_AUT] = std::make_unique<SplashAUTState>();
 	m_states[GameStates::START_MENU] = std::make_unique<StartMenuState>();
+	m_states[GameStates::GAMEPLAY] = std::make_unique<LevelState>();
+	m_states[GameStates::TRANSITION] = std::make_unique<LevelTransitionState>();
 
 	ChangeState(GameStates::SPLASH_AUT);
 }
@@ -23,6 +27,9 @@ GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem)
 void GameStateManager::ChangeState(GameStates newState)
 {
 	if (m_currentState) {
+		if (dynamic_cast<DifficultyMenuState*>(m_currentState)) {
+			m_currentDifficulty = m_currentState->GetGameDifficulty();
+		}
 		m_currentState->Exit();
 	}
 
@@ -32,6 +39,11 @@ void GameStateManager::ChangeState(GameStates newState)
 		m_currentState = state->second.get();
 		m_currentState->SetRenderer(&m_renderer);
 		m_currentState->SetInputSystem(&m_inputSystem);
+
+		if (newState == GameStates::GAMEPLAY) {
+			m_currentState->SetDifficulty(m_currentDifficulty);
+		}
+
 		m_currentState->Enter();
 	}
 }

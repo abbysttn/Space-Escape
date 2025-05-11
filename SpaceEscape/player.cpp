@@ -187,6 +187,11 @@ void Player::SetDamageTaken(bool taken)
     m_canTakeDamage = taken;
 }
 
+void Player::SetPlayerScale(float scale)
+{
+    m_sprite->SetScale(scale);
+}
+
 void Player::UpdatePushBack(float deltaTime)
 {
     if (m_isPushed && m_canTakeDamage) {

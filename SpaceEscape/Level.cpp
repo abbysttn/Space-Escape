@@ -22,9 +22,10 @@
 #include "enemy.h"
 #include "enemyspawner.h"
 
-Level::Level() : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
-m_waterPool(nullptr), m_tileSize(48.0f), m_levelNumber(1), m_layerNumber(0), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
-m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_pauseGame(false), m_invulnerability(false) {}
+Level::Level(string levelType, char levelDifficulty, int levelNumber, char gameDifficulty) : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
+m_waterPool(nullptr), m_tileSize(48.0f), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
+m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_gameOver(false), m_levelDone(false), m_invulnerability(false), m_levelType(levelType), m_levelDifficulty(levelDifficulty),
+m_levelNumber(levelNumber), m_gameDifficulty(gameDifficulty) {}
 
 Level::~Level()
 {
@@ -41,9 +42,6 @@ Level::~Level()
 
 bool Level::Initialise(Renderer& renderer)
 {
-	levelType = "summer";
-	levelDifficulty = "easy";
-
 	m_cooldownTime = 0.2f;
 	m_currentCooldown = 0.0f;
 	m_enemySpawnTimer = 0.0f;
@@ -52,7 +50,7 @@ bool Level::Initialise(Renderer& renderer)
 	m_currentEnemies = 0;
 
 	m_hudParser = new HUDParser();
-	m_tileParser = new TileParser(levelType, 1);
+	m_tileParser = new TileParser(m_levelType, m_levelNumber);
 
 	m_playerPool = new GameObjectPool(Player(), 4);
 	m_weaponPool = new GameObjectPool(Weapon(), 6);
@@ -99,10 +97,6 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 {
 	m_boundaryCollisionTree->clear();
 	m_enemyCollisionTree->clear();
-
-	if (m_pauseGame) {
-		deltaTime = 0.0f;
-	}
 
 	//timers
 
@@ -588,11 +582,28 @@ bool Level::EnemiesInitialised(Renderer& renderer)
 		if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
 			Enemy* enemy = static_cast<Enemy*>(obj);
 
-			string filepath = "..\\assets\\alien_" + levelDifficulty + ".png";
+			string enemyPath;
+
+			switch (m_levelDifficulty) {
+			case 'E':
+				enemyPath = "easy";
+				break;
+			case 'M':
+				enemyPath = "medium";
+				break;
+			case 'H':
+				enemyPath = "hard";
+				break;
+			default:
+				enemyPath = "easy";
+				break;
+			}
+
+			string filepath = "..\\assets\\alien_" + enemyPath + ".png";
 
 			enemy->Initialise(renderer, filepath.c_str());
 			enemy->SetActive(false);
-			enemy->SetAttackDamage('M', 'H');
+			enemy->SetAttackDamage(m_levelDifficulty, m_gameDifficulty);
 		}
 	}
 
@@ -955,8 +966,6 @@ void Level::DoDamage()
 
 void Level::GameOver()
 {
-	m_pauseGame = true;
-
 	for (size_t i = 0; i < m_playerPool->totalCount(); i++) {
 		if (GameObject* obj = m_playerPool->getObjectAtIndex(i)) {
 			if (obj && dynamic_cast<Player*>(obj)) {
@@ -974,5 +983,13 @@ void Level::GameOver()
 			}
 		}
 	}
+
+	m_gameOver = true;
+}
+
+void Level::NextLevel()
+{
+	// if rift vial collected and used
+	m_levelDone = true;
 }
 

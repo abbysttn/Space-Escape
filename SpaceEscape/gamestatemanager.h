@@ -7,6 +7,7 @@
 class Renderer;
 class InputSystem;
 enum GameStates;
+enum GameDifficulty;
 class GameState;
 
 class GameStateManager {
@@ -31,6 +32,7 @@ public:
 protected:
 	std::unordered_map<GameStates, std::unique_ptr<GameState>> m_states;
 	GameState* m_currentState;
+	GameDifficulty m_currentDifficulty;
 	Renderer& m_renderer;
 	InputSystem& m_inputSystem;
 

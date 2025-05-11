@@ -46,6 +46,8 @@ public:
 
 	void SetDamageTaken(bool taken);
 
+	void SetPlayerScale(float scale);
+
 	
 protected:
 	void UpdatePushBack(float deltaTime);

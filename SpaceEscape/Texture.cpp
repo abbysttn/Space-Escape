@@ -23,11 +23,16 @@ Texture::~Texture()
 
 bool Texture::Initialise(const char* pcFilename)
 {
-	
-
 	SDL_Surface* pSurface = IMG_Load(pcFilename);
 	if (pSurface)
 	{
+		//fixes the issue of the images not rendering properly after text is renderered.
+
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+		//essentially resets this line: glPixelStorei(GL_UNPACK_ROW_LENGTH, pSurface->pitch / pSurface->format->BytesPerPixel);
+
 		m_iWidth = pSurface->w;
 		m_iHeight = pSurface->h;
 		int bytesPerPixel = pSurface->format->BytesPerPixel;

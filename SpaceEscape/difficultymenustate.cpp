@@ -17,23 +17,27 @@ void DifficultyMenuState::Update(float deltatime)
 {
 	if (m_scene && m_inputSystem) {
 		m_scene->Process(deltatime, *m_inputSystem);
-		/*if (m_scene->GetStatus()) {
+		if (m_scene->GetStatus()) {
 			char selection = m_scene->GetSelection();
 
-			switch (selection) {
-			case 'S':
-				break;
-
-			case 'I':
-				break;
-
-			case 'E':
-				m_gameLooping = false;
-				break;
-			}*/
-
-			//m_nextState = GameStates::NONE;
-		//}
+            switch (selection) {
+            case 'E':
+                m_nextState = GameStates::GAMEPLAY;
+                m_gameDifficulty = GameDifficulty::EASY;
+                break;
+            case 'N':
+                m_nextState = GameStates::GAMEPLAY;
+                m_gameDifficulty = GameDifficulty::NORMAL;
+                break;
+            case 'H':
+                m_nextState = GameStates::GAMEPLAY;
+                m_gameDifficulty = GameDifficulty::HARD;
+                break;
+            default:
+                m_nextState = GameStates::NONE;
+                break;
+            }
+		}
 	}
 }
 

@@ -173,6 +173,9 @@
     <ClInclude Include="inlinehelpers.h" />
     <ClInclude Include="inputsystem.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="levelstate.h" />
+    <ClInclude Include="leveltransition.h" />
+    <ClInclude Include="leveltransitionstate.h" />
     <ClInclude Include="life.h" />
     <ClInclude Include="logmanager.h" />
     <ClInclude Include="matrix4.h" />
@@ -233,6 +236,9 @@
     <ClCompile Include="iniparser.cpp" />
     <ClCompile Include="inputsystem.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="levelstate.cpp" />
+    <ClCompile Include="leveltransition.cpp" />
+    <ClCompile Include="leveltransitionstate.cpp" />
     <ClCompile Include="life.cpp" />
     <ClCompile Include="logmanager.cpp" />
     <ClCompile Include="main.cpp" />

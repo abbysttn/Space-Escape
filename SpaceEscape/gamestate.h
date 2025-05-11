@@ -15,8 +15,15 @@ enum GameStates {
 	DIFFICULTY_MENU,
 	INSTRUCTIONS,
 	GAMEPLAY,
+	TRANSITION,
 	PAUSED,
 	GAME_OVER
+};
+
+enum GameDifficulty {
+	EASY,
+	NORMAL,
+	HARD
 };
 
 class GameState {
@@ -31,6 +38,8 @@ public:
 
 	virtual void SetRenderer(Renderer* renderer) { m_renderer = renderer; }
 	virtual void SetInputSystem(InputSystem* inputSystem) { m_inputSystem = inputSystem; }
+	void SetDifficulty(GameDifficulty difficulty) { m_gameDifficulty = difficulty; }
+	virtual GameDifficulty GetGameDifficulty() { return m_gameDifficulty; }
 	virtual GameStates GetNextState() const = 0;
 
 	bool GetGameStatus() { return m_gameLooping; }
@@ -48,6 +57,7 @@ protected:
 	InputSystem* m_inputSystem;
 
 	bool m_gameLooping;
+	GameDifficulty m_gameDifficulty;
 
 private:
 };

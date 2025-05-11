@@ -25,6 +25,9 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui_widgets.c
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\iniparser.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\iniparser.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\inputsystem.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\inputsystem.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\Level.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\levelstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\levelstate.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\leveltransition.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\leveltransition.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\leveltransitionstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\leveltransitionstate.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\life.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\life.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\logmanager.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\logmanager.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\main.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\main.obj
