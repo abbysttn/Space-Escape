@@ -17,8 +17,10 @@ void LevelState::Update(float deltatime)
 {
 	if (m_scene && m_inputSystem) {
 		m_scene->Process(deltatime, *m_inputSystem);
-		if ()
-		m_nextState = GameStates::NONE;
+		if (m_scene->GameStatus()) {
+			m_levelNumber++;
+			m_nextState = GameStates::TRANSITION;
+		}
 	}
 }
 
@@ -37,6 +39,7 @@ void LevelState::Exit()
 {
 	delete m_scene;
 	m_scene = 0;
+	m_nextState = GameStates::NONE;
 }
 
 GameStates LevelState::GetNextState() const

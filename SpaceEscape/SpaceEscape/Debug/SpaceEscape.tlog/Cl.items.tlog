@@ -24,6 +24,7 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui_tables.cp
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui_widgets.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\imgui_widgets.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\iniparser.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\iniparser.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\inputsystem.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\inputsystem.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\itemmanager.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\itemmanager.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\Level.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\levelstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\levelstate.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\leveltransition.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\leveltransition.obj
@@ -39,11 +40,13 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\playerstate.cpp;C:\Us
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\prop.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\prop.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\quadtree.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\quadtree.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Renderer.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\Renderer.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\riftvial.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\riftvial.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\scene.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\scene.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\scenesplashaut.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\scenesplashaut.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\scenesplashfmod.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\scenesplashfmod.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\selectionarrow.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\selectionarrow.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\shader.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\shader.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\shippart.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\shippart.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\soundsystem.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\soundsystem.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\splashautstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\splashautstate.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\splashfmodstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\splashfmodstate.obj

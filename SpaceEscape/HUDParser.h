@@ -8,6 +8,7 @@ class Scene;
 class Renderer;
 class DDLevelLoad;
 class GameObjectPool;
+//class ItemManager;
 
 class HUDParser : public Scene {
 public:
@@ -37,14 +38,17 @@ private:
 	GameObjectPool* m_HUDTiles;
 	GameObjectPool* m_playerLivesPool;
 	GameObjectPool* m_playerHealthPool;
+	//GameObjectPool* m_itemDisplayPool;
 
 	GameObjectPool* m_weaponPool;
 
 	DDLevelLoad* m_levelParser;
 
+	//Vector2 m_itemsStartPos;
 	Vector2 m_livesStartPos;
 	Vector2 m_weaponPos;
 	float weaponOffset;
+	//float itemOffset;
 
 	float screenOffsetX;
 	float screenOffsetXR;

@@ -21,11 +21,12 @@
 #include "bullet.h"
 #include "enemy.h"
 #include "enemyspawner.h"
+#include "riftvial.h"
 
 Level::Level(string levelType, char levelDifficulty, int levelNumber, char gameDifficulty) : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
 m_waterPool(nullptr), m_tileSize(48.0f), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
 m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_gameOver(false), m_levelDone(false), m_invulnerability(false), m_levelType(levelType), m_levelDifficulty(levelDifficulty),
-m_levelNumber(levelNumber), m_gameDifficulty(gameDifficulty) {}
+m_levelNumber(levelNumber), m_gameDifficulty(gameDifficulty), m_riftVial(0) {}
 
 Level::~Level()
 {
@@ -37,6 +38,8 @@ Level::~Level()
 	delete m_spawnerPool;
 	delete m_enemyPool;
 
+	delete m_riftVial;
+
 	SoundSystem::getInstance().close();
 }
 
@@ -45,9 +48,11 @@ bool Level::Initialise(Renderer& renderer)
 	m_cooldownTime = 0.2f;
 	m_currentCooldown = 0.0f;
 	m_enemySpawnTimer = 0.0f;
-	m_enemySpawnTime = 8.0f;
-	m_maxEnemies = 20;
+	m_enemySpawnTime = 4.0f;
+	m_maxEnemies = 3;
 	m_currentEnemies = 0;
+
+	m_centerPos = { renderer.GetWidth() / 2.0f, renderer.GetHeight() / 2.0f };
 
 	m_hudParser = new HUDParser();
 	m_tileParser = new TileParser(m_levelType, m_levelNumber);
@@ -55,7 +60,10 @@ bool Level::Initialise(Renderer& renderer)
 	m_playerPool = new GameObjectPool(Player(), 4);
 	m_weaponPool = new GameObjectPool(Weapon(), 6);
 	m_bulletPool = new GameObjectPool(Bullet(), 20);
-	m_enemyPool = new GameObjectPool(Enemy(), 20);
+	m_enemyPool = new GameObjectPool(Enemy(), m_maxEnemies);
+
+	m_riftVial = new RiftVial();
+	m_riftVial->Initialise(renderer);
 
 	m_tileParser->Initialise(renderer);
 	m_hudParser->Initialise(renderer);
@@ -168,8 +176,6 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 
 				m_enemyCollisionTree->insert(enemy, enemyRange);
 
-				//enemy->GetUpdatedPosition(deltaTime, m_playerPrevPosition);
-
 				bool colliding = EnemyColliding(enemy);
 				if (!colliding) {
 					enemy->Process(deltaTime, m_playerPrevPosition);
@@ -192,6 +198,12 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 	}
 
 	DoDamage();
+
+	if (AllEnemiesDefeated()) {
+		m_riftVial->Drop(m_centerPos);
+	}
+
+	m_riftVial->Process(deltaTime);
 
 	m_hudParser->Process(deltaTime, inputSystem);
 }
@@ -231,6 +243,10 @@ void Level::Draw(Renderer& renderer)
 				bullet->Draw(renderer);
 			}
 		}
+	}
+
+	if (AllEnemiesDefeated()) {
+		m_riftVial->Draw(renderer);
 	}
 
 	m_hudParser->Draw(renderer);
@@ -469,6 +485,19 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			Player* player = static_cast<Player*>(obj);
 			player->SetRunning();
 			player->Position() = m_playerPosition;
+
+			if (AllEnemiesDefeated()) {
+				float dx = player->Position().x - m_centerPos.x;
+				float dy = player->Position().y - m_centerPos.y;
+
+				float distSqrd = dx * dx + dy * dy;
+				float maxDistance = 30.0f;
+
+				if (distSqrd <= (maxDistance * maxDistance)) {
+					m_riftVial->SetCollected(true);
+					NextLevel();
+				}
+			}
 		}
 	}
 }
@@ -964,6 +993,24 @@ void Level::DoDamage()
 	}
 }
 
+bool Level::AllEnemiesDefeated()
+{
+	if (m_maxEnemies != m_currentEnemies) return false;
+
+	for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
+		if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<Enemy*>(obj)) {
+				Enemy* enemy = static_cast<Enemy*>(obj);
+				if (enemy->isActive()) {
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 void Level::GameOver()
 {
 	for (size_t i = 0; i < m_playerPool->totalCount(); i++) {
@@ -989,7 +1036,11 @@ void Level::GameOver()
 
 void Level::NextLevel()
 {
-	// if rift vial collected and used
 	m_levelDone = true;
+}
+
+bool Level::GameStatus()
+{
+	return m_levelDone;
 }
 

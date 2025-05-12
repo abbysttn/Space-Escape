@@ -42,10 +42,9 @@ public:
 	void SetEnemyType(char type);
 
 	float GetDamageDealt();
-
-
-	//temp
 	void SetAttackDamage(char type, char difficulty);
+
+	void SetEnemyDrop(bool drop);
 
 protected:
 	void UpdatePushBack(float deltaTime);
@@ -79,6 +78,8 @@ protected:
 	char m_enemyType;
 	float m_attackDamage;
 	char m_gameDifficulty;
+
+	bool m_dropsParts;
 
 private:
 };

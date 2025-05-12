@@ -36,6 +36,7 @@ void LevelTransitionState::Exit()
 {
 	delete m_scene;
 	m_scene = 0;
+	m_nextState = GameStates::NONE;
 }
 
 GameStates LevelTransitionState::GetNextState() const

@@ -11,7 +11,7 @@
 #include "center.h"
 #include "edgeCorner.h"
 #include "water.h"
-#include "bridge.h"
+//#include "bridge.h"
 
 #include "prop.h"
 #include "enemyspawner.h"
@@ -46,11 +46,11 @@ bool TileParser::Initialise(Renderer& renderer)
 	m_centerPool = new GameObjectPool(Center(), 100);
 	m_edgeCornerPool = new GameObjectPool(EdgeCorner(), 100);
 	m_waterPool = new GameObjectPool(Water(), 100);
-	m_bridgePool = new GameObjectPool(Bridge(), 100);
+	//m_bridgePool = new GameObjectPool(Bridge(), 100);
 	m_propPool = new GameObjectPool(Prop(), 100);
 	m_spawnerPool = new GameObjectPool(EnemySpawner(), 3);
 
-	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_bridgePool || !m_propPool || !m_spawnerPool) {
+	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_propPool || !m_spawnerPool) {
 		return false;
 	}
 
@@ -64,7 +64,7 @@ bool TileParser::Initialise(Renderer& renderer)
 
 void TileParser::Process(float deltaTime, InputSystem& inputSystem)
 {
-	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_bridgePool || !m_propPool || !m_spawnerPool) {
+	if (!m_cornerPool || !m_edgePool || !m_centerPool || !m_edgeCornerPool || !m_waterPool || !m_propPool || !m_spawnerPool) {
 		return;
 	}
 
@@ -104,14 +104,14 @@ void TileParser::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
-	for (size_t i = 0; i < m_bridgePool->totalCount(); i++) {
+	/*for (size_t i = 0; i < m_bridgePool->totalCount(); i++) {
 		if (GameObject* obj = m_bridgePool->getObjectAtIndex(i)) {
 			if (obj && dynamic_cast<Bridge*>(obj)) {
 				Bridge* bridge = static_cast<Bridge*>(obj);
 				bridge->Process(deltaTime);
 			}
 		}
-	}
+	}*/
 
 	for (size_t i = 0; i < m_waterPool->totalCount(); i++) {
 		if (GameObject* obj = m_waterPool->getObjectAtIndex(i)) {
@@ -197,14 +197,14 @@ void TileParser::Draw(Renderer& renderer)
 		}
 	}
 
-	for (size_t i = 0; i < m_bridgePool->totalCount(); i++) {
+	/*for (size_t i = 0; i < m_bridgePool->totalCount(); i++) {
 		if (GameObject* obj = m_bridgePool->getObjectAtIndex(i)) {
 			if (obj && obj->isActive()) {
 				Bridge* bridge = static_cast<Bridge*>(obj);
 				bridge->Draw(renderer);
 			}
 		}
-	}
+	}*/
 
 	for (size_t i = 0; i < m_propPool->totalCount(); i++) {
 		if (GameObject* obj = m_propPool->getObjectAtIndex(i)) {
@@ -246,7 +246,7 @@ GameObjectPool* TileParser::GetSpawnerPool()
 
 bool TileParser::FileParsed(Renderer& renderer)
 {
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 2; i++) {
 		string levelPath = "..\\assets\\level" + to_string(levelNum);
 
 		string levelPathLayer = levelPath + "_" + to_string(i) + ".txt";
@@ -431,39 +431,6 @@ bool TileParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t
 			}
 		}
 
-		return true;
-
-	case 'Z':
-	case 'Y':
-	case 'X':
-		if (GameObject* obj = m_bridgePool->getObject()) {
-			Bridge* bridge = dynamic_cast<Bridge*>(obj);
-			string bridgeType;
-
-			switch (tileType) {
-			case 'Z':
-				bridgeType = "left";
-				break;
-			case 'Y':
-				bridgeType = "middle";
-				break;
-			case 'X':
-				bridgeType = "right";
-				break;
-			}
-
-			if (bridge) {
-				string filepath = "..\\assets\\bridge_" + bridgeType + ".png";
-
-				if (!bridge->initialise(renderer, filepath.c_str())) {
-					return false;
-				}
-
-				bridge->Position().x = (x * m_tileSize) + screenOffsetX;
-				bridge->Position().y = (y * m_tileSize) + screenOffsetY;
-				bridge->SetActive(true);
-			}
-		}
 		return true;
 
 	case '1':

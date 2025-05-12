@@ -24,6 +24,8 @@ class Player;
 class Water;
 class Enemy;
 
+class RiftVial;
+
 class Level : public Scene {
 public:
 	Level(string levelType, char levelDifficulty, int levelNumber, char gameDifficulty);
@@ -36,6 +38,8 @@ public:
 
 	void GameOver();
 	void NextLevel();
+
+	bool GameStatus();
 
 protected:
 	bool PlayerInitialised(Renderer& renderer);
@@ -60,6 +64,8 @@ protected:
 
 	bool DamageCollision(Enemy* enemy, const Box& collision);
 	void DoDamage();
+
+	bool AllEnemiesDefeated();
 
 private:
 	Level(const Level& level);
@@ -92,6 +98,7 @@ protected:
 
 	bool playerPositioned;
 
+	Vector2 m_centerPos;
 	Vector2 m_playerPosition;
 	Vector2 m_playerPrevPosition;
 
@@ -117,6 +124,8 @@ protected:
 
 	bool m_levelDone;
 	bool m_gameOver;
+
+	RiftVial* m_riftVial;
 	
 
 private:

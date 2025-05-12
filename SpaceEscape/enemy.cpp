@@ -315,3 +315,8 @@ void Enemy::SetAttackDamage(char type, char difficulty)
 
     m_attackDamage = damage * multiplier;
 }
+
+void Enemy::SetEnemyDrop(bool drop)
+{
+    m_dropsParts = drop;
+}

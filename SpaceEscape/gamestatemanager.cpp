@@ -21,7 +21,7 @@ GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem)
 	m_states[GameStates::GAMEPLAY] = std::make_unique<LevelState>();
 	m_states[GameStates::TRANSITION] = std::make_unique<LevelTransitionState>();
 
-	ChangeState(GameStates::SPLASH_AUT);
+	ChangeState(GameStates::GAMEPLAY);
 }
 
 void GameStateManager::ChangeState(GameStates newState)

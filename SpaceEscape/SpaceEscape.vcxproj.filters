@@ -216,6 +216,21 @@
     <ClInclude Include="leveltransition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="riftvial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shippart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="itemmanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="flyingcutscenestate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="flyingcutscene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp">
@@ -402,6 +417,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="leveltransition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="riftvial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="shippart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="itemmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="flyingcutscenestate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="flyingcutscene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

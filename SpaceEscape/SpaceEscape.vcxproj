@@ -154,6 +154,8 @@
     <ClInclude Include="edgeCorner.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="enemyspawner.h" />
+    <ClInclude Include="flyingcutscene.h" />
+    <ClInclude Include="flyingcutscenestate.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gamestate.h" />
     <ClInclude Include="gameobject.h" />
@@ -172,6 +174,7 @@
     <ClInclude Include="iniparser.h" />
     <ClInclude Include="inlinehelpers.h" />
     <ClInclude Include="inputsystem.h" />
+    <ClInclude Include="itemmanager.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="levelstate.h" />
     <ClInclude Include="leveltransition.h" />
@@ -186,11 +189,13 @@
     <ClInclude Include="prop.h" />
     <ClInclude Include="quadtree.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="riftvial.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="scenesplashaut.h" />
     <ClInclude Include="scenesplashfmod.h" />
     <ClInclude Include="selectionarrow.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="shippart.h" />
     <ClInclude Include="soundsystem.h" />
     <ClInclude Include="splashautstate.h" />
     <ClInclude Include="splashfmodstate.h" />
@@ -222,6 +227,8 @@
     <ClCompile Include="edgeCorner.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="enemyspawner.cpp" />
+    <ClCompile Include="flyingcutscene.cpp" />
+    <ClCompile Include="flyingcutscenestate.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameobjectpool.cpp" />
     <ClCompile Include="gamestatemanager.cpp" />
@@ -235,6 +242,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="iniparser.cpp" />
     <ClCompile Include="inputsystem.cpp" />
+    <ClCompile Include="itemmanager.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="levelstate.cpp" />
     <ClCompile Include="leveltransition.cpp" />
@@ -250,11 +258,13 @@
     <ClCompile Include="prop.cpp" />
     <ClCompile Include="quadtree.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="riftvial.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="scenesplashaut.cpp" />
     <ClCompile Include="scenesplashfmod.cpp" />
     <ClCompile Include="selectionarrow.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="shippart.cpp" />
     <ClCompile Include="soundsystem.cpp" />
     <ClCompile Include="splashautstate.cpp" />
     <ClCompile Include="splashfmodstate.cpp" />

@@ -1,5 +1,4 @@
 #include "playerstate.h"
-#include "logmanager.h"
 
 PlayerState* PlayerState::sm_pInstance = 0;
 
