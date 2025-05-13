@@ -8,12 +8,15 @@
 #include "life.h"
 
 #include "playerstate.h"
+#include "itemmanager.h"
+#include "hudshippart.h"
 
 #include "underlayTiles.h"
 
 #include <cassert>
 
-HUDParser::HUDParser() : m_HUDTiles(nullptr), m_levelParser(0), m_tileSize(48.0f), m_weaponPool(nullptr), m_playerLivesPool(nullptr), m_playerHealthPool(nullptr) {}
+HUDParser::HUDParser() : m_HUDTiles(nullptr), m_levelParser(0), m_tileSize(48.0f), m_weaponPool(nullptr), m_playerLivesPool(nullptr), m_playerHealthPool(nullptr), m_itemDisplayPool(nullptr),
+m_itemPool(nullptr) {}
 
 HUDParser::~HUDParser()
 {
@@ -22,11 +25,15 @@ HUDParser::~HUDParser()
 	delete m_weaponPool;
 	delete m_playerLivesPool;
 	delete m_playerHealthPool;
+	delete m_itemPool;
 }
 
 bool HUDParser::Initialise(Renderer& renderer)
 {
 	m_levelParser = new DDLevelLoad();
+
+	m_itemDisplayPool = ItemManager::GetInstance().GetPool();
+	m_itemPool = new GameObjectPool(HUDShipPart(), 7);
 
 	m_HUDTiles = new GameObjectPool(UnderlayTiles(), 100);
 	m_weaponPool = new GameObjectPool(Weapon(), 4);
@@ -53,6 +60,8 @@ bool HUDParser::Initialise(Renderer& renderer)
 		return false;
 	}
 
+	PositionItems();
+
 	return true;
 }
 
@@ -66,6 +75,31 @@ void HUDParser::Process(float deltaTime, InputSystem& inputSystem)
 			}
 		}
 	}
+
+	/*for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<HUDShipPart*>(obj)) {
+				HUDShipPart* HUDpart = static_cast<HUDShipPart*>(obj);
+				HUDpart->Process(deltaTime);
+				HUDpart->SetColour(0.0f, 0.0f, 0.0f);
+
+				bool collected = false;
+
+				if (GameObject* obj2 = m_itemDisplayPool->getObjectAtIndex(i)) {
+					if (obj2 && dynamic_cast<ShipPart*>(obj2)) {
+						ShipPart* part = static_cast<ShipPart*>(obj2);
+						if (ItemManager::GetInstance().IsCollected(part)) {
+							collected = true;
+						}
+					}
+				}
+
+				if (collected) {
+					HUDpart->SetColour(1.0f, 1.0f, 1.0f);
+				}
+			}
+		}
+	}*/
 
 	for (size_t i = 0; i < m_playerHealthPool->totalCount(); i++) {
 		if (GameObject* obj = m_playerHealthPool->getObjectAtIndex(i)) {
@@ -138,6 +172,15 @@ void HUDParser::Draw(Renderer& renderer)
 			}
 		}
 	}
+
+	/*for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+			if (obj && obj->isActive()) {
+				HUDShipPart* part = static_cast<HUDShipPart*>(obj);
+				part->Draw(renderer);
+			}
+		}
+	}*/
 
 	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
 		if (obj && obj->isActive()) {
@@ -263,6 +306,7 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 		}
 		return true;
 
+	case 'I':
 	case 'Z':
 	case 'Y':
 		if (GameObject* obj = m_HUDTiles->getObject()) {
@@ -280,6 +324,10 @@ bool HUDParser::InitObjects(Renderer& renderer, char tileType, size_t x, size_t 
 				if (tileType == 'Y') {
 					tile->Position().x = (x * m_tileSize) + screenOffsetXR;
 					m_weaponPos = tile->Position();
+				}
+				else if (tileType == 'I') {
+					tile->Position().x = (x * m_tileSize) + screenOffsetX;
+					m_itemsStartPos = tile->Position();
 				}
 				else {
 					tile->Position().x = (x * m_tileSize) + screenOffsetX;
@@ -609,4 +657,19 @@ bool HUDParser::LivesInitialised(Renderer& renderer)
 	}
 
 	return true;
+}
+
+void HUDParser::PositionItems()
+{
+	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+			HUDShipPart* part = static_cast<HUDShipPart*>(obj);
+			part->SetActive(true);
+
+			part->Position() = m_itemsStartPos;
+			part->Position().y += itemOffset;
+
+			itemOffset += part->GetSpriteWidth();
+		}
+	}
 }

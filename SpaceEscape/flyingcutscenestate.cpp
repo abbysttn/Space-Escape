@@ -16,7 +16,9 @@ void FlyingCutsceneState::Update(float deltatime)
 {
 	if (m_scene && m_inputSystem) {
 		m_scene->Process(deltatime, *m_inputSystem);
-		//getstatus
+		if (m_scene->GetStatus()) {
+			m_nextState = GameStates::START_MENU;
+		}
 	}
 }
 

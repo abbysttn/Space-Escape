@@ -162,6 +162,7 @@
     <ClInclude Include="gameobjectpool.h" />
     <ClInclude Include="gamestatemanager.h" />
     <ClInclude Include="HUDParser.h" />
+    <ClInclude Include="hudshippart.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
     <ClInclude Include="imgui\imgui_impl_opengl3.h" />
@@ -185,6 +186,7 @@
     <ClInclude Include="particle.h" />
     <ClInclude Include="particleemitter.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="playership.h" />
     <ClInclude Include="playerstate.h" />
     <ClInclude Include="prop.h" />
     <ClInclude Include="quadtree.h" />
@@ -233,6 +235,7 @@
     <ClCompile Include="gameobjectpool.cpp" />
     <ClCompile Include="gamestatemanager.cpp" />
     <ClCompile Include="HUDParser.cpp" />
+    <ClCompile Include="hudshippart.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />
@@ -254,6 +257,7 @@
     <ClCompile Include="particle.cpp" />
     <ClCompile Include="particleemitter.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="playership.cpp" />
     <ClCompile Include="playerstate.cpp" />
     <ClCompile Include="prop.cpp" />
     <ClCompile Include="quadtree.cpp" />

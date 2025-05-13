@@ -22,6 +22,7 @@
 #include "enemy.h"
 #include "enemyspawner.h"
 #include "riftvial.h"
+#include "itemmanager.h"
 
 Level::Level(string levelType, char levelDifficulty, int levelNumber, char gameDifficulty) : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
 m_waterPool(nullptr), m_tileSize(48.0f), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
@@ -52,10 +53,16 @@ bool Level::Initialise(Renderer& renderer)
 	m_maxEnemies = 3;
 	m_currentEnemies = 0;
 
+	ItemManager::GetInstance().CreatePool(renderer);
+	m_itemPool = ItemManager::GetInstance().GetPool();
+
 	m_centerPos = { renderer.GetWidth() / 2.0f, renderer.GetHeight() / 2.0f };
 
+	//add more levels, might need to put in gamemanager
+	int randomLevel = GetRandom(1, 4);
+
 	m_hudParser = new HUDParser();
-	m_tileParser = new TileParser(m_levelType, m_levelNumber);
+	m_tileParser = new TileParser(m_levelType, 2);
 
 	m_playerPool = new GameObjectPool(Player(), 4);
 	m_weaponPool = new GameObjectPool(Weapon(), 6);
@@ -205,6 +212,15 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 
 	m_riftVial->Process(deltaTime);
 
+	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<ShipPart*>(obj)) {
+				ShipPart* part = static_cast<ShipPart*>(obj);
+				if (part->isActive()) part->Process(deltaTime);
+			}
+		}
+	}
+
 	m_hudParser->Process(deltaTime, inputSystem);
 }
 
@@ -247,6 +263,15 @@ void Level::Draw(Renderer& renderer)
 
 	if (AllEnemiesDefeated()) {
 		m_riftVial->Draw(renderer);
+	}
+
+	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+			if (obj && obj->isActive()) {
+				ShipPart* part = static_cast<ShipPart*>(obj);
+				if (part->isActive()) part->Draw(renderer);
+			}
+		}
 	}
 
 	m_hudParser->Draw(renderer);
@@ -487,15 +512,24 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			player->Position() = m_playerPosition;
 
 			if (AllEnemiesDefeated()) {
-				float dx = player->Position().x - m_centerPos.x;
-				float dy = player->Position().y - m_centerPos.y;
-
-				float distSqrd = dx * dx + dy * dy;
-				float maxDistance = 30.0f;
-
-				if (distSqrd <= (maxDistance * maxDistance)) {
+				if (CollectItem(player, m_centerPos)) {
 					m_riftVial->SetCollected(true);
 					NextLevel();
+				}
+			}
+
+			for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+				if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+					if (obj && dynamic_cast<ShipPart*>(obj)) {
+						ShipPart* part = static_cast<ShipPart*>(obj);
+						if (part->isActive() && !part->IsCollected() && CollectItem(player, part->Position())) {
+							ItemManager::GetInstance().MarkCollected(part);
+							part->SetActive(false);
+							if (ItemManager::GetInstance().IsCollected(part)) {
+								LogManager::GetInstance().Log("Collected!");
+							}
+						}
+					}
 				}
 			}
 		}
@@ -909,6 +943,17 @@ void Level::DoDamage()
 					if (isSwinging) {
 						enemy->ApplyPushBack(pushDirection);
 						enemy->AddDamage(weaponDamage);
+
+						if (!enemy->isActive()) {
+							if (m_itemPool->hasAvailableObjects()) {
+								if (GameObject* obj = m_itemPool->getObject()) {
+									ShipPart* part = static_cast<ShipPart*>(obj);
+									if (part) {
+										part->Drop(enemy->Position());
+									}
+								}
+							}
+						}
 					}
 					else {
 						Vector2 pushDirectionPlayer(player->Position().x - enemy->Position().x,
@@ -949,6 +994,17 @@ void Level::DoDamage()
 
 								enemy->ApplyPushBack(pushDirection);
 								enemy->AddDamage(weaponDamage);
+
+								if (!enemy->isActive()) {
+									if (m_itemPool->hasAvailableObjects()) {
+										if (GameObject* obj = m_itemPool->getObject()) {
+											ShipPart* part = static_cast<ShipPart*>(obj);
+											if (part) {
+												part->Drop(enemy->Position());
+											}
+										}
+									}
+								}
 
 								m_bulletPool->release(bullet);
 								break;
@@ -1009,6 +1065,21 @@ bool Level::AllEnemiesDefeated()
 	}
 
 	return true;
+}
+
+bool Level::CollectItem(Player* player, Vector2 position)
+{
+	float dx = player->Position().x - position.x;
+	float dy = player->Position().y - position.y;
+
+	float distSqrd = dx * dx + dy * dy;
+	float maxDistance = 30.0f;
+
+	if (distSqrd <= (maxDistance * maxDistance)) {
+		return true;
+	}
+
+	return false;
 }
 
 void Level::GameOver()

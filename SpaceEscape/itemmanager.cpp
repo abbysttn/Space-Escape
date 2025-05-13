@@ -1,31 +1,44 @@
 #include "itemmanager.h"
 
-void ItemManager::RegisterItem(ShipPart* item)
-{
-	if (!item) return;
+#include "gameobjectpool.h"
+#include "shippart.h"
+#include "Renderer.h"
 
-	if (m_itemStates.find(item) == m_itemStates.end()) {
-		m_itemStates[item] = false;
-		m_allItems.push_back(item);
+#include "logmanager.h"
+
+void ItemManager::CreatePool(Renderer& renderer)
+{
+	m_itemStates.clear();
+
+	m_allItems = new GameObjectPool(ShipPart(), 7);
+
+	for (size_t i = 0; i < m_allItems->totalCount(); i++) {
+		if (GameObject* obj = m_allItems->getObjectAtIndex(i)) {
+			ShipPart* part = static_cast<ShipPart*>(obj);
+			if (!part->Initialise(renderer)) {
+				return;
+			}
+
+			if (m_itemStates.find(part) == m_itemStates.end()) {
+				m_itemStates.try_emplace(part, false);
+			}
+		}
 	}
 }
 
-void ItemManager::UnregisterItem(ShipPart* item)
+GameObjectPool* ItemManager::GetPool()
 {
-	if (!item) return;
-
-	m_itemStates.erase(item);
-
-	m_allItems.erase(remove(m_allItems.begin(), m_allItems.end(), item), m_allItems.end());
+	return m_allItems;
 }
 
 void ItemManager::MarkCollected(ShipPart* item)
 {
 	if (!item) return;
 
-	auto it = m_itemStates.find(item);
-	if (it != m_itemStates.end()) {
-		it->second = true;
+	auto part = m_itemStates.find(item);
+
+	if (part != m_itemStates.end()) {
+		part->second = true;
 		item->SetCollected(true);
 	}
 }
@@ -34,24 +47,27 @@ bool ItemManager::IsCollected(ShipPart* item) const
 {
 	if (!item) return false;
 
-	auto it = m_itemStates.find(item);
-	if (it != m_itemStates.end()) {
-		return it->second;
+	auto part = m_itemStates.find(item);
+
+	if (part != m_itemStates.end()) {
+		return part->second;
 	}
+
 	return false;
 }
 
 void ItemManager::ResetAllItems()
 {
-	for (auto& pair : m_itemStates) {
-		ShipPart* item = pair.first;
-		pair.second = false;
-		item->SetCollected(false);
-		item->SetActive(true);
+	for (size_t i = 0; i < m_allItems->totalCount(); i++) {
+		if (GameObject* obj = m_allItems->getObjectAtIndex(i)) {
+			ShipPart* part = static_cast<ShipPart*>(obj);
+			m_allItems->release(part);
+		}
 	}
+
+	delete m_allItems;
+	m_allItems = 0;
+
+	m_itemStates.clear();
 }
 
-const std::vector<ShipPart*> ItemManager::GetAllItems() const
-{
-	return m_allItems;
-}

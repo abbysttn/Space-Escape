@@ -2,29 +2,37 @@
 
 #include "Renderer.h"
 #include "inputsystem.h"
-#include "player.h"
-#include "sprite.h"
+#include "playership.h"
 
-FlyingCutscene::FlyingCutscene() : m_player(0), m_ship(0), m_sceneDone(false) {}
+FlyingCutscene::FlyingCutscene() : m_ship(0), m_sceneDone(false) {}
 
 FlyingCutscene::~FlyingCutscene()
 {
-	delete m_player;
 	delete m_ship;
-	m_ship = 0;
 }
 
 bool FlyingCutscene::Initialise(Renderer& renderer)
 {
-	return false;
+	m_ship = new PlayerShip();
+	m_ship->Initialise(renderer);
+	m_ship->SetActive(true);
+	m_ship->Position().y = 10.0f;
+
+	//add particles
+
+	return true;
 }
 
 void FlyingCutscene::Process(float deltaTime, InputSystem& inputSystem)
 {
+	m_ship->Fall(deltaTime);
+	m_ship->Process(deltaTime);
 }
 
 void FlyingCutscene::Draw(Renderer& renderer)
 {
+	renderer.SetClearColour(13, 16, 28);
+	m_ship->Draw(renderer);
 }
 
 void FlyingCutscene::DebugDraw()
@@ -33,5 +41,8 @@ void FlyingCutscene::DebugDraw()
 
 bool FlyingCutscene::GetStatus()
 {
-	return false;
+	if (m_ship->IsActive()) {
+		return false;
+	}
+	return true;
 }

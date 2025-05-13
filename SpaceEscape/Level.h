@@ -67,6 +67,8 @@ protected:
 
 	bool AllEnemiesDefeated();
 
+	bool CollectItem(Player* player, Vector2 position);
+
 private:
 	Level(const Level& level);
 	Level& operator=(const Level& level);
@@ -80,6 +82,7 @@ protected:
 	GameObjectPool* m_weaponPool;
 	GameObjectPool* m_spawnerPool;
 	GameObjectPool* m_enemyPool;
+	GameObjectPool* m_itemPool;
 
 	unique_ptr<QuadTree> m_boundaryCollisionTree;
 	unique_ptr<QuadTree> m_enemyCollisionTree;

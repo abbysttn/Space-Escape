@@ -5,6 +5,9 @@
 #include <vector>
 #include "shippart.h"
 
+class GameObjectPool;
+class Renderer;
+
 using namespace std;
 
 class ItemManager {
@@ -17,15 +20,13 @@ public:
 		return instance;
 	}
 
-	void RegisterItem(ShipPart* item);
-	void UnregisterItem(ShipPart* item);
+	void CreatePool(Renderer& renderer);
+	GameObjectPool* GetPool();
 
 	void MarkCollected(ShipPart* item);
 	bool IsCollected(ShipPart* item) const;
 
 	void ResetAllItems();
-
-	const std::vector<ShipPart*> GetAllItems() const;
 
 protected:
 
@@ -37,7 +38,7 @@ public:
 
 protected:
 	unordered_map<ShipPart*, bool> m_itemStates;
-	std::vector<ShipPart*> m_allItems;
+	GameObjectPool* m_allItems;
 
 private:
 };

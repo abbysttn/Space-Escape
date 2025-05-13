@@ -37,6 +37,7 @@ private:
 
 	vector<Pool> pool;
 	GameObject* m_prototype;
+	size_t m_initialSize;
 };
 
 #endif // !_GAMEOBJECTPOOL_H__

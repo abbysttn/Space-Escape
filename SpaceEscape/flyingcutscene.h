@@ -7,8 +7,7 @@ using namespace std;
 
 class Renderer;
 class InputSystem;
-class Player;
-class Sprite;
+class PlayerShip;
 
 class FlyingCutscene : public Scene {
 public:
@@ -31,8 +30,7 @@ private:
 public:
 
 protected:
-	Player* m_player;
-	Sprite* m_ship;
+	PlayerShip* m_ship;
 
 	bool m_sceneDone;
 

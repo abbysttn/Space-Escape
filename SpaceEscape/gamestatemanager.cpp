@@ -10,6 +10,7 @@
 #include "difficultymenustate.h"
 #include "levelstate.h"
 #include "leveltransitionstate.h"
+#include "flyingcutscenestate.h"
 
 GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem) : m_renderer(renderer), m_inputSystem(inputSystem)
 , m_currentState(nullptr), m_gameLooping(true)
@@ -20,6 +21,7 @@ GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem)
 	m_states[GameStates::START_MENU] = std::make_unique<StartMenuState>();
 	m_states[GameStates::GAMEPLAY] = std::make_unique<LevelState>();
 	m_states[GameStates::TRANSITION] = std::make_unique<LevelTransitionState>();
+	m_states[GameStates::FLYING_CUTSCENE] = std::make_unique<FlyingCutsceneState>();
 
 	ChangeState(GameStates::GAMEPLAY);
 }

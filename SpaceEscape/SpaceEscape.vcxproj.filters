@@ -231,6 +231,12 @@
     <ClInclude Include="flyingcutscene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="playership.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hudshippart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp">
@@ -432,6 +438,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="flyingcutscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="playership.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hudshippart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,27 +3,22 @@
 #include "Renderer.h"
 #include "sprite.h"
 
-#include "itemmanager.h"
-
 #include <cassert>
 #include <cstdlib>
 
-ShipPart::ShipPart() : m_sprite(0), m_collected(false) 
+ShipPart::ShipPart() : m_sprite(0), m_collected(false), m_gravity(500.0f), m_isDropping(false)
 {
-	ItemManager::GetInstance().RegisterItem(this);
 }
 
 ShipPart::~ShipPart()
 {
-	ItemManager::GetInstance().UnregisterItem(this);
-
 	delete m_sprite;
 	m_sprite = 0;
 }
 
 bool ShipPart::Initialise(Renderer& renderer)
 {
-	m_sprite = renderer.CreateSprite("");
+	m_sprite = renderer.CreateSprite("..\\assets\\pot.png");
 
 	m_sprite->SetScale(3.0);
 
@@ -34,7 +29,30 @@ bool ShipPart::Initialise(Renderer& renderer)
 
 void ShipPart::Process(float deltaTime)
 {
-	if (m_active) {
+	if (m_active && !m_collected) {
+
+		if (m_isDropping) {
+			m_velocity.y += m_gravity * deltaTime;
+
+			m_position += m_velocity * deltaTime;
+
+			float ground = m_startPos.y + 30.0f;
+
+			if (m_position.y >= ground && m_velocity.y > 0) {
+				if (bounces > 0) {
+					m_position.y = ground;
+					m_velocity.y = -m_velocity.y * 0.6f;
+					m_velocity.x *= 0.8f;
+					bounces--;
+				}
+				else {
+					m_position.y = ground;
+					m_velocity = { 0, 0 };
+					m_isDropping = false;
+				}
+			}
+		}
+
 		m_sprite->SetX(static_cast<int>(m_position.x));
 		m_sprite->SetY(static_cast<int>(m_position.y));
 	}
@@ -84,24 +102,34 @@ void ShipPart::SetRotation(float angle)
 
 void ShipPart::SetCollected(bool collected)
 {
-	if (collected) {
-		ItemManager::GetInstance().MarkCollected(this);
-	}
-
 	m_collected = collected;
 }
 
 bool ShipPart::IsCollected()
 {
-	return ItemManager::GetInstance().IsCollected(this);
+	return m_collected;
 }
 
 void ShipPart::Drop(Vector2 position)
 {
+	m_position = position;
+	m_startPos = position;
+	bounces = 2;
+	m_velocity = { 0, -100.0f };
+	m_isDropping = true;
+	m_active = true;
+	m_collected = false;
 }
 
 void ShipPart::Reset()
 {
 	m_active = false;
 	m_collected = false;
+}
+
+void ShipPart::SetColour(float red, float green, float blue)
+{
+	m_sprite->SetRedTint(red);
+	m_sprite->SetGreenTint(green);
+	m_sprite->SetBlueTint(blue);
 }

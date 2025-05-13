@@ -26,6 +26,7 @@ protected:
 	bool InitObjects(Renderer& renderer, char tileType, size_t x, size_t y);
 	bool WeaponsInitialised(Renderer& renderer);
 	bool LivesInitialised(Renderer& renderer);
+	void PositionItems();
 private:
 	HUDParser(const HUDParser& hudParser);
 	HUDParser& operator=(const HUDParser& hudParser);
@@ -38,17 +39,18 @@ private:
 	GameObjectPool* m_HUDTiles;
 	GameObjectPool* m_playerLivesPool;
 	GameObjectPool* m_playerHealthPool;
-	//GameObjectPool* m_itemDisplayPool;
+	GameObjectPool* m_itemPool;
+	GameObjectPool* m_itemDisplayPool;
 
 	GameObjectPool* m_weaponPool;
 
 	DDLevelLoad* m_levelParser;
 
-	//Vector2 m_itemsStartPos;
+	Vector2 m_itemsStartPos;
 	Vector2 m_livesStartPos;
 	Vector2 m_weaponPos;
 	float weaponOffset;
-	//float itemOffset;
+	float itemOffset = 0;
 
 	float screenOffsetX;
 	float screenOffsetXR;

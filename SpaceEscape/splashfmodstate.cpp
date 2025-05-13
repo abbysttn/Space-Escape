@@ -17,7 +17,7 @@ void SplashFMODState::Update(float deltatime)
 	if (m_scene && m_inputSystem) {
 		m_scene->Process(deltatime, *m_inputSystem);
 		if (m_scene->getStatus()) {
-			m_nextState = GameStates::START_MENU;
+			m_nextState = GameStates::FLYING_CUTSCENE;
 		}
 	}
 }

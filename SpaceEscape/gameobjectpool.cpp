@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 
-GameObjectPool::GameObjectPool(const GameObject& prototype, size_t initialSize) : m_prototype(prototype.Create())
+GameObjectPool::GameObjectPool(const GameObject& prototype, size_t initialSize) : m_prototype(prototype.Create()), m_initialSize(initialSize)
 {
 	pool.resize(initialSize);
 	for (auto& entry : pool) {
