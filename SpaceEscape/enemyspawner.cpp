@@ -45,7 +45,7 @@ Vector2& EnemySpawner::Position()
 	return m_position;
 }
 
-int EnemySpawner::GetSpriteWidth()
+int EnemySpawner::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

@@ -20,6 +20,8 @@ public:
 	void SetRotation(float angle);
 	void SetActive(bool active);
 
+	int GetSpriteWidth();
+
 	void Fly(float deltaTime);
 	void Fall(float deltaTime);
 

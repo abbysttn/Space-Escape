@@ -19,7 +19,7 @@ public:
 	void Draw(Renderer& renderer);
 	Vector2& Position();
 
-	int GetSpriteWidth();
+	int GetSpriteWidth() const override;
 	void SetColour(float red, float green, float blue);
 	GameObject* Create() const override;
 	bool isActive() const override;

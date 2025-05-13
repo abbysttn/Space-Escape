@@ -43,7 +43,7 @@ Vector2& Life::Position()
 	return m_position;
 }
 
-int Life::GetSpriteWidth()
+int Life::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

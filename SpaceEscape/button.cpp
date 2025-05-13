@@ -49,7 +49,7 @@ Vector2& Button::Position()
 	return m_position;
 }
 
-int Button::GetSpriteWidth()
+int Button::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

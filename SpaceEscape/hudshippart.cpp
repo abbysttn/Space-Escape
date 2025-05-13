@@ -44,7 +44,7 @@ Vector2& HUDShipPart::Position()
 	return m_position;
 }
 
-int HUDShipPart::GetSpriteWidth()
+int HUDShipPart::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

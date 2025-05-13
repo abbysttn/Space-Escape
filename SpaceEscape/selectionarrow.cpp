@@ -61,7 +61,7 @@ Vector2& SelectionArrow::Position()
 	return m_position;
 }
 
-int SelectionArrow::GetSpriteWidth()
+int SelectionArrow::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

@@ -20,7 +20,7 @@ bool TextRenderer::initialise(Renderer& renderer, const char* text, int pointSiz
 
 	if (!m_sprite) return false;
 
-
+	return true;
 }
 
 void TextRenderer::Process(float deltaTime)
@@ -40,7 +40,7 @@ Vector2& TextRenderer::Position()
 	return m_position;
 }
 
-int TextRenderer::GetSpriteWidth()
+int TextRenderer::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

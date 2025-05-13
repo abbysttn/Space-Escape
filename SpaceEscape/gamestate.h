@@ -42,6 +42,8 @@ public:
 	void SetDifficulty(GameDifficulty difficulty) { m_gameDifficulty = difficulty; }
 	virtual GameDifficulty GetGameDifficulty() { return m_gameDifficulty; }
 	virtual GameStates GetNextState() const = 0;
+	bool GetGameWon() { return m_wonGame; }
+	void SetGameWon(bool won) { m_wonGame = won; }
 
 	bool GetGameStatus() { return m_gameLooping; }
 
@@ -58,6 +60,7 @@ protected:
 	InputSystem* m_inputSystem;
 
 	bool m_gameLooping;
+	bool m_wonGame;
 	GameDifficulty m_gameDifficulty;
 
 private:

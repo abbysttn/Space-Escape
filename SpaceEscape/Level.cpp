@@ -11,6 +11,7 @@
 
 #include "imgui/imgui.h"
 #include "inlinehelpers.h"
+#include "collisionhelper.h"
 
 #include "HUDParser.h"
 #include "TileParser.h"
@@ -23,11 +24,12 @@
 #include "enemyspawner.h"
 #include "riftvial.h"
 #include "itemmanager.h"
+#include "bossenemy.h"
 
-Level::Level(string levelType, char levelDifficulty, int levelNumber, char gameDifficulty) : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
+Level::Level(string levelType, char levelDifficulty, int levelMap, char gameDifficulty, int levelNumber) : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
 m_waterPool(nullptr), m_tileSize(48.0f), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
 m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_gameOver(false), m_levelDone(false), m_invulnerability(false), m_levelType(levelType), m_levelDifficulty(levelDifficulty),
-m_levelNumber(levelNumber), m_gameDifficulty(gameDifficulty), m_riftVial(0) {}
+m_levelNumber(levelNumber), m_levelMap(levelMap), m_gameDifficulty(gameDifficulty), m_riftVial(0), m_boss(0) {}
 
 Level::~Level()
 {
@@ -40,6 +42,7 @@ Level::~Level()
 	delete m_enemyPool;
 
 	delete m_riftVial;
+	delete m_boss;
 
 	SoundSystem::getInstance().close();
 }
@@ -52,22 +55,19 @@ bool Level::Initialise(Renderer& renderer)
 	m_enemySpawnTime = 4.0f;
 	m_maxEnemies = 3;
 	m_currentEnemies = 0;
-
-	ItemManager::GetInstance().CreatePool(renderer);
+	
 	m_itemPool = ItemManager::GetInstance().GetPool();
 
 	m_centerPos = { renderer.GetWidth() / 2.0f, renderer.GetHeight() / 2.0f };
 
-	//add more levels, might need to put in gamemanager
-	int randomLevel = GetRandom(1, 4);
-
 	m_hudParser = new HUDParser();
-	m_tileParser = new TileParser(m_levelType, 2);
+	m_tileParser = new TileParser(m_levelType, m_levelMap);
 
 	m_playerPool = new GameObjectPool(Player(), 4);
 	m_weaponPool = new GameObjectPool(Weapon(), 6);
 	m_bulletPool = new GameObjectPool(Bullet(), 20);
 	m_enemyPool = new GameObjectPool(Enemy(), m_maxEnemies);
+	m_boss = new BossEnemy();
 
 	m_riftVial = new RiftVial();
 	m_riftVial->Initialise(renderer);
@@ -94,9 +94,17 @@ bool Level::Initialise(Renderer& renderer)
 		return false;
 	}
 
-	if (!EnemiesInitialised(renderer)) {
-		LogManager::GetInstance().Log("Unable to Initialise Enemies!");
-		return false;
+	if (m_levelNumber != 5) {
+		if (!EnemiesInitialised(renderer)) {
+			LogManager::GetInstance().Log("Unable to Initialise Enemies!");
+			return false;
+		}
+	}
+	else {
+		m_boss->Initialise(renderer, m_levelNumber);
+		m_boss->SetGameDifficulty(m_gameDifficulty);
+		m_boss->SetActive(true);
+		m_boss->Position() = { 0, 0 };
 	}
 	
 	LogManager::GetInstance().Log("Initialised all Sprites!");
@@ -119,11 +127,13 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 		m_currentCooldown -= deltaTime;
 	}
 
-	m_enemySpawnTimer += deltaTime;
+	if (m_levelNumber != 5) {
+		m_enemySpawnTimer += deltaTime;
 
-	if (m_enemySpawnTimer >= m_enemySpawnTime && m_currentEnemies < m_maxEnemies) {
-		SpawnEnemy();
-		m_enemySpawnTimer = 0.0f;
+		if (m_enemySpawnTimer >= m_enemySpawnTime && m_currentEnemies < m_maxEnemies) {
+			SpawnEnemy();
+			m_enemySpawnTimer = 0.0f;
+		}
 	}
 
 	//
@@ -139,7 +149,7 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 			Player* player = static_cast<Player*>(obj);
 			if (player->isActive()) {
 
-				bool colliding = PlayerColliding(player);
+				bool colliding = CheckWaterCollision(player);
 				if (!colliding) {
 					player->Process(deltaTime);
 				}
@@ -168,26 +178,45 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
-	for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
-		if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
-			if (obj && dynamic_cast<Enemy*>(obj)) {
-				Enemy* enemy = static_cast<Enemy*>(obj);
+	if (m_levelNumber != 5) {
+		for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
+			if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+				if (obj && dynamic_cast<Enemy*>(obj)) {
+					Enemy* enemy = static_cast<Enemy*>(obj);
 
-				float enemySize = (float)enemy->GetSpriteWidth();
-				Box enemyRange(
-					enemy->Position().x,
-					enemy->Position().y,
-					enemySize,
-					enemySize
-				);
+					float enemySize = (float)enemy->GetSpriteWidth();
+					Box enemyRange(
+						enemy->Position().x,
+						enemy->Position().y,
+						enemySize,
+						enemySize
+					);
 
-				m_enemyCollisionTree->insert(enemy, enemyRange);
+					m_enemyCollisionTree->insert(enemy, enemyRange);
 
-				bool colliding = EnemyColliding(enemy);
-				if (!colliding) {
-					enemy->Process(deltaTime, m_playerPrevPosition);
+					bool colliding = CheckWaterCollision(enemy);
+					if (!colliding) {
+						enemy->Process(deltaTime, m_playerPrevPosition);
+					}
 				}
 			}
+		}
+	}
+
+	if (m_boss->isActive()) {
+		float bossSize = (float)m_boss->GetSpriteWidth();
+		Box bossRange(
+			m_boss->Position().x,
+			m_boss->Position().y,
+			bossSize,
+			bossSize
+		);
+
+		m_enemyCollisionTree->insert(m_boss, bossRange);
+
+		bool colliding = CheckWaterCollision(m_boss);
+		if (!colliding) {
+			m_boss->Process(deltaTime, m_playerPosition);
 		}
 	}
 
@@ -204,10 +233,14 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
-	DoDamage();
+	
 
-	if (AllEnemiesDefeated()) {
-		m_riftVial->Drop(m_centerPos);
+	if (m_levelNumber != 5) {
+		DoDamage();
+
+		if (AllEnemiesDefeated()) {
+			m_riftVial->Drop(m_centerPos);
+		}
 	}
 
 	m_riftVial->Process(deltaTime);
@@ -243,14 +276,19 @@ void Level::Draw(Renderer& renderer)
 		}
 	}
 
-	for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
-		if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
-			if (obj && obj->isActive()) {
-				Enemy* enemy = static_cast<Enemy*>(obj);
-				enemy->Draw(renderer);
+
+	if (m_levelNumber != 5) {
+		for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
+			if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+				if (obj && obj->isActive()) {
+					Enemy* enemy = static_cast<Enemy*>(obj);
+					enemy->Draw(renderer);
+				}
 			}
 		}
 	}
+
+	m_boss->Draw(renderer);
 
 	for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
 		if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
@@ -261,8 +299,10 @@ void Level::Draw(Renderer& renderer)
 		}
 	}
 
-	if (AllEnemiesDefeated()) {
-		m_riftVial->Draw(renderer);
+	if (m_levelNumber != 5) {
+		if (AllEnemiesDefeated()) {
+			m_riftVial->Draw(renderer);
+		}
 	}
 
 	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
@@ -378,7 +418,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			Vector2 pushbackPos = player->GetUpdatedPushPosition(deltaTime);
 
 			player->Position() = pushbackPos;
-			bool collision = PlayerColliding(player);
+			bool collision = CheckWaterCollision(player);
 
 			if (collision) {
 				player->SetPushedBack(false);
@@ -437,7 +477,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 
 	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 		Player* player = static_cast<Player*>(obj);
-		collision = PlayerColliding(player);
+		collision = CheckWaterCollision(player);
 	}
 
 	if (!collision) {
@@ -511,10 +551,12 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			player->SetRunning();
 			player->Position() = m_playerPosition;
 
-			if (AllEnemiesDefeated()) {
-				if (CollectItem(player, m_centerPos)) {
-					m_riftVial->SetCollected(true);
-					NextLevel();
+			if (m_levelNumber != 5) {
+				if (AllEnemiesDefeated()) {
+					if (CollectItem(player, m_centerPos)) {
+						m_riftVial->SetCollected(true);
+						NextLevel();
+					}
 				}
 			}
 
@@ -670,6 +712,9 @@ bool Level::EnemiesInitialised(Renderer& renderer)
 		}
 	}
 
+	m_boss->Initialise(renderer, m_levelNumber);
+	m_boss->SetGameDifficulty(m_gameDifficulty);
+
 	return true;
 }
 
@@ -769,6 +814,8 @@ void Level::SpawnEnemy()
 		return;
 	}
 
+	Vector2 spawnerPos;
+
 	if (GameObject* obj = m_enemyPool->getObject()) {
 		Enemy* enemy = dynamic_cast<Enemy*>(obj);
 		if (enemy) {
@@ -778,6 +825,7 @@ void Level::SpawnEnemy()
 			if (GameObject* spawnObj = m_spawnerPool->getObjectAtIndex(spawner)) {
 				if (EnemySpawner* spawner = dynamic_cast<EnemySpawner*>(spawnObj)) {
 					enemy->Position() = spawner->Position();
+					spawnerPos = spawner->Position();
 				}
 			}
 
@@ -786,100 +834,123 @@ void Level::SpawnEnemy()
 	}
 
 	m_currentEnemies++;
+
+	//5% chance for boss to spawn
+	if (!m_boss->isActive()) {
+		/*float chance = GetRandomPercentage();
+		if (chance <= 0.05f) {
+			m_boss->Position() = spawnerPos;
+			m_boss->SetActive(true);
+		}*/
+		m_boss->Position() = spawnerPos;
+		m_boss->SetActive(true);
+	}
 }
 
-bool Level::EnemyColliding(Enemy* enemy)
+bool Level::CheckWaterCollision(GameObject* obj)
 {
-	bool collision = false;
+	if (!obj || !obj->isActive()) return false;
+
+	Vector2 pos;
+	float width;
+
+	if (Player* player = dynamic_cast<Player*>(obj)) {
+		pos = player->Position();
+		width = (float)player->GetSpriteWidth();
+	}
+	else if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
+		pos = enemy->Position();
+		width = (float)enemy->GetSpriteWidth();
+	}
+	else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
+		pos = boss->Position();
+		width = (float)boss->GetSpriteWidth();
+	}
+
+	Box objectBox(
+		pos.x, pos.y, width, width
+	);
+
+	auto potentialCollision = m_boundaryCollisionTree->queryRange(objectBox);
+
+	for (auto* object : potentialCollision) {
+		if (Water* water = dynamic_cast<Water*>(object)) {
+			Box waterBox(water->Position().x, water->Position().y, (float)water->GetSpriteWidth(),
+				(float)water->GetSpriteWidth());
+
+			if (CollisionHelper::IsColliding(objectBox, waterBox)) {
+				if (Player* player = dynamic_cast<Player*>(obj)) {
+					HandlePlayerCollision(waterBox, player);
+				}
+				else if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
+					HandleEnemyCollision(waterBox, enemy);
+					LogManager::GetInstance().Log("Enemy Collides");
+				}
+				else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
+					HandleEnemyCollision(waterBox, boss);
+					LogManager::GetInstance().Log("Boss Collides");
+				}
+
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void Level::HandleEnemyCollision(const Box& collision, GameObject* obj)
+{
+	Vector2 pos;
+	float width;
+
+	if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
+		pos = enemy->Position();
+		width = (float)enemy->GetSpriteWidth();
+	}
+	else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
+		pos = boss->Position();
+		width = (float)boss->GetSpriteWidth();
+	}
 
 	Box enemyBox(
-		enemy->Position().x, enemy->Position().y,
-		enemy->GetSpriteWidth(), enemy->GetSpriteWidth());
+		pos.x, pos.y,
+		width, width);
 
-	Box waterBox;
+	Vector2 direction = CollisionHelper::CalcPushDistance(enemyBox, collision);
 
-	auto potentialCollisions = m_boundaryCollisionTree->queryRange(enemyBox);
-
-	for (auto* obj : potentialCollisions) {
-		Water* water = dynamic_cast<Water*>(obj);
-		if (water && IsColliding(enemyBox, water)) {
-			collision = true;
-			waterBox = { water->Position().x, water->Position().y,
-				(float)water->GetSpriteWidth(), (float)water->GetSpriteWidth() };
-			break;
-		}
-	}
-
-	if (collision) {
-		HandleEnemyCollision(waterBox, enemy);
-	}
-
-	return collision;
-}
-
-void Level::HandleEnemyCollision(const Box& collision, Enemy* enemy)
-{
-	Vector2 center(enemy->Position().x + enemy->GetSpriteWidth() / 2.0f, enemy->Position().y + enemy->GetSpriteWidth() / 2.0f);
-	Vector2 waterCenter(collision.x + collision.width / 2.0f, collision.y + collision.height / 2.0f);
-
-	Vector2 direction(center.x - waterCenter.x, center.y - waterCenter.y);
-
-	float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+	float length = CollisionHelper::GetLength(direction);
 
 	if (length != 0) {
-		direction.x /= length;
-		direction.y /= length;
-
-		enemy->Position().x += direction.x * 5.0f;
-		enemy->Position().y += direction.y * 5.0f;
-	}
-
-	enemy->ResetWander(direction);
-}
-
-bool Level::PlayerColliding(Player* player)
-{
-	bool collision = false;
-
-	Box playerBox(
-		player->Position().x, player->Position().y,
-		player->GetSpriteWidth(), player->GetSpriteWidth());
-
-	Box waterBox;
-
-	auto potentialCollisions = m_boundaryCollisionTree->queryRange(playerBox);
-
-	for (auto* obj : potentialCollisions) {
-		Water* water = dynamic_cast<Water*>(obj);
-		if (water && IsColliding(playerBox, water)) {
-			collision = true;
-			waterBox = { water->Position().x, water->Position().y,
-				(float)water->GetSpriteWidth(), (float)water->GetSpriteWidth() };
-			break;
+		if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
+			enemy->Position().x += direction.x * 5.0f;
+			enemy->Position().y += direction.y * 5.0f;
+		}
+		else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
+			boss->Position().x += direction.x * 5.0f;
+			boss->Position().y += direction.y * 5.0f;
 		}
 	}
 
-	if (collision) {
-		HandlePlayerCollision(waterBox, player);
+	if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
+		enemy->ResetWander(direction);
 	}
-
-	return collision;
+	else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
+		boss->ResetWander(direction);
+	}
 }
 
 void Level::HandlePlayerCollision(const Box& collision, Player* player)
 {
-	Vector2 center(player->Position().x + player->GetSpriteWidth() / 2.0f,
-		player->Position().y + player->GetSpriteWidth() / 2.0f);
-	Vector2 waterCenter(collision.x + collision.width / 2.0f,
-		collision.y + collision.height / 2.0f);
+	Box playerBox(
+		player->Position().x, player->Position().y,
+		(float)player->GetSpriteWidth(), (float)player->GetSpriteWidth());
 
-	Vector2 direction(center.x - waterCenter.x, center.y - waterCenter.y);
+	Vector2 direction = CollisionHelper::CalcPushDistance(playerBox, collision);
 
-	float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+	float length = CollisionHelper::GetLength(direction);
 
 	if (length != 0) {
-		direction.x /= length;
-		direction.y /= length;
 
 		// Push the player back from the water
 		player->Position().x += direction.x * 5.0f;
@@ -890,22 +961,30 @@ void Level::HandlePlayerCollision(const Box& collision, Player* player)
 	}
 }
 
-bool Level::DamageCollision(Enemy* enemy, const Box& collision)
+bool Level::DamageCollision(GameObject* obj, const Box& collision)
 {
 	bool colliding;
 
-	if (!enemy) {
+	if (!obj) {
 		return false;
 	}
 
-	float eX = enemy->Position().x;
-	float eY = enemy->Position().y;
-	float eW = (float)enemy->GetSpriteWidth();
+	Vector2 pos;
+	float width;
 
-	colliding = eX < collision.x + collision.width &&
-		eX + eW > collision.x &&
-		eY < collision.y + collision.width &&
-		eY + eW > collision.y;
+	if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
+		pos = enemy->Position();
+		width = (float)enemy->GetSpriteWidth();
+	}
+	else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
+		pos = boss->Position();
+		width = (float)boss->GetSpriteWidth();
+	}
+
+	colliding = pos.x < collision.x + collision.width &&
+		pos.x + width > collision.x &&
+		pos.y < collision.y + collision.width &&
+		pos.y + width > collision.y;
 
 	return colliding;
 }
@@ -935,34 +1014,70 @@ void Level::DoDamage()
 			Player* player = dynamic_cast<Player*>(obj);
 
 			for (auto* obj : potentialCollisions) {
-				Enemy* enemy = dynamic_cast<Enemy*>(obj);
-				if (enemy->isActive() && DamageCollision(enemy, playerBox)) {
-					Vector2 pushDirection(enemy->Position().x - player->Position().x,
-						enemy->Position().y - player->Position().y);
+				if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
+					if (enemy->isActive() && DamageCollision(enemy, playerBox)) {
+						Vector2 pushDirection(enemy->Position().x - player->Position().x,
+							enemy->Position().y - player->Position().y);
 
-					if (isSwinging) {
-						enemy->ApplyPushBack(pushDirection);
-						enemy->AddDamage(weaponDamage);
+						if (isSwinging) {
+							enemy->ApplyPushBack(pushDirection);
+							enemy->AddDamage(weaponDamage);
 
-						if (!enemy->isActive()) {
-							if (m_itemPool->hasAvailableObjects()) {
-								if (GameObject* obj = m_itemPool->getObject()) {
-									ShipPart* part = static_cast<ShipPart*>(obj);
-									if (part) {
-										part->Drop(enemy->Position());
+							if (!enemy->isActive()) {
+								if (m_itemPool->hasAvailableObjects()) {
+									if (GameObject* obj = m_itemPool->getObject()) {
+										ShipPart* part = static_cast<ShipPart*>(obj);
+										if (part && AllEnemiesDefeated()) {
+											part->Drop(enemy->Position());
+										}
 									}
 								}
 							}
 						}
+						else {
+							Vector2 pushDirectionPlayer(player->Position().x - enemy->Position().x,
+								player->Position().y - enemy->Position().y);
+							player->ApplyPushBack(pushDirectionPlayer);
+							player->AddDamage(enemy->GetDamageDealt());
+							enemy->ApplyPushBack(pushDirection);
+						}
+						break;
 					}
-					else {
-						Vector2 pushDirectionPlayer(player->Position().x - enemy->Position().x,
-							player->Position().y - enemy->Position().y);
-						player->ApplyPushBack(pushDirectionPlayer);
-						player->AddDamage(enemy->GetDamageDealt());
-						enemy->ApplyPushBack(pushDirection);
+				}
+				else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
+					if (boss->isActive() && DamageCollision(boss, playerBox)) {
+						Vector2 pushDirection(boss->Position().x - player->Position().x,
+							boss->Position().y - player->Position().y);
+
+						if (isSwinging) {
+							boss->ApplyPushBack(pushDirection);
+							boss->AddDamage(weaponDamage);
+
+							if (!boss->isActive()) {
+								if (m_itemPool->hasAvailableObjects()) {
+									if (GameObject* obj = m_itemPool->getObject()) {
+										ShipPart* part = static_cast<ShipPart*>(obj);
+										if (part && AllEnemiesDefeated()) {
+											if (m_levelNumber == 5) {
+												//final boss drop
+											}
+											else {
+												part->Drop(boss->Position());
+											}
+										}
+									}
+								}
+							}
+						}
+						else {
+							Vector2 pushDirectionPlayer(player->Position().x - boss->Position().x,
+								player->Position().y - boss->Position().y);
+							player->ApplyPushBack(pushDirectionPlayer);
+							player->AddDamage(boss->GetDamageDealt());
+							boss->ApplyPushBack(pushDirection);
+						}
+						break;
 					}
-					break;
 				}
 			}
 			break;
@@ -974,7 +1089,7 @@ void Level::DoDamage()
 			if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
 				if (Bullet* bullet = static_cast<Bullet*>(obj)) {
 					if (bullet->isActive()) {
-						float bulletSize = bullet->GetSpriteWidth();
+						float bulletSize = (float)bullet->GetSpriteWidth();
 						Box bulletRange(
 							bullet->Position().x - bulletSize / 2,
 							bullet->Position().y - bulletSize / 2,
@@ -985,29 +1100,59 @@ void Level::DoDamage()
 						auto potentialCollisions = m_enemyCollisionTree->queryRange(bulletRange);
 
 						for (auto* obj : potentialCollisions) {
-							Enemy* enemy = dynamic_cast<Enemy*>(obj);
+							if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
 
-							if (enemy->isActive() && DamageCollision(enemy, bulletRange)) {
-								bullet->SetActive(false);
-								Vector2 pushDirection(enemy->Position().x - bullet->Position().x,
-									enemy->Position().y - bullet->Position().y);
+								if (enemy->isActive() && DamageCollision(enemy, bulletRange)) {
+									bullet->SetActive(false);
+									Vector2 pushDirection(enemy->Position().x - bullet->Position().x,
+										enemy->Position().y - bullet->Position().y);
 
-								enemy->ApplyPushBack(pushDirection);
-								enemy->AddDamage(weaponDamage);
+									enemy->ApplyPushBack(pushDirection);
+									enemy->AddDamage(weaponDamage);
 
-								if (!enemy->isActive()) {
-									if (m_itemPool->hasAvailableObjects()) {
-										if (GameObject* obj = m_itemPool->getObject()) {
-											ShipPart* part = static_cast<ShipPart*>(obj);
-											if (part) {
-												part->Drop(enemy->Position());
+									if (!enemy->isActive()) {
+										if (m_itemPool->hasAvailableObjects()) {
+											if (GameObject* obj = m_itemPool->getObject()) {
+												ShipPart* part = static_cast<ShipPart*>(obj);
+												if (part && AllEnemiesDefeated()) {
+													part->Drop(enemy->Position());
+												}
 											}
 										}
 									}
-								}
 
-								m_bulletPool->release(bullet);
-								break;
+									m_bulletPool->release(bullet);
+									break;
+								}
+							}
+							else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
+								if (boss->isActive() && DamageCollision(boss, bulletRange)) {
+									bullet->SetActive(false);
+									Vector2 pushDirection(boss->Position().x - bullet->Position().x,
+										boss->Position().y - bullet->Position().y);
+
+									boss->ApplyPushBack(pushDirection);
+									boss->AddDamage(weaponDamage);
+
+									if (!boss->isActive()) {
+										if (m_itemPool->hasAvailableObjects()) {
+											if (GameObject* obj = m_itemPool->getObject()) {
+												ShipPart* part = static_cast<ShipPart*>(obj);
+												if (part) {
+													if (m_levelNumber == 5) {
+														//final boss drop
+													}
+													else {
+														part->Drop(boss->Position());
+													}
+												}
+											}
+										}
+									}
+
+									m_bulletPool->release(bullet);
+									break;
+								}
 							}
 						}
 

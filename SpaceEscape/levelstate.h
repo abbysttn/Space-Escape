@@ -20,6 +20,7 @@ public:
 protected:
 	char GetRandomLevelDifficulty();
 	char GetDifficulty();
+	int GetRandomLevelMap();
 
 private:
 	LevelState(const LevelState& levelState);

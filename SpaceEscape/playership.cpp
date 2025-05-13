@@ -20,8 +20,8 @@ bool PlayerShip::Initialise(Renderer& renderer)
 
 	m_sprite->SetScale(1.0f);
 
-	float width = renderer.GetWidth();
-	float height = renderer.GetHeight();
+	float width = (float)renderer.GetWidth();
+	float height = (float)renderer.GetHeight();
 
 	m_position.x = 10.0f;
 	m_position.y = height / 2.0f;
@@ -68,6 +68,11 @@ void PlayerShip::SetRotation(float angle)
 void PlayerShip::SetActive(bool active)
 {
 	m_active = active;
+}
+
+int PlayerShip::GetSpriteWidth()
+{
+	return m_sprite->GetWidth();
 }
 
 void PlayerShip::Fly(float deltaTime)

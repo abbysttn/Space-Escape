@@ -2,6 +2,9 @@
 #define PARTICLEEMITTER_H__
 // Library includes:
 #include <vector>
+#include <string>
+
+using namespace std;
 // Forward declarations:
 class Renderer;
 class Sprite;
@@ -13,11 +16,20 @@ class ParticleEmitter
 public:
 	ParticleEmitter();
 	~ParticleEmitter();
-	bool Initialise(Renderer& renderer);
+	bool Initialise(Renderer& renderer, const char* filename);
 	void Process(float deltaTime);
 	void Draw(Renderer& renderer);
 	void Spawn();
 	void DebugDraw();
+
+	void SetAngles(float maxAngle, float minAngle);
+	void SetColour(float colour[3]);
+	void SetEmitRate(float rate);
+	void SetBatchSize(int size);
+	void SetLifeSpan(float life);
+	void SetPosition(float fX, float fY);
+	void SetAcceleration(float rate);
+
 protected:
 private:
 	ParticleEmitter(const ParticleEmitter& particleemitter);
@@ -37,6 +49,7 @@ protected:
 	float m_fMaxAngle;
 	float m_fX;
 	float m_fY;
+
 private:
 };
 #endif // PARTICLEEMITTER_H__

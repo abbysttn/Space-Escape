@@ -40,8 +40,8 @@ bool StartScene::Initialise(Renderer& renderer)
 
 	m_backgroundPlanet = renderer.CreateSprite("..\\assets\\Lava.png");
 	m_backgroundPlanet->SetScale(10.0f);
-	m_backgroundPlanet->SetX(screenWidth / 2.0f);
-	m_backgroundPlanet->SetY(screenHeight / 2.0f);
+	m_backgroundPlanet->SetX(screenWidth / 2);
+	m_backgroundPlanet->SetY(screenHeight / 2);
 
 	for (size_t i = 0; i < m_buttonPool->totalCount(); i++) {
 		if (GameObject* obj = m_buttonPool->getObjectAtIndex(i)) {
@@ -151,8 +151,8 @@ void StartScene::Process(float deltaTime, InputSystem& inputSystem)
 				Box buttonRange(
 					button->Position().x - button->GetSpriteWidth() / 2,
 					button->Position().y - button->GetSpriteHeight() / 2,
-					button->GetSpriteWidth(),
-					button->GetSpriteHeight()
+					(float)button->GetSpriteWidth(),
+					(float)button->GetSpriteHeight()
 				);
 
 				m_collisionTree->insert(button, buttonRange);

@@ -9,7 +9,7 @@ void LevelState::Enter()
 {
 	if (!m_renderer) return;
 
-	m_scene = new Level("summer", GetRandomLevelDifficulty(), m_levelNumber, GetDifficulty());
+	m_scene = new Level("summer", GetRandomLevelDifficulty(), GetRandomLevelMap(), GetDifficulty(), m_levelNumber);
 	if (m_scene) m_scene->Initialise(*m_renderer);
 }
 
@@ -108,4 +108,11 @@ char LevelState::GetDifficulty()
 	default:
 		return 'N';
 	}
+}
+
+int LevelState::GetRandomLevelMap()
+{
+	int levelNum = GetRandom(1, 8);
+
+	return levelNum;
 }

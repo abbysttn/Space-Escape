@@ -18,7 +18,7 @@ public:
 	void Process(float deltaTime, Vector2 playerPos);
 	void Draw(Renderer& renderer);
 	Vector2& Position();
-	int GetSpriteWidth();
+	int GetSpriteWidth() const override;
 	void SetColour(float red, float green, float blue);
 	void SetActive(bool active);
 	void SetRotation(float angle);
@@ -44,7 +44,6 @@ public:
 	float GetDamageDealt();
 	void SetAttackDamage(char type, char difficulty);
 
-	void SetEnemyDrop(bool drop);
 
 protected:
 	void UpdatePushBack(float deltaTime);
@@ -77,9 +76,6 @@ protected:
 	float m_health;
 	char m_enemyType;
 	float m_attackDamage;
-	char m_gameDifficulty;
-
-	bool m_dropsParts;
 
 private:
 };

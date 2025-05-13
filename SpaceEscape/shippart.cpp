@@ -69,7 +69,7 @@ Vector2& ShipPart::Position()
 	return m_position;
 }
 
-int ShipPart::GetSpriteWidth()
+int ShipPart::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

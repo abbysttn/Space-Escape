@@ -45,7 +45,7 @@ Vector2& EdgeCorner::Position()
 	return m_position;
 }
 
-int EdgeCorner::GetSpriteWidth()
+int EdgeCorner::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

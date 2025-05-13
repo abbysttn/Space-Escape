@@ -27,9 +27,9 @@ ParticleEmitter::~ParticleEmitter()
 
 }
 
-bool ParticleEmitter::Initialise(Renderer& renderer)
+bool ParticleEmitter::Initialise(Renderer& renderer, const char* filename)
 {
-	m_pSharedSprite = renderer.CreateSprite("..//assets//ball.png");
+	m_pSharedSprite = renderer.CreateSprite(filename);
 	return (m_pSharedSprite != nullptr);
 }
 
@@ -45,7 +45,7 @@ void ParticleEmitter::Process(float deltaTime)
 		m_fTimeElapsed = 0.0f;
 	}
 
-	for (int i = 0; i < m_particles.size(); i++) {
+	for (size_t i = 0; i < m_particles.size(); i++) {
 		m_particles[i]->Process(deltaTime);
 
 		if (!m_particles[i]->m_bAlive) {
@@ -78,8 +78,13 @@ void ParticleEmitter::Spawn()
 	particle->m_fColour[1] = m_fColour[1];
 	particle->m_fColour[2] = m_fColour[2];
 
-	float angle = GetRandom(m_fMinAngle, m_fMaxAngle);
-	float radians = angle * 3.14159 / 180.0f;
+	float angle = (float)GetRandom((int)m_fMinAngle, (int)m_fMaxAngle);
+	float radians = angle * 3.14159f / 180.0f;
+
+	float speed = m_fAccelerationScalar;
+
+	particle->m_velocity.x = cosf(radians) * speed;
+	particle->m_velocity.y = sinf(radians) * speed;
 
 	particle->m_acceleration.x = 0.0f;
 	particle->m_acceleration.y = 98.1f;
@@ -103,4 +108,43 @@ void ParticleEmitter::DebugDraw()
 	ImGui::Text("Active Particles: %d", static_cast<int>(m_particles.size()));
 
 	ImGui::End();
+}
+
+void ParticleEmitter::SetAngles(float maxAngle, float minAngle)
+{
+	m_fMaxAngle = maxAngle;
+	m_fMinAngle = minAngle;
+}
+
+void ParticleEmitter::SetColour(float colour[3])
+{
+	m_fColour[0] = colour[0];
+	m_fColour[1] = colour[1];
+	m_fColour[2] = colour[2];
+}
+
+void ParticleEmitter::SetEmitRate(float rate)
+{
+	m_fEmitRate = rate;
+}
+
+void ParticleEmitter::SetBatchSize(int size)
+{
+	m_iSpawnBatchSize = size;
+}
+
+void ParticleEmitter::SetLifeSpan(float life)
+{
+	m_fMaxLifespan = life;
+}
+
+void ParticleEmitter::SetPosition(float fX, float fY)
+{
+	m_fX = fX;
+	m_fY = fY;
+}
+
+void ParticleEmitter::SetAcceleration(float rate)
+{
+	m_fAccelerationScalar = rate;
 }

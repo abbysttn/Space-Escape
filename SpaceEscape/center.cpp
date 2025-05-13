@@ -45,7 +45,7 @@ Vector2& Center::Position()
 	return m_position;
 }
 
-int Center::GetSpriteWidth()
+int Center::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

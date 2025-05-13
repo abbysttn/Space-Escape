@@ -138,9 +138,6 @@
     <ClInclude Include="player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="bridge.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HUDParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -235,6 +232,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hudshippart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bossenemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="collisionhelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gameoverscene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gameoverstate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -350,9 +359,6 @@
     <ClCompile Include="player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="bridge.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HUDParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -444,6 +450,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="hudshippart.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bossenemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gameoverscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gameoverstate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -26,7 +26,7 @@ protected:
 	bool InitObjects(Renderer& renderer, char tileType, size_t x, size_t y);
 	bool WeaponsInitialised(Renderer& renderer);
 	bool LivesInitialised(Renderer& renderer);
-	void PositionItems();
+	void PositionItems(Renderer& renderer);
 private:
 	HUDParser(const HUDParser& hudParser);
 	HUDParser& operator=(const HUDParser& hudParser);

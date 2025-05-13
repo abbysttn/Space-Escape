@@ -18,7 +18,7 @@ public:
 	void Process(float deltaTime);
 	void Draw(Renderer& renderer);
 	Vector2& Position();
-	int GetSpriteWidth();
+	int GetSpriteWidth() const override;
 
 	GameObject* Create() const override;
 	bool isActive() const override;
@@ -31,6 +31,7 @@ public:
 	bool IsCollected();
 
 	void Drop(Vector2 position);
+	void BossDrop(Vector2 position);
 	void Reset();
 
 	void SetColour(float red, float green, float blue);

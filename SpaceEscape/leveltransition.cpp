@@ -27,13 +27,13 @@ bool LevelTransition::Initialise(Renderer& renderer)
 	m_player->SetLoop(true);
 	m_player->SetFrameTime(0.05f);
 	m_player->Position().x = screenWidth / 2.0f;
-	m_player->Position().y = screenHeight;
+	m_player->Position().y = (float)screenHeight;
 
 	m_startPos = Vector2(m_player->Position().x, m_player->Position().y);
 
 	m_blackHole = renderer.CreateSprite("..\\assets\\black_hole.png");
-	m_blackHole->SetX(screenWidth / 2.0f);
-	m_blackHole->SetY(screenHeight / 2.0f);
+	m_blackHole->SetX(screenWidth / 2);
+	m_blackHole->SetY(screenHeight / 2);
 	m_blackHole->SetScale(6.0f);
 
 	m_swirlProgress = 0.0f;
@@ -82,7 +82,7 @@ void LevelTransition::GenerateFibonacciSpiral(int points, float centerX, float c
 {
 	m_fibonacciPoints.clear();
 
-	float startDist = sqrt(pow(m_player->Position().x - centerX, 2) + pow(m_player->Position().y - centerY, 2));
+	float startDist = sqrtf((float)(pow(m_player->Position().x - centerX, 2)) + (float)(pow(m_player->Position().y - centerY, 2)));
 
 	for (int i = 0; i <= points; i++) {
 		float progress = (float)i / points;
@@ -90,8 +90,8 @@ void LevelTransition::GenerateFibonacciSpiral(int points, float centerX, float c
 		float radius = startDist * (1 - progress * 0.9f);
 
 		Vector2 point;
-		point.x = centerX + radius * cos(angle);
-		point.y = centerY + radius * sin(angle);
+		point.x = (float)(centerX + radius * cos(angle));
+		point.y = (float)(centerY + radius * sin(angle));
 
 		if (i == 0) {
 			m_player->Position() = point;
@@ -124,9 +124,9 @@ void LevelTransition::AnimatePlayerSwirl()
 
 	m_player->Position() = pos;
 
-	if (fib2 < m_fibonacciPoints.size() - 1) {
+	if ((float)fib2 < m_fibonacciPoints.size() - 1) {
 		Vector2 dir = m_fibonacciPoints[fib2] - m_fibonacciPoints[fib1];
-		float angle = atan2(dir.y, dir.x);
+		float angle = (float)(atan2(dir.y, dir.x));
 		m_player->SetRotation(angle);
 	}
 

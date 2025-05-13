@@ -36,6 +36,8 @@ protected:
 	Renderer& m_renderer;
 	InputSystem& m_inputSystem;
 
+	bool m_wonGame;
+
 	bool m_gameLooping;
 
 private:

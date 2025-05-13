@@ -49,7 +49,7 @@ Vector2& Prop::Position()
 	return m_position;
 }
 
-int Prop::GetSpriteWidth()
+int Prop::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

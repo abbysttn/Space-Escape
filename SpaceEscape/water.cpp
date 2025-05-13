@@ -49,7 +49,7 @@ Vector2& Water::Position()
 	return m_position;
 }
 
-int Water::GetSpriteWidth()
+int Water::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

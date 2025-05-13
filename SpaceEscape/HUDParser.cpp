@@ -60,7 +60,7 @@ bool HUDParser::Initialise(Renderer& renderer)
 		return false;
 	}
 
-	PositionItems();
+	PositionItems(renderer);
 
 	return true;
 }
@@ -76,7 +76,7 @@ void HUDParser::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
-	/*for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
 		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
 			if (obj && dynamic_cast<HUDShipPart*>(obj)) {
 				HUDShipPart* HUDpart = static_cast<HUDShipPart*>(obj);
@@ -99,7 +99,7 @@ void HUDParser::Process(float deltaTime, InputSystem& inputSystem)
 				}
 			}
 		}
-	}*/
+	}
 
 	for (size_t i = 0; i < m_playerHealthPool->totalCount(); i++) {
 		if (GameObject* obj = m_playerHealthPool->getObjectAtIndex(i)) {
@@ -107,7 +107,7 @@ void HUDParser::Process(float deltaTime, InputSystem& inputSystem)
 				UnderlayTiles* health = static_cast<UnderlayTiles*>(obj);
 				float healthLeft = PlayerState::GetInstance().GetHealth();
 
-				size_t reverseIndex = (i + 1) * 10.0f;
+				float reverseIndex = (i + 1) * 10.0f;
 
 				if (healthLeft < reverseIndex) health->SetColour(1.0f, 0.0f, 0.0f);
 				else health->SetColour(1.0f, 1.0f, 1.0f);
@@ -121,7 +121,7 @@ void HUDParser::Process(float deltaTime, InputSystem& inputSystem)
 		if (GameObject* obj = m_playerLivesPool->getObjectAtIndex(i)) {
 			if (obj && dynamic_cast<Life*>(obj)) {
 				Life* life = static_cast<Life*>(obj);
-				int livesLeft = PlayerState::GetInstance().GetLives();
+				size_t livesLeft = PlayerState::GetInstance().GetLives();
 
 				size_t reverseIndex = m_playerLivesPool->totalCount() - 1 - i;
 
@@ -173,14 +173,14 @@ void HUDParser::Draw(Renderer& renderer)
 		}
 	}
 
-	/*for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
 		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
 			if (obj && obj->isActive()) {
 				HUDShipPart* part = static_cast<HUDShipPart*>(obj);
 				part->Draw(renderer);
 			}
 		}
-	}*/
+	}
 
 	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
 		if (obj && obj->isActive()) {
@@ -659,11 +659,12 @@ bool HUDParser::LivesInitialised(Renderer& renderer)
 	return true;
 }
 
-void HUDParser::PositionItems()
+void HUDParser::PositionItems(Renderer& renderer)
 {
 	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
 		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
 			HUDShipPart* part = static_cast<HUDShipPart*>(obj);
+			part->Initialise(renderer);
 			part->SetActive(true);
 
 			part->Position() = m_itemsStartPos;

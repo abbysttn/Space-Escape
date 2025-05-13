@@ -8,6 +8,7 @@ using namespace std;
 class Renderer;
 class InputSystem;
 class PlayerShip;
+class ParticleEmitter;
 
 class FlyingCutscene : public Scene {
 public:
@@ -24,13 +25,16 @@ public:
 protected:
 
 private:
-	FlyingCutscene(const FlyingCutscene& startScene);
-	FlyingCutscene& operator=(const FlyingCutscene& startScene);
+	FlyingCutscene(const FlyingCutscene& flyingCutScene);
+	FlyingCutscene& operator=(const FlyingCutscene& flyingCutScene);
 
 public:
 
 protected:
 	PlayerShip* m_ship;
+	ParticleEmitter* m_exhaustEmitter;
+
+	float m_particleOffset;
 
 	bool m_sceneDone;
 

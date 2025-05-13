@@ -1,4 +1,2 @@
-﻿  HUDParser.cpp
-C:\Users\abbys\OneDrive\Documents\GitHub\Space-Escape\SpaceEscape\HUDParser.cpp(110,25): warning C4244: 'initializing': conversion from 'float' to 'size_t', possible loss of data
-C:\Users\abbys\OneDrive\Documents\GitHub\Space-Escape\SpaceEscape\HUDParser.cpp(128,19): warning C4018: '<=': signed/unsigned mismatch
-  SpaceEscape.vcxproj -> C:\Users\abbys\OneDrive\Documents\GitHub\Space-Escape\SpaceEscape\Debug\SpaceEscape.exe
+﻿  Level.cpp
+  SpaceEscape.vcxproj -> C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Debug\SpaceEscape.exe

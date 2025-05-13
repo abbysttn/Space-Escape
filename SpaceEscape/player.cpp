@@ -73,7 +73,7 @@ Vector2& Player::Position()
     return m_position;
 }
 
-int Player::GetSpriteWidth()
+int Player::GetSpriteWidth() const
 {
     return m_sprite->GetWidth();
 }
@@ -135,7 +135,7 @@ void Player::SetRunning()
 void Player::ApplyPushBack(Vector2 direction)
 {
     if (m_canTakeDamage) {
-        float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+        float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
 
         if (length != 0) {
             direction.x /= length;

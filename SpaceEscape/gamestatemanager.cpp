@@ -11,6 +11,9 @@
 #include "levelstate.h"
 #include "leveltransitionstate.h"
 #include "flyingcutscenestate.h"
+#include "gameoverstate.h"
+
+#include "itemmanager.h"
 
 GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem) : m_renderer(renderer), m_inputSystem(inputSystem)
 , m_currentState(nullptr), m_gameLooping(true)
@@ -22,8 +25,9 @@ GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem)
 	m_states[GameStates::GAMEPLAY] = std::make_unique<LevelState>();
 	m_states[GameStates::TRANSITION] = std::make_unique<LevelTransitionState>();
 	m_states[GameStates::FLYING_CUTSCENE] = std::make_unique<FlyingCutsceneState>();
+	m_states[GameStates::GAME_OVER] = std::make_unique<GameOverState>();
 
-	ChangeState(GameStates::GAMEPLAY);
+	ChangeState(GameStates::DIFFICULTY_MENU);
 }
 
 void GameStateManager::ChangeState(GameStates newState)
@@ -31,6 +35,9 @@ void GameStateManager::ChangeState(GameStates newState)
 	if (m_currentState) {
 		if (dynamic_cast<DifficultyMenuState*>(m_currentState)) {
 			m_currentDifficulty = m_currentState->GetGameDifficulty();
+			ItemManager::GetInstance().CreatePool(m_renderer);
+
+			//reset on game over
 		}
 		m_currentState->Exit();
 	}
@@ -45,6 +52,9 @@ void GameStateManager::ChangeState(GameStates newState)
 		if (newState == GameStates::GAMEPLAY) {
 			m_currentState->SetDifficulty(m_currentDifficulty);
 		}
+
+		//temp
+		m_currentState->SetGameWon(false);
 
 		m_currentState->Enter();
 	}

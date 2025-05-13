@@ -33,8 +33,6 @@ bool Enemy::Initialise(Renderer& renderer, const char* filename)
     SetLoop(true);
     m_sprite->Animate();
 
-    m_gameDifficulty = 'E';
-
     return true;
 }
 
@@ -54,7 +52,7 @@ void Enemy::Process(float deltaTime, Vector2 playerPos)
                 playerPos.x - m_position.x, playerPos.y - m_position.y
             };
 
-            float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+            float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
 
             if (length <= 150.0f) {
                 m_canSeePlayer = true;
@@ -79,8 +77,8 @@ void Enemy::Process(float deltaTime, Vector2 playerPos)
                     m_wanderTime = m_wanderDuration;
 
                     float angle = GetRandom(0, 360) * (3.14519f / 180.0f); //angle in radians
-                    m_wanderDirection.x = cos(angle);
-                    m_wanderDirection.y = sin(angle);
+                    m_wanderDirection.x = (float)cos(angle);
+                    m_wanderDirection.y = (float)sin(angle);
                 }
 
                 m_position.x += m_wanderDirection.x * (m_speed * 0.25f) * deltaTime;
@@ -114,7 +112,7 @@ Vector2& Enemy::Position()
     return m_position;
 }
 
-int Enemy::GetSpriteWidth()
+int Enemy::GetSpriteWidth() const
 {
     return m_sprite->GetWidth();
 }
@@ -181,7 +179,7 @@ Vector2 Enemy::GetUpdatedPosition(float deltaTime, Vector2 playerPos)
         playerPos.x - m_position.x, playerPos.y - m_position.y
     };
 
-    float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+    float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
 
     if (length <= 150.0f) {
         m_canSeePlayer = true;
@@ -206,8 +204,8 @@ Vector2 Enemy::GetUpdatedPosition(float deltaTime, Vector2 playerPos)
             m_wanderTime = m_wanderDuration;
 
             float angle = GetRandom(0, 360) * (3.14519f / 180.0f); //angle in radians
-            m_wanderDirection.x = cos(angle);
-            m_wanderDirection.y = sin(angle);
+            m_wanderDirection.x = (float)cos(angle);
+            m_wanderDirection.y = (float)sin(angle);
         }
 
         m_updatedPos.x += m_wanderDirection.x * (m_speed * 0.25f) * deltaTime;
@@ -225,7 +223,7 @@ void Enemy::ResetWander(Vector2 direction)
 
 void Enemy::ApplyPushBack(Vector2 direction)
 {
-    float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+    float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
 
     if (length != 0) {
         direction.x /= length;
@@ -314,9 +312,4 @@ void Enemy::SetAttackDamage(char type, char difficulty)
     }
 
     m_attackDamage = damage * multiplier;
-}
-
-void Enemy::SetEnemyDrop(bool drop)
-{
-    m_dropsParts = drop;
 }

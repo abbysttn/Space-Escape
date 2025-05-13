@@ -11,6 +11,8 @@ public:
 
 	virtual GameObject* Create() const = 0;
 
+	virtual int GetSpriteWidth() const = 0;
+
 	float x, y;
 	bool active;
 

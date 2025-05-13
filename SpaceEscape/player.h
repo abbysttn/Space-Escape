@@ -19,7 +19,7 @@ public:
 	void Process(float deltaTime);
 	void Draw(Renderer& renderer);
 	Vector2& Position();
-	int GetSpriteWidth();
+	int GetSpriteWidth() const override;
 	void SetColour(float red, float green, float blue);
 	void SetActive(bool active);
 	void SetRotation(float angle);

@@ -26,8 +26,8 @@ bool Bullet::initialise(Renderer& renderer)
 	m_position.x = 0;
 	m_position.y = 0;
 
-	float width = renderer.GetWidth();
-	float height = renderer.GetHeight();
+	float width = (float)renderer.GetWidth();
+	float height = (float)renderer.GetHeight();
 
 	m_boundsLow.x = m_sprite->GetWidth() / 2.0f;
 	m_boundsLow.y = m_sprite->GetHeight() / 2.0f;
@@ -66,7 +66,7 @@ Vector2& Bullet::Position()
 	return m_position;
 }
 
-int Bullet::GetSpriteWidth()
+int Bullet::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }
@@ -109,7 +109,7 @@ void Bullet::Fire(Vector2& startPos, const Vector2& targetPos)
 		m_targetPos.x - m_position.x, m_targetPos.y - m_position.y
 	};
 
-	float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+	float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
 
 	if (length != 0.0f) {
 		direction.x /= length;

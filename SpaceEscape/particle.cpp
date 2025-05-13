@@ -13,6 +13,7 @@ Particle::~Particle()
 bool Particle::Initialise(Sprite& sprite)
 {
 	m_pSharedSprite = &sprite;
+	m_pSharedSprite->SetScale(3.0f);
 	return true;
 }
 
@@ -39,8 +40,8 @@ void Particle::Draw(Renderer& renderer)
 		m_pSharedSprite->SetBlueTint(m_fColour[2]);
 		float alpha = 1.0f - (m_fCurrentAge / m_fMaxLifespan);
 		m_pSharedSprite->SetAlpha(alpha);
-		m_pSharedSprite->SetX(m_postion.x);
-		m_pSharedSprite->SetY(m_postion.y);
+		m_pSharedSprite->SetX((int)m_postion.x);
+		m_pSharedSprite->SetY((int)m_postion.y);
 		m_pSharedSprite->Draw(renderer);
 	}
 }

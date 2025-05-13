@@ -17,7 +17,7 @@ public:
 	void Process(float deltaTime);
 	void Draw(Renderer& renderer);
 	Vector2& Position();
-	int GetSpriteWidth();
+	int GetSpriteWidth() const override;
 	int GetSpriteHeight();
 	void SetColour(float red, float green, float blue);
 	GameObject* Create() const override;

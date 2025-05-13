@@ -86,7 +86,7 @@ Vector2& Weapon::Position()
     return m_position;
 }
 
-int Weapon::GetSpriteWidth()
+int Weapon::GetSpriteWidth() const
 {
     return m_sprite->GetWidth();
 }

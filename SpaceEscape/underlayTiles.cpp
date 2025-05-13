@@ -45,7 +45,7 @@ Vector2& UnderlayTiles::Position()
 	return m_position;
 }
 
-int UnderlayTiles::GetSpriteWidth()
+int UnderlayTiles::GetSpriteWidth() const
 {
 	return m_sprite->GetWidth();
 }

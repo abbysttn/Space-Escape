@@ -142,10 +142,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="animatedsprite.h" />
-    <ClInclude Include="bridge.h" />
+    <ClInclude Include="bossenemy.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="button.h" />
     <ClInclude Include="center.h" />
+    <ClInclude Include="collisionhelper.h" />
     <ClInclude Include="corner.h" />
     <ClInclude Include="DDLevelLoad.h" />
     <ClInclude Include="difficultymenustate.h" />
@@ -157,6 +158,8 @@
     <ClInclude Include="flyingcutscene.h" />
     <ClInclude Include="flyingcutscenestate.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gameoverscene.h" />
+    <ClInclude Include="gameoverstate.h" />
     <ClInclude Include="gamestate.h" />
     <ClInclude Include="gameobject.h" />
     <ClInclude Include="gameobjectpool.h" />
@@ -217,7 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp" />
-    <ClCompile Include="bridge.cpp" />
+    <ClCompile Include="bossenemy.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="center.cpp" />
@@ -233,6 +236,8 @@
     <ClCompile Include="flyingcutscenestate.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameobjectpool.cpp" />
+    <ClCompile Include="gameoverscene.cpp" />
+    <ClCompile Include="gameoverstate.cpp" />
     <ClCompile Include="gamestatemanager.cpp" />
     <ClCompile Include="HUDParser.cpp" />
     <ClCompile Include="hudshippart.cpp" />

@@ -10,6 +10,7 @@ using namespace std;
 
 class Renderer;
 class GameObjectPool;
+class GameObject;
 class DDLevelLoad;
 class LogManager;
 class InputSystem;
@@ -19,16 +20,18 @@ class SoundSystem;
 
 class HUDParser;
 class TileParser;
+class CollisionHelper;
 
 class Player;
 class Water;
 class Enemy;
+class BossEnemy;
 
 class RiftVial;
 
 class Level : public Scene {
 public:
-	Level(string levelType, char levelDifficulty, int levelNumber, char gameDifficulty);
+	Level(string levelType, char levelDifficulty, int levelMap, char gameDifficulty, int levelNumber);
 	virtual ~Level();
 
 	virtual bool Initialise(Renderer& renderer);
@@ -57,12 +60,12 @@ protected:
 
 	void SpawnEnemy();
 
-	bool EnemyColliding(Enemy* enemy);
-	void HandleEnemyCollision(const Box& collision, Enemy* enemy);
-	bool PlayerColliding(Player* player);
+	bool CheckWaterCollision(GameObject* obj);
+
+	void HandleEnemyCollision(const Box& collision, GameObject* obj);
 	void HandlePlayerCollision(const Box& collision, Player* player);
 
-	bool DamageCollision(Enemy* enemy, const Box& collision);
+	bool DamageCollision(GameObject* obj, const Box& collision);
 	void DoDamage();
 
 	bool AllEnemiesDefeated();
@@ -83,6 +86,8 @@ protected:
 	GameObjectPool* m_spawnerPool;
 	GameObjectPool* m_enemyPool;
 	GameObjectPool* m_itemPool;
+
+	BossEnemy* m_boss;
 
 	unique_ptr<QuadTree> m_boundaryCollisionTree;
 	unique_ptr<QuadTree> m_enemyCollisionTree;
@@ -122,6 +127,7 @@ protected:
 
 	string m_levelType;
 	char m_levelDifficulty;
+	int m_levelMap;
 	int m_levelNumber;
 	char m_gameDifficulty;
 
