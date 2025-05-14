@@ -8,7 +8,7 @@ void GameOverState::Enter()
 {
 	if (!m_renderer) return;
 
-	m_scene = new GameOverScene(m_wonGame);
+	m_scene = new GameOverScene(GetGameWon());
 	if (m_scene) m_scene->Initialise(*m_renderer);
 }
 

@@ -13,7 +13,6 @@ Particle::~Particle()
 bool Particle::Initialise(Sprite& sprite)
 {
 	m_pSharedSprite = &sprite;
-	m_pSharedSprite->SetScale(3.0f);
 	return true;
 }
 
@@ -44,4 +43,9 @@ void Particle::Draw(Renderer& renderer)
 		m_pSharedSprite->SetY((int)m_postion.y);
 		m_pSharedSprite->Draw(renderer);
 	}
+}
+
+void Particle::SetScale(float scale)
+{
+	m_pSharedSprite->SetScale(scale);
 }

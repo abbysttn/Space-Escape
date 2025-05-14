@@ -12,14 +12,12 @@ public:
 	SoundSystem();
 	~SoundSystem();
 
-	static SoundSystem& getInstance();
-
 	bool initialise();
 	void update();
 	void close();
 
 	bool loadSound(const string& name, const char* filePath, bool looping = false);
-	void playSound(const string& name, float volume);
+	void playSound(const string& name, float volume, bool isMusic);
 
 	void stopSound(const string& name);
 
@@ -27,6 +25,8 @@ protected:
 private:
 	map<string, FMOD::Sound*> m_sounds;
 	FMOD::System* m_pSystem;
+	FMOD::ChannelGroup* m_musicGroup;
+	FMOD::ChannelGroup* m_sfxGroup;
 
 };
 

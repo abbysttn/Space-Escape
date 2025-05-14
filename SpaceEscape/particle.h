@@ -15,6 +15,8 @@ public:
 	bool Initialise(Sprite& sprite);
 	void Process(float deltaTime);
 	void Draw(Renderer& renderer);
+
+	void SetScale(float scale);
 protected:
 private:
 	Particle(const Particle& particle);

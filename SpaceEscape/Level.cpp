@@ -7,11 +7,12 @@
 #include "inputsystem.h"
 #include "xboxcontroller.h"
 #include "quadtree.h"
-#include "soundsystem.h"
 
 #include "imgui/imgui.h"
 #include "inlinehelpers.h"
 #include "collisionhelper.h"
+#include "particleemitter.h"
+#include "soundsystem.h"
 
 #include "HUDParser.h"
 #include "TileParser.h"
@@ -26,10 +27,11 @@
 #include "itemmanager.h"
 #include "bossenemy.h"
 
-Level::Level(string levelType, char levelDifficulty, int levelMap, char gameDifficulty, int levelNumber) : m_playerSize(48.0f), m_soundSystem(0), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
+Level::Level(string levelType, char levelDifficulty, int levelMap, char gameDifficulty, int levelNumber) : m_playerSize(48.0f), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
 m_waterPool(nullptr), m_tileSize(48.0f), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
 m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_gameOver(false), m_levelDone(false), m_invulnerability(false), m_levelType(levelType), m_levelDifficulty(levelDifficulty),
-m_levelNumber(levelNumber), m_levelMap(levelMap), m_gameDifficulty(gameDifficulty), m_riftVial(0), m_boss(0) {}
+m_levelNumber(levelNumber), m_levelMap(levelMap), m_gameDifficulty(gameDifficulty), m_riftVial(0), m_boss(0), m_deathParticles(0), m_particleTime(0.0f), m_particleMaxTime(0.5f),
+m_particleSpawned(false), m_sounds(0) {}
 
 Level::~Level()
 {
@@ -43,8 +45,7 @@ Level::~Level()
 
 	delete m_riftVial;
 	delete m_boss;
-
-	SoundSystem::getInstance().close();
+	delete m_deathParticles;
 }
 
 bool Level::Initialise(Renderer& renderer)
@@ -55,6 +56,12 @@ bool Level::Initialise(Renderer& renderer)
 	m_enemySpawnTime = 4.0f;
 	m_maxEnemies = 3;
 	m_currentEnemies = 0;
+
+	m_sounds = new SoundSystem();
+	m_sounds->initialise();
+	m_sounds->loadSound("hit", "..\\assets\\hit.wav", false);
+	m_sounds->loadSound("collect", "..\\assets\\collect.wav", false);
+	m_sounds->loadSound("shoot", "..\\assets\\shoot.wav", false);
 	
 	m_itemPool = ItemManager::GetInstance().GetPool();
 
@@ -71,6 +78,13 @@ bool Level::Initialise(Renderer& renderer)
 
 	m_riftVial = new RiftVial();
 	m_riftVial->Initialise(renderer);
+
+	m_deathParticles = new ParticleEmitter();
+	
+	if (!ParticlesInitialised(renderer)) {
+		LogManager::GetInstance().Log("Unable to Initialise Particles!");
+		return false;
+	}
 
 	m_tileParser->Initialise(renderer);
 	m_hudParser->Initialise(renderer);
@@ -104,7 +118,6 @@ bool Level::Initialise(Renderer& renderer)
 		m_boss->Initialise(renderer, m_levelNumber);
 		m_boss->SetGameDifficulty(m_gameDifficulty);
 		m_boss->SetActive(true);
-		m_boss->Position() = { 0, 0 };
 	}
 	
 	LogManager::GetInstance().Log("Initialised all Sprites!");
@@ -118,6 +131,8 @@ bool Level::Initialise(Renderer& renderer)
 
 void Level::Process(float deltaTime, InputSystem& inputSystem)
 {
+	m_sounds->update();
+
 	m_boundaryCollisionTree->clear();
 	m_enemyCollisionTree->clear();
 
@@ -136,11 +151,24 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
+	if (m_particleTime < m_particleMaxTime) {
+		m_particleTime += deltaTime;
+	}
+
+	if (m_particleTime >= m_particleMaxTime) {
+		m_particleSpawned = false;
+		m_deathParticles->Reset();
+	}
+
 	//
 
 	m_tileParser->Process(deltaTime, inputSystem);
 
 	AddWaterCollision();
+
+	if (m_particleSpawned) {
+		m_deathParticles->Process(deltaTime);
+	}
 
 	PlayerMovement(inputSystem, m_currentPlayer, deltaTime);
 
@@ -162,7 +190,8 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 			}
 			else {
 				m_playerAlive = false;
-				GameOver();
+				m_gameOver = true;
+				NextLevel();
 			}
 		}
 	}
@@ -233,14 +262,10 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
-	
+	DoDamage();
 
-	if (m_levelNumber != 5) {
-		DoDamage();
-
-		if (AllEnemiesDefeated()) {
-			m_riftVial->Drop(m_centerPos);
-		}
+	if (AllEnemiesDefeated()) {
+		m_riftVial->Drop(m_centerPos);
 	}
 
 	m_riftVial->Process(deltaTime);
@@ -261,6 +286,8 @@ void Level::Draw(Renderer& renderer)
 {
 	renderer.SetClearColour(71, 171, 169);
 	m_tileParser->Draw(renderer);
+
+	m_deathParticles->Draw(renderer);
 
 	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 		if (obj && obj->isActive()) {
@@ -299,10 +326,8 @@ void Level::Draw(Renderer& renderer)
 		}
 	}
 
-	if (m_levelNumber != 5) {
-		if (AllEnemiesDefeated()) {
-			m_riftVial->Draw(renderer);
-		}
+	if (AllEnemiesDefeated()) {
+		m_riftVial->Draw(renderer);
 	}
 
 	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
@@ -402,6 +427,10 @@ bool Level::PlayerInitialised(Renderer& renderer)
 			default:
 				return false;
 			}
+
+			if (m_levelNumber == 1) {
+				player->reset();
+			}
 		}
 	}
 
@@ -493,6 +522,9 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 
 	if (inputSystem.GetMouseButtonState(SDL_BUTTON_LEFT) == BS_PRESSED) { // weapon swing
 		m_currentPlayer = 3;
+
+		m_sounds->playSound("shoot", 0.9f, false);
+
 		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
 			Player* player = static_cast<Player*>(obj);
 			player->SetRunning();
@@ -551,9 +583,16 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			player->SetRunning();
 			player->Position() = m_playerPosition;
 
-			if (m_levelNumber != 5) {
-				if (AllEnemiesDefeated()) {
-					if (CollectItem(player, m_centerPos)) {
+			if (AllEnemiesDefeated()) {
+				if (CollectItem(player, m_centerPos)) {
+					if (m_levelNumber == 5) {
+						m_sounds->playSound("collect", 0.9f, false);
+						m_riftVial->SetCollected(true);
+						m_gameOver = false;
+						NextLevel();
+					}
+					else {
+						m_sounds->playSound("collect", 0.9f, false);
 						m_riftVial->SetCollected(true);
 						NextLevel();
 					}
@@ -565,11 +604,9 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 					if (obj && dynamic_cast<ShipPart*>(obj)) {
 						ShipPart* part = static_cast<ShipPart*>(obj);
 						if (part->isActive() && !part->IsCollected() && CollectItem(player, part->Position())) {
+							m_sounds->playSound("collect", 0.9f, false);
 							ItemManager::GetInstance().MarkCollected(part);
 							part->SetActive(false);
-							if (ItemManager::GetInstance().IsCollected(part)) {
-								LogManager::GetInstance().Log("Collected!");
-							}
 						}
 					}
 				}
@@ -708,12 +745,34 @@ bool Level::EnemiesInitialised(Renderer& renderer)
 
 			enemy->Initialise(renderer, filepath.c_str());
 			enemy->SetActive(false);
+			enemy->SetEnemyType(m_levelDifficulty);
 			enemy->SetAttackDamage(m_levelDifficulty, m_gameDifficulty);
 		}
 	}
 
 	m_boss->Initialise(renderer, m_levelNumber);
 	m_boss->SetGameDifficulty(m_gameDifficulty);
+
+	return true;
+}
+
+bool Level::ParticlesInitialised(Renderer& renderer)
+{
+	m_deathParticles->Initialise(renderer, "..\\assets\\skull.png");
+
+	if (!m_deathParticles) return false;
+
+	float colour[3] = { 1.0f, 0.2f, 0.2f };
+
+	m_deathParticles->SetColour(colour);
+	m_deathParticles->SetAngles(359.0f, 0.0f);
+	m_deathParticles->SetEmitRate(0.2f);
+	m_deathParticles->SetBatchSize(4);
+	m_deathParticles->SetLifeSpan(0.5f);
+	m_deathParticles->SetAcceleration(70.0f);
+	m_deathParticles->SetScale(1.0f);
+
+	m_deathParticles->SetActive(false);
 
 	return true;
 }
@@ -837,13 +896,11 @@ void Level::SpawnEnemy()
 
 	//5% chance for boss to spawn
 	if (!m_boss->isActive()) {
-		/*float chance = GetRandomPercentage();
+		float chance = GetRandomPercentage();
 		if (chance <= 0.05f) {
 			m_boss->Position() = spawnerPos;
 			m_boss->SetActive(true);
-		}*/
-		m_boss->Position() = spawnerPos;
-		m_boss->SetActive(true);
+		}
 	}
 }
 
@@ -1020,15 +1077,21 @@ void Level::DoDamage()
 							enemy->Position().y - player->Position().y);
 
 						if (isSwinging) {
+							m_sounds->playSound("hit", 0.9f, false);
 							enemy->ApplyPushBack(pushDirection);
 							enemy->AddDamage(weaponDamage);
+							SpawnParticles(enemy->Position());
 
 							if (!enemy->isActive()) {
-								if (m_itemPool->hasAvailableObjects()) {
-									if (GameObject* obj = m_itemPool->getObject()) {
-										ShipPart* part = static_cast<ShipPart*>(obj);
-										if (part && AllEnemiesDefeated()) {
-											part->Drop(enemy->Position());
+								SpawnParticles(enemy->Position());
+
+								if (AllEnemiesDefeated()) {
+									if (m_itemPool->hasAvailableObjects()) {
+										if (GameObject* obj = m_itemPool->getObject()) {
+											ShipPart* part = static_cast<ShipPart*>(obj);
+											if (part) {
+												part->Drop(enemy->Position());
+											}
 										}
 									}
 								}
@@ -1050,19 +1113,29 @@ void Level::DoDamage()
 							boss->Position().y - player->Position().y);
 
 						if (isSwinging) {
+							m_sounds->playSound("hit", 0.9f, false);
 							boss->ApplyPushBack(pushDirection);
 							boss->AddDamage(weaponDamage);
+							SpawnParticles(boss->Position());
 
 							if (!boss->isActive()) {
+								SpawnParticles(boss->Position());
+
 								if (m_itemPool->hasAvailableObjects()) {
-									if (GameObject* obj = m_itemPool->getObject()) {
-										ShipPart* part = static_cast<ShipPart*>(obj);
-										if (part && AllEnemiesDefeated()) {
-											if (m_levelNumber == 5) {
-												//final boss drop
-											}
-											else {
-												part->Drop(boss->Position());
+									if (AllEnemiesDefeated()) {
+										if (GameObject* obj = m_itemPool->getObject()) {
+											ShipPart* part = static_cast<ShipPart*>(obj);
+											if (part) {
+												if (m_levelNumber == 5) {
+													//final boss drop
+												}
+												else {
+													if (boss->DropsItems()) {
+
+														//change to weapon
+														part->Drop(boss->Position());
+													}
+												}
 											}
 										}
 									}
@@ -1103,19 +1176,24 @@ void Level::DoDamage()
 							if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
 
 								if (enemy->isActive() && DamageCollision(enemy, bulletRange)) {
+									m_sounds->playSound("hit", 0.9f, false);
 									bullet->SetActive(false);
 									Vector2 pushDirection(enemy->Position().x - bullet->Position().x,
 										enemy->Position().y - bullet->Position().y);
 
 									enemy->ApplyPushBack(pushDirection);
 									enemy->AddDamage(weaponDamage);
+									SpawnParticles(enemy->Position());
 
 									if (!enemy->isActive()) {
-										if (m_itemPool->hasAvailableObjects()) {
-											if (GameObject* obj = m_itemPool->getObject()) {
-												ShipPart* part = static_cast<ShipPart*>(obj);
-												if (part && AllEnemiesDefeated()) {
-													part->Drop(enemy->Position());
+										SpawnParticles(enemy->Position());
+										if (AllEnemiesDefeated()) {
+											if (m_itemPool->hasAvailableObjects()) {
+												if (GameObject* obj = m_itemPool->getObject()) {
+													ShipPart* part = static_cast<ShipPart*>(obj);
+													if (part) {
+														part->Drop(enemy->Position());
+													}
 												}
 											}
 										}
@@ -1127,23 +1205,32 @@ void Level::DoDamage()
 							}
 							else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
 								if (boss->isActive() && DamageCollision(boss, bulletRange)) {
+									m_sounds->playSound("hit", 0.9f, false);
 									bullet->SetActive(false);
 									Vector2 pushDirection(boss->Position().x - bullet->Position().x,
 										boss->Position().y - bullet->Position().y);
 
 									boss->ApplyPushBack(pushDirection);
 									boss->AddDamage(weaponDamage);
+									SpawnParticles(boss->Position());
 
 									if (!boss->isActive()) {
-										if (m_itemPool->hasAvailableObjects()) {
-											if (GameObject* obj = m_itemPool->getObject()) {
-												ShipPart* part = static_cast<ShipPart*>(obj);
-												if (part) {
-													if (m_levelNumber == 5) {
-														//final boss drop
-													}
-													else {
-														part->Drop(boss->Position());
+										SpawnParticles(boss->Position());
+										if (AllEnemiesDefeated()) {
+											if (m_itemPool->hasAvailableObjects()) {
+												if (GameObject* obj = m_itemPool->getObject()) {
+													ShipPart* part = static_cast<ShipPart*>(obj);
+													if (part) {
+														if (m_levelNumber == 5) {
+															//final boss drop
+														}
+														else {
+															if (boss->DropsItems()) {
+
+																//change to weapon
+																part->Drop(boss->Position());
+															}
+														}
 													}
 												}
 											}
@@ -1170,17 +1257,31 @@ void Level::DoDamage()
 			Player* player = dynamic_cast<Player*>(obj);
 
 			for (auto* obj : potentialPlayerCollisions) {
-				Enemy* enemy = dynamic_cast<Enemy*>(obj);
-				if (enemy->isActive() && DamageCollision(enemy, playerBox)) {
-					Vector2 pushDirection(enemy->Position().x - player->Position().x,
-						enemy->Position().y - player->Position().y);
-					Vector2 pushDirectionPlayer(player->Position().x - enemy->Position().x,
-						player->Position().y - enemy->Position().y);
-					player->ApplyPushBack(pushDirectionPlayer);
-					player->AddDamage(enemy->GetDamageDealt());
-					enemy->ApplyPushBack(pushDirection);
+				if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
+					if (enemy->isActive() && DamageCollision(enemy, playerBox)) {
+						Vector2 pushDirection(enemy->Position().x - player->Position().x,
+							enemy->Position().y - player->Position().y);
+						Vector2 pushDirectionPlayer(player->Position().x - enemy->Position().x,
+							player->Position().y - enemy->Position().y);
+						player->ApplyPushBack(pushDirectionPlayer);
+						player->AddDamage(enemy->GetDamageDealt());
+						enemy->ApplyPushBack(pushDirection);
 
-					break;
+						break;
+					}
+				}
+				else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
+					if (boss->isActive() && DamageCollision(boss, playerBox)) {
+						Vector2 pushDirection(boss->Position().x - player->Position().x,
+							boss->Position().y - player->Position().y);
+						Vector2 pushDirectionPlayer(player->Position().x - boss->Position().x,
+							player->Position().y - boss->Position().y);
+						player->ApplyPushBack(pushDirectionPlayer);
+						player->AddDamage(boss->GetDamageDealt());
+						boss->ApplyPushBack(pushDirection);
+
+						break;
+					}
 				}
 			}
 			break;
@@ -1196,7 +1297,7 @@ void Level::DoDamage()
 
 bool Level::AllEnemiesDefeated()
 {
-	if (m_maxEnemies != m_currentEnemies) return false;
+	if (m_maxEnemies != m_currentEnemies && m_levelNumber != 5) return false;
 
 	for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
 		if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
@@ -1207,6 +1308,10 @@ bool Level::AllEnemiesDefeated()
 				}
 			}
 		}
+	}
+
+	if (m_boss->isActive()) {
+		return false;
 	}
 
 	return true;
@@ -1227,27 +1332,17 @@ bool Level::CollectItem(Player* player, Vector2 position)
 	return false;
 }
 
-void Level::GameOver()
+void Level::SpawnParticles(Vector2 position)
 {
-	for (size_t i = 0; i < m_playerPool->totalCount(); i++) {
-		if (GameObject* obj = m_playerPool->getObjectAtIndex(i)) {
-			if (obj && dynamic_cast<Player*>(obj)) {
-				Player* player = static_cast<Player*>(obj);
-				player->SetActive(false);
-			}
-		}
-	}
+	m_deathParticles->SetPosition(position.x, position.y);
+	m_particleSpawned = true;
+	m_particleTime = 0.0f;
+	m_deathParticles->SetActive(true);
+}
 
-	for (size_t i = 0; i < m_weaponPool->totalCount(); i++) {
-		if (GameObject* obj = m_weaponPool->getObjectAtIndex(i)) {
-			if (obj && dynamic_cast<Weapon*>(obj)) {
-				Weapon* weapon = static_cast<Weapon*>(obj);
-				weapon->SetWeapon(false);
-			}
-		}
-	}
-
-	m_gameOver = true;
+bool Level::GameOver()
+{
+	return m_gameOver;
 }
 
 void Level::NextLevel()

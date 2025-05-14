@@ -32,7 +32,7 @@ protected:
 	Level* m_scene;
 	GameStates m_nextState;
 
-	int m_levelNumber = 2;
+	int m_levelNumber = 5;
 
 private:
 };

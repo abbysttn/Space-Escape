@@ -77,6 +77,10 @@ protected:
 	char m_enemyType;
 	float m_attackDamage;
 
+	float m_reactionTime;
+	float m_reactionTimer;
+	bool m_isReacting;
+
 private:
 };
 

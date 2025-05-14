@@ -30,14 +30,11 @@ void Game::DestroyInstance() {
 }
 
 Game::Game() : m_pRenderer(0), m_bLooping(true), m_soundSystem(0), m_pInputSystem(nullptr) {
-    SoundSystem::getInstance().initialise();
 }
 
 Game::~Game() {
     delete m_pRenderer;
     m_pRenderer = 0;
-
-    SoundSystem::getInstance().close();
 }
 
 void Game::Quit() {
@@ -64,15 +61,6 @@ bool Game::Initialise() {
     m_pInputSystem->Initialise();
 
     m_stateManager = new GameStateManager(*m_pRenderer, *m_pInputSystem);
-
-
-
-#if USE_SOUND
-    m_soundSystem = new SoundSystem();
-    m_soundSystem->getInstance().loadSound("background", "..\\assets\\background.mp3", true);
-#endif
-    
-
     return true;
 }
 
@@ -113,12 +101,10 @@ void Game::Process(float deltaTime)
         deltaTime = 0.0f;
 }
 #endif // !DEBUG
-    m_soundSystem->getInstance().playSound("background", 0.1f);
+    
     
     m_stateManager->Update(deltaTime);
     m_bLooping = m_stateManager->GetGameStatus();
-
-    SoundSystem::getInstance().update();
 }
 
 void Game::Draw(Renderer& renderer)
@@ -169,8 +155,6 @@ void Game::DebugDraw
         {
             m_pRenderer->DebugDraw();
         }
-
-        //ImGui::SliderInt("Active scene", &m_iCurrentScene, 0, m_scenes.size() - 1, "%d");
 
         m_stateManager->DebugDraw();
 

@@ -19,6 +19,9 @@ BossEnemy::~BossEnemy()
 
 bool BossEnemy::Initialise(Renderer& renderer, int levelNum)
 {
+    screenWidth = (float)renderer.GetWidth();
+    screenHeight = (float)renderer.GetHeight();
+
 	m_sprite = renderer.CreateAnimatedSprite("..\\assets\\boss.png");
 
 	if (!m_sprite) {
@@ -336,4 +339,7 @@ void BossEnemy::InitFinalBoss()
     m_bossColour[0] = 0.33f;
     m_bossColour[1] = 0.21f;
     m_bossColour[2] = 0.92f;
+
+    m_position.x = screenWidth / 2.0f;
+    m_position.y = screenHeight / 2.0f;
 }

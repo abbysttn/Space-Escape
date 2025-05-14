@@ -5,17 +5,29 @@ SoundSystem::SoundSystem() : m_pSystem(nullptr) {}
 
 SoundSystem::~SoundSystem() {}
 
-SoundSystem& SoundSystem::getInstance()
-{
-	static SoundSystem instance;
-	return instance;
-}
-
 bool SoundSystem::initialise()
 {
-	FMOD::System_Create(&m_pSystem);
-	m_pSystem->init(100, FMOD_INIT_NORMAL, 0);
-	return true;
+	FMOD_RESULT result;
+
+	result = FMOD::System_Create(&m_pSystem);
+
+	if (result != FMOD_OK) {
+		return false;
+	}
+
+	m_pSystem->setDSPBufferSize(2048, 8);
+
+	result = m_pSystem->setSoftwareFormat(48000, FMOD_SPEAKERMODE_STEREO, 0);
+
+	result = m_pSystem->init(100, FMOD_INIT_NORMAL | FMOD_INIT_3D_RIGHTHANDED, nullptr);
+
+	m_pSystem->createChannelGroup("Music", &m_musicGroup);
+	m_pSystem->createChannelGroup("SFX", &m_sfxGroup);
+
+	m_musicGroup->setVolume(0.3f);
+	m_sfxGroup->setVolume(1.0f);
+
+	return (result == FMOD_OK);
 }
 
 void SoundSystem::update()
@@ -44,7 +56,8 @@ bool SoundSystem::loadSound(const string& name, const char* filePath, bool loopi
 	}
 
 	FMOD::Sound* sound = nullptr;
-	if (m_pSystem->createSound(filePath, mode, 0, &sound) == FMOD_OK) {
+	FMOD_RESULT result = m_pSystem->createSound(filePath, mode, nullptr, &sound);
+	if (result == FMOD_OK) {
 		m_sounds[name] = sound;
 		return true;
 	}
@@ -52,18 +65,21 @@ bool SoundSystem::loadSound(const string& name, const char* filePath, bool loopi
 	return false;
 }
 
-void SoundSystem::playSound(const string& name, float volume)
+void SoundSystem::playSound(const string& name, float volume, bool isMusic)
 {
 	auto it = m_sounds.find(name);
+	if (it == m_sounds.end()) return;
 
-	if (it != m_sounds.end()) {
-		FMOD::Channel* channel = nullptr;
+	FMOD::Channel* channel;
+	FMOD::ChannelGroup* channelG = isMusic ? m_musicGroup : m_sfxGroup;
 
-		m_pSystem->playSound(it->second, 0, false, &channel);
+	FMOD_RESULT result = m_pSystem->playSound(it->second, channelG, false, &channel);
 
-		if (channel) {
-			channel->setVolume(volume);
-		}
+	if (result == FMOD_OK && channel) {
+		channel->setVolume(volume);
+
+		channel->setMode(FMOD_3D_WORLDRELATIVE);
+		channel->setPriority(128);
 	}
 
 }

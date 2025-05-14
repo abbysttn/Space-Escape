@@ -66,6 +66,14 @@ bool PlayerState::IsPlayerAlive()
     return m_playerAlive;
 }
 
+void PlayerState::Reset()
+{
+    m_currentHealth = m_maxHealth;
+    m_currentLives = m_maxLives;
+
+    m_playerAlive = true;
+}
+
 PlayerState::PlayerState()
 {
 }

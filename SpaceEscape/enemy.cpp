@@ -10,7 +10,8 @@
 #include <cstdlib>
 #include <math.h>
 
-Enemy::Enemy() : m_sprite(0), m_speed(50.0f), m_wanderDirection(0, 0), m_wanderTime(0), m_wanderDuration(2.0f), m_isPushed(false), m_canSeePlayer(false), m_health(100.0f) {}
+Enemy::Enemy() : m_sprite(0), m_speed(50.0f), m_wanderDirection(0, 0), m_wanderTime(0), m_wanderDuration(2.0f), m_isPushed(false), m_canSeePlayer(false), m_health(100.0f)
+, m_reactionTimer(0.0f), m_isReacting(false), m_reactionTime(0.0f) {}
 
 Enemy::~Enemy()
 {
@@ -38,61 +39,69 @@ bool Enemy::Initialise(Renderer& renderer, const char* filename)
 
 void Enemy::Process(float deltaTime, Vector2 playerPos)
 {
-    if (!m_sprite) {
+    if (!m_sprite || !m_alive) {
         return;
     }
 
-    if (m_alive) {
-        UpdatePushBack(deltaTime);
+    UpdatePushBack(deltaTime);
 
-        if (!m_isPushed) {
-            SetColour(1.0f, 1.0f, 1.0f);
+    if (m_isPushed) {
+        SetColour(1.0f, 0.0f, 0.0f);
+        m_sprite->SetX(static_cast<int>(m_position.x));
+        m_sprite->SetY(static_cast<int>(m_position.y));
+        m_sprite->Process(deltaTime);
+        return;
+    }
+        
+    SetColour(1.0f, 1.0f, 1.0f);
 
-            Vector2 direction = {
-                playerPos.x - m_position.x, playerPos.y - m_position.y
-            };
+    Vector2 direction = playerPos - m_position;
 
-            float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
+    float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
 
-            if (length <= 150.0f) {
-                m_canSeePlayer = true;
+    if (length <= 150.0f) {
+        if (!m_canSeePlayer) {
+            m_canSeePlayer = true;
+            m_reactionTimer = m_reactionTime;
+            m_isReacting = true;
+        }
 
-                if (length != 0.0f) {
-                    direction.x /= length;
-                    direction.y /= length;
-                }
+        if (m_isReacting) {
+            m_reactionTimer -= deltaTime;
 
-                m_velocity.x = direction.x * m_speed;
-                m_velocity.y = direction.y * m_speed;
-
-                m_position.x += m_velocity.x * deltaTime;
-                m_position.y += m_velocity.y * deltaTime;
-            }
-            else {
-                m_canSeePlayer = false;
-
-                m_wanderTime -= deltaTime;
-
-                if (m_wanderTime <= 0) {
-                    m_wanderTime = m_wanderDuration;
-
-                    float angle = GetRandom(0, 360) * (3.14519f / 180.0f); //angle in radians
-                    m_wanderDirection.x = (float)cos(angle);
-                    m_wanderDirection.y = (float)sin(angle);
-                }
-
-                m_position.x += m_wanderDirection.x * (m_speed * 0.25f) * deltaTime;
-                m_position.y += m_wanderDirection.y * (m_speed * 0.25f) * deltaTime;
+            if (m_reactionTimer <= 0) {
+                m_isReacting = false;
             }
         }
         else {
-            SetColour(1.0f, 0.0f, 0.0f);
+            if (length != 0.0f) {
+                direction.x /= length;
+                direction.y /= length;
+            }
+
+            m_velocity = direction * m_speed;
+            m_position += m_velocity * deltaTime;
+        }        
+    }
+    else {
+        m_canSeePlayer = false;
+        m_isReacting = false;
+
+        m_wanderTime -= deltaTime;
+
+        if (m_wanderTime <= 0) {
+            m_wanderTime = m_wanderDuration;
+
+            float angle = GetRandom(0, 360) * (3.14519f / 180.0f); //angle in radians
+            m_wanderDirection.x = (float)cos(angle);
+            m_wanderDirection.y = (float)sin(angle);
         }
 
-        m_sprite->SetX(static_cast<int>(m_position.x));
-        m_sprite->SetY(static_cast<int>(m_position.y));
+        m_position += m_wanderDirection * (m_speed * 0.25f) * deltaTime;
     }
 
+    m_sprite->SetX(static_cast<int>(m_position.x));
+    m_sprite->SetY(static_cast<int>(m_position.y));
     m_sprite->Process(deltaTime);
 }
 
@@ -247,6 +256,24 @@ void Enemy::AddDamage(float weaponDamage)
 void Enemy::SetEnemyType(char type)
 {
     m_enemyType = type;
+
+    switch (type) {
+    case 'E':
+        m_reactionTime = 2.0f;
+        break;
+
+    case 'M':
+        m_reactionTime = 1.0f;
+        break;
+
+    case 'H':
+        m_reactionTime = 0.5f;
+        break;
+
+    default:
+        m_reactionTime = 0.5f;
+        break;
+    }
 }
 
 float Enemy::GetDamageDealt()

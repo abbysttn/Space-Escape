@@ -8,7 +8,7 @@
 
 ParticleEmitter::ParticleEmitter() : m_pSharedSprite(0), m_fTimeElapsed(0.0f),
 m_iSpawnBatchSize(5), m_fEmitRate(0.1f), m_fMaxLifespan(2.0f), m_fAccelerationScalar(100.0f),
- m_fMinAngle(0.0f), m_fMaxAngle(360.0f), m_fX(400.0f), m_fY(300.0f) 
+ m_fMinAngle(0.0f), m_fMaxAngle(360.0f), m_fX(400.0f), m_fY(300.0f), m_active(true), m_scale(3.0f)
 {
 	m_fColour[0] = 1.0f;
 	m_fColour[1] = 1.0f;
@@ -35,30 +35,34 @@ bool ParticleEmitter::Initialise(Renderer& renderer, const char* filename)
 
 void ParticleEmitter::Process(float deltaTime)
 {
-	m_fTimeElapsed += deltaTime;
+	if (m_active) {
+		m_fTimeElapsed += deltaTime;
 
-	if (m_fTimeElapsed >= m_fEmitRate) {
-		for (int i = 0; i < m_iSpawnBatchSize; i++) {
-			Spawn();
+		if (m_fTimeElapsed >= m_fEmitRate) {
+			for (int i = 0; i < m_iSpawnBatchSize; i++) {
+				Spawn();
+			}
+
+			m_fTimeElapsed = 0.0f;
 		}
 
-		m_fTimeElapsed = 0.0f;
-	}
+		for (size_t i = 0; i < m_particles.size(); i++) {
+			m_particles[i]->Process(deltaTime);
 
-	for (size_t i = 0; i < m_particles.size(); i++) {
-		m_particles[i]->Process(deltaTime);
-
-		if (!m_particles[i]->m_bAlive) {
-			delete m_particles[i];
-			m_particles.erase(m_particles.begin() + i);
+			if (!m_particles[i]->m_bAlive) {
+				delete m_particles[i];
+				m_particles.erase(m_particles.begin() + i);
+			}
 		}
 	}
 }
 
 void ParticleEmitter::Draw(Renderer& renderer)
 {
-	for (Particle* particle : m_particles) {
-		particle->Draw(renderer);
+	if (m_active) {
+		for (Particle* particle : m_particles) {
+			particle->Draw(renderer);
+		}
 	}
 }
 
@@ -66,6 +70,8 @@ void ParticleEmitter::Spawn()
 {
 	Particle* particle = new Particle();
 	particle->Initialise(*m_pSharedSprite);
+
+	particle->SetScale(m_scale);
 
 	particle->m_bAlive = true;
 	particle->m_fCurrentAge = 0.0f;
@@ -147,4 +153,23 @@ void ParticleEmitter::SetPosition(float fX, float fY)
 void ParticleEmitter::SetAcceleration(float rate)
 {
 	m_fAccelerationScalar = rate;
+}
+
+void ParticleEmitter::SetScale(float scale)
+{
+	m_scale = scale;
+
+	for (Particle* particle : m_particles) {
+		particle->SetScale(scale);
+	}
+}
+
+void ParticleEmitter::SetActive(bool active)
+{
+	m_active = active;
+}
+
+void ParticleEmitter::Reset()
+{
+	m_particles.clear();
 }

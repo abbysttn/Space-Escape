@@ -21,6 +21,7 @@ class SoundSystem;
 class HUDParser;
 class TileParser;
 class CollisionHelper;
+class ParticleEmitter;
 
 class Player;
 class Water;
@@ -39,7 +40,7 @@ public:
 	virtual void Draw(Renderer& renderer);
 	virtual void DebugDraw();
 
-	void GameOver();
+	bool GameOver();
 	void NextLevel();
 
 	bool GameStatus();
@@ -51,6 +52,7 @@ protected:
 	bool WeaponsInitialised(Renderer& renderer);
 	bool BulletsInitialised(Renderer& renderer);
 	bool EnemiesInitialised(Renderer& renderer);
+	bool ParticlesInitialised(Renderer& renderer);
 
 	void AddWaterCollision();
 
@@ -71,6 +73,7 @@ protected:
 	bool AllEnemiesDefeated();
 
 	bool CollectItem(Player* player, Vector2 position);
+	void SpawnParticles(Vector2 position);
 
 private:
 	Level(const Level& level);
@@ -88,6 +91,7 @@ protected:
 	GameObjectPool* m_itemPool;
 
 	BossEnemy* m_boss;
+	ParticleEmitter* m_deathParticles;
 
 	unique_ptr<QuadTree> m_boundaryCollisionTree;
 	unique_ptr<QuadTree> m_enemyCollisionTree;
@@ -112,7 +116,7 @@ protected:
 
 	bool m_playerPushed;
 
-	SoundSystem* m_soundSystem;
+	SoundSystem* m_sounds;
 
 	float m_cooldownTime;
 	float m_currentCooldown;
@@ -134,8 +138,11 @@ protected:
 	bool m_levelDone;
 	bool m_gameOver;
 
+
 	RiftVial* m_riftVial;
-	
+	float m_particleTime;
+	float m_particleMaxTime;
+	bool m_particleSpawned;
 
 private:
 };

@@ -32,6 +32,7 @@ bool FlyingCutscene::Initialise(Renderer& renderer)
 	m_exhaustEmitter->SetBatchSize(5);
 	m_exhaustEmitter->SetLifeSpan(1.0f);
 	m_exhaustEmitter->SetAcceleration(180.0f);
+	m_exhaustEmitter->SetActive(true);
 
 	m_particleOffset = m_ship->GetSpriteWidth() / 3.0f;
 

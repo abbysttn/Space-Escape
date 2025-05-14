@@ -85,6 +85,9 @@ protected:
 
 	float m_bossColour[3];
 
+	float screenWidth;
+	float screenHeight;
+
 private:
 };
 

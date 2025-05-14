@@ -17,7 +17,17 @@ void LevelState::Update(float deltatime)
 {
 	if (m_scene && m_inputSystem) {
 		m_scene->Process(deltatime, *m_inputSystem);
-		if (m_scene->GameStatus()) {
+		if (m_levelNumber == 5 && m_scene->GameStatus()) {
+			if (!m_scene->GameOver()) {
+				SetGameWon(true);
+			}
+			m_nextState = GameStates::GAME_OVER;
+			m_levelNumber = 1;
+		} else if (m_scene->GameStatus()) {
+			if (m_scene->GameOver()) {
+				SetGameWon(false);
+				m_nextState = GameStates::GAME_OVER;
+			}
 			m_levelNumber++;
 			m_nextState = GameStates::TRANSITION;
 		}

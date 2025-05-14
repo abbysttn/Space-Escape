@@ -17,6 +17,8 @@ public:
 
 	bool IsPlayerAlive();
 
+	void Reset();
+
 protected:
 
 private:

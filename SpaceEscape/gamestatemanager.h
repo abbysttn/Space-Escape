@@ -1,6 +1,8 @@
 #ifndef _GAMESTATEMANAGER_H__
 #define _GAMESTATEMANAGER_H__
 
+#define USE_SOUND 1
+
 #include <unordered_map>
 #include <memory>
 
@@ -9,6 +11,7 @@ class InputSystem;
 enum GameStates;
 enum GameDifficulty;
 class GameState;
+class SoundSystem;
 
 class GameStateManager {
 public:
@@ -35,6 +38,7 @@ protected:
 	GameDifficulty m_currentDifficulty;
 	Renderer& m_renderer;
 	InputSystem& m_inputSystem;
+	SoundSystem* m_soundSystem;
 
 	bool m_wonGame;
 

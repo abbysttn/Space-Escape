@@ -29,6 +29,10 @@ public:
 	void SetLifeSpan(float life);
 	void SetPosition(float fX, float fY);
 	void SetAcceleration(float rate);
+	void SetScale(float scale);
+
+	void SetActive(bool active);
+	void Reset();
 
 protected:
 private:
@@ -49,6 +53,9 @@ protected:
 	float m_fMaxAngle;
 	float m_fX;
 	float m_fY;
+	float m_scale;
+
+	bool m_active;
 
 private:
 };

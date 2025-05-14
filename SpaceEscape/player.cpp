@@ -109,6 +109,8 @@ void Player::reset()
 {
     m_position.x = 0;
     m_position.y = 0;
+
+    PlayerState::GetInstance().Reset();
 }
 
 void Player::SetFrameTime(float time)

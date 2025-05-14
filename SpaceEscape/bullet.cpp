@@ -8,7 +8,7 @@
 #include <cassert>
 #include <cstdlib>
 
-Bullet::Bullet() : m_sprite(0), m_speed(100.0f), m_targetPos(0,0) {}
+Bullet::Bullet() : m_sprite(0), m_speed(200.0f), m_targetPos(0,0) {}
 
 Bullet::~Bullet()
 {

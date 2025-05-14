@@ -56,6 +56,7 @@ bool GameOverScene::Initialise(Renderer& renderer)
 		m_exhaustEmitter->SetAcceleration(180.0f);
 	}
 
+	m_exhaustEmitter->SetActive(true);
 	m_particleOffset = m_ship->GetSpriteWidth() / 3.0f;
 
 	m_gameMessage->Position() = { screenWidth / 2.0f, screenHeight / 2.0f };

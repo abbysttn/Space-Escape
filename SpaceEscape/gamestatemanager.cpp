@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "gamestate.h"
 #include "inputsystem.h"
+#include "soundsystem.h"
 
 #include "splashautstate.h"
 #include "splashfmodstate.h"
@@ -28,6 +29,12 @@ GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem)
 	m_states[GameStates::GAME_OVER] = std::make_unique<GameOverState>();
 
 	ChangeState(GameStates::DIFFICULTY_MENU);
+
+#if USE_SOUND
+	m_soundSystem = new SoundSystem();
+	m_soundSystem->initialise();
+	m_soundSystem->loadSound("background", "..\\assets\\background.wav", true);
+#endif
 }
 
 void GameStateManager::ChangeState(GameStates newState)
@@ -38,6 +45,9 @@ void GameStateManager::ChangeState(GameStates newState)
 			ItemManager::GetInstance().CreatePool(m_renderer);
 
 			//reset on game over
+		}
+		if (dynamic_cast<LevelState*>(m_currentState)) {
+			m_wonGame = m_currentState->GetGameWon();
 		}
 		m_currentState->Exit();
 	}
@@ -52,9 +62,9 @@ void GameStateManager::ChangeState(GameStates newState)
 		if (newState == GameStates::GAMEPLAY) {
 			m_currentState->SetDifficulty(m_currentDifficulty);
 		}
-
-		//temp
-		m_currentState->SetGameWon(false);
+		if (newState == GameStates::GAME_OVER) {
+			m_currentState->SetGameWon(m_wonGame);
+		}
 
 		m_currentState->Enter();
 	}
@@ -71,6 +81,9 @@ void GameStateManager::Update(float deltatime)
 			ChangeState(nextState);
 		}
 	}
+
+	m_soundSystem->playSound("background", 0.1f, true);
+	m_soundSystem->update();
 }
 
 void GameStateManager::Draw()
