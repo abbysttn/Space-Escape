@@ -50,6 +50,8 @@ Level::~Level()
 
 bool Level::Initialise(Renderer& renderer)
 {
+	SetRenderColour(m_levelType);
+
 	m_cooldownTime = 0.2f;
 	m_currentCooldown = 0.0f;
 	m_enemySpawnTimer = 0.0f;
@@ -284,7 +286,7 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 
 void Level::Draw(Renderer& renderer)
 {
-	renderer.SetClearColour(71, 171, 169);
+	renderer.SetClearColour(m_renderColour1, m_renderColour2, m_renderColour3);
 	m_tileParser->Draw(renderer);
 
 	m_deathParticles->Draw(renderer);
@@ -583,7 +585,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			player->SetRunning();
 			player->Position() = m_playerPosition;
 
-			if (AllEnemiesDefeated()) {
+			if (AllEnemiesDefeated() && ItemsCollected()) {
 				if (CollectItem(player, m_centerPos)) {
 					if (m_levelNumber == 5) {
 						m_sounds->playSound("collect", 0.9f, false);
@@ -698,8 +700,6 @@ bool Level::WeaponsInitialised(Renderer& renderer)
 			}
 		}
 	}
-
-	m_currentWeapon = 0;
 
 	return true;
 }
@@ -1120,23 +1120,27 @@ void Level::DoDamage()
 
 							if (!boss->isActive()) {
 								SpawnParticles(boss->Position());
-
-								if (m_itemPool->hasAvailableObjects()) {
-									if (AllEnemiesDefeated()) {
-										if (GameObject* obj = m_itemPool->getObject()) {
-											ShipPart* part = static_cast<ShipPart*>(obj);
-											if (part) {
-												if (m_levelNumber == 5) {
-													//final boss drop
-												}
-												else {
-													if (boss->DropsItems()) {
-
-														//change to weapon
-														part->Drop(boss->Position());
-													}
+								if (m_levelNumber == 5) {
+									if (m_itemPool->hasAvailableObjects()) {
+										int offset = -48;
+										for (size_t i = 0; i < 3; i++) {
+											if (GameObject* obj = m_itemPool->getObject()) {
+												ShipPart* part = static_cast<ShipPart*>(obj);
+												if (part) {
+													Vector2 position = boss->Position();
+													position.x += offset;
+													part->Drop(position);
+													offset += 48;
 												}
 											}
+										}
+									}
+								}
+								else {
+									if (GameObject* obj = m_weaponPool->getObject()) {
+										Weapon* weapon = static_cast<Weapon*>(obj);
+										if (weapon) {
+											weapon->Drop(boss->Position());
 										}
 									}
 								}
@@ -1216,22 +1220,27 @@ void Level::DoDamage()
 
 									if (!boss->isActive()) {
 										SpawnParticles(boss->Position());
-										if (AllEnemiesDefeated()) {
+										if (m_levelNumber == 5) {
 											if (m_itemPool->hasAvailableObjects()) {
-												if (GameObject* obj = m_itemPool->getObject()) {
-													ShipPart* part = static_cast<ShipPart*>(obj);
-													if (part) {
-														if (m_levelNumber == 5) {
-															//final boss drop
-														}
-														else {
-															if (boss->DropsItems()) {
-
-																//change to weapon
-																part->Drop(boss->Position());
-															}
+												int offset = -48;
+												for (size_t i = 0; i < 3; i++) {
+													if (GameObject* obj = m_itemPool->getObject()) {
+														ShipPart* part = static_cast<ShipPart*>(obj);
+														if (part) {
+															Vector2 position = boss->Position();
+															position.x += offset;
+															part->Drop(position);
+															offset += 48;
 														}
 													}
+												}
+											}
+										}
+										else {
+											if (GameObject* obj = m_weaponPool->getObject()) {
+												Weapon* weapon = static_cast<Weapon*>(obj);
+												if (weapon) {
+													weapon->Drop(boss->Position());
 												}
 											}
 										}
@@ -1338,6 +1347,46 @@ void Level::SpawnParticles(Vector2 position)
 	m_particleSpawned = true;
 	m_particleTime = 0.0f;
 	m_deathParticles->SetActive(true);
+}
+
+bool Level::ItemsCollected()
+{
+	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<ShipPart*>(obj)) {
+				ShipPart* part = static_cast<ShipPart*>(obj);
+				if (part->isActive() && !part->IsCollected()) {
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+void Level::SetRenderColour(string levelType)
+{
+	if (levelType == "fall") {
+		m_renderColour1 = 91;
+		m_renderColour2 = 61;
+		m_renderColour3 = 142;
+	}
+	else if (levelType == "spring") {
+		m_renderColour1 = 33;
+		m_renderColour2 = 35;
+		m_renderColour3 = 78;
+	}
+	else if (levelType == "summer") {
+		m_renderColour1 = 71;
+		m_renderColour2 = 171;
+		m_renderColour3 = 169;
+	}
+	else {
+		m_renderColour1 = 72;
+		m_renderColour2 = 108;
+		m_renderColour3 = 55;
+	}
 }
 
 bool Level::GameOver()

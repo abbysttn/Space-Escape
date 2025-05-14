@@ -246,6 +246,12 @@
     <ClInclude Include="gameoverstate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="weaponstate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dropableweapon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp">
@@ -459,6 +465,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gameoverstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="weaponstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dropableweapon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

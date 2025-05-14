@@ -2,6 +2,7 @@
 
 #include "Renderer.h"
 #include "sprite.h"
+#include "inlinehelpers.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -18,7 +19,8 @@ ShipPart::~ShipPart()
 
 bool ShipPart::Initialise(Renderer& renderer)
 {
-	m_sprite = renderer.CreateSprite("..\\assets\\pot.png");
+	string filepath = GetFilepath();
+	m_sprite = renderer.CreateSprite(filepath.c_str());
 
 	m_sprite->SetScale(3.0);
 
@@ -132,4 +134,41 @@ void ShipPart::SetColour(float red, float green, float blue)
 	m_sprite->SetRedTint(red);
 	m_sprite->SetGreenTint(green);
 	m_sprite->SetBlueTint(blue);
+}
+
+int ShipPart::GetPartType()
+{
+	return m_shipPart;
+}
+
+string ShipPart::GetFilepath()
+{
+	int randomPart = GetRandom(1, 4);
+	m_shipPart = randomPart;
+
+	string filepath = "..\\assets\\";
+
+	switch (randomPart) {
+	case 1:
+		filepath += "copper.png";
+		break;
+
+	case 2:
+		filepath += "metal_sheet.png";
+		break;
+
+	case 3:
+		filepath += "wood_plank.png";
+		break;
+
+	case 4:
+		filepath += "metal_pieces.png";
+		break;
+
+	default:
+		filepath += "copper.png";
+		break;
+	}
+
+	return filepath;
 }

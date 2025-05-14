@@ -2,6 +2,9 @@
 #define _LEVELSTATE_H__
 
 #include "gamestate.h"
+#include <string>
+
+using namespace std;
 
 class Level;
 
@@ -21,6 +24,7 @@ protected:
 	char GetRandomLevelDifficulty();
 	char GetDifficulty();
 	int GetRandomLevelMap();
+	string GetRandomLevelType();
 
 private:
 	LevelState(const LevelState& levelState);
@@ -32,7 +36,7 @@ protected:
 	Level* m_scene;
 	GameStates m_nextState;
 
-	int m_levelNumber = 5;
+	int m_levelNumber = 4;
 
 private:
 };

@@ -22,7 +22,7 @@ bool BossEnemy::Initialise(Renderer& renderer, int levelNum)
     screenWidth = (float)renderer.GetWidth();
     screenHeight = (float)renderer.GetHeight();
 
-	m_sprite = renderer.CreateAnimatedSprite("..\\assets\\boss.png");
+	m_sprite = renderer.CreateAnimatedSprite("..\\assets\\slime.png");
 
 	if (!m_sprite) {
 		LogManager::GetInstance().Log("Failed to load boss!");
@@ -31,7 +31,7 @@ bool BossEnemy::Initialise(Renderer& renderer, int levelNum)
 
     GetBoss(levelNum);
     m_alive = false;
-	m_sprite->SetupFrames(48, 48);
+	m_sprite->SetupFrames(22, 16);
 	m_sprite->SetFrameDuration(0.1f);
 	SetLoop(true);
 	m_sprite->Animate();

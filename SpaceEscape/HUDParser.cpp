@@ -664,7 +664,16 @@ void HUDParser::PositionItems(Renderer& renderer)
 	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
 		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
 			HUDShipPart* part = static_cast<HUDShipPart*>(obj);
-			part->Initialise(renderer);
+
+			int partNum;
+
+			if (GameObject* partObj = m_itemDisplayPool->getObjectAtIndex(i)) {
+				ShipPart* shipPart = static_cast<ShipPart*>(partObj);
+
+				partNum = shipPart->GetPartType();
+			}
+
+			part->Initialise(renderer, partNum);
 			part->SetActive(true);
 
 			part->Position() = m_itemsStartPos;

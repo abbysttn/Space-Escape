@@ -97,6 +97,11 @@ bool Renderer::Initialise(bool windowed, int width, int height)
 	return initialised;
 }
 
+void Renderer::ClearTextures()
+{
+	m_pTextureManager->ClearAllTextures();
+}
+
 bool Renderer::InitialiseOpenGL(int screenWidth, int screenHeight)
 {
 	m_iWidth = screenWidth;

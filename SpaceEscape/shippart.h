@@ -3,6 +3,7 @@
 
 #include "vector2.h"
 #include "gameobject.h"
+#include <string>
 
 using namespace std;
 
@@ -31,10 +32,12 @@ public:
 	bool IsCollected();
 
 	void Drop(Vector2 position);
-	void BossDrop(Vector2 position);
 	void Reset();
 
 	void SetColour(float red, float green, float blue);
+	int GetPartType();
+
+	string GetFilepath();
 
 protected:
 
@@ -56,6 +59,8 @@ protected:
 	float m_gravity;
 	bool m_isDropping;
 	int bounces;
+
+	int m_shipPart;
 
 private:
 };

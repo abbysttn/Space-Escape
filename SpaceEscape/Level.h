@@ -18,6 +18,8 @@ class QuadTree;
 struct Box;
 class SoundSystem;
 
+class WeaponState;
+
 class HUDParser;
 class TileParser;
 class CollisionHelper;
@@ -75,6 +77,10 @@ protected:
 	bool CollectItem(Player* player, Vector2 position);
 	void SpawnParticles(Vector2 position);
 
+	bool ItemsCollected();
+
+	void SetRenderColour(string levelType);
+
 private:
 	Level(const Level& level);
 	Level& operator=(const Level& level);
@@ -107,6 +113,10 @@ protected:
 	float m_playerSize;
 	float screenOffsetX;
 	float screenOffsetY;
+
+	int m_renderColour1;
+	int m_renderColour2;
+	int m_renderColour3;
 
 	bool playerPositioned;
 
@@ -143,6 +153,8 @@ protected:
 	float m_particleTime;
 	float m_particleMaxTime;
 	bool m_particleSpawned;
+
+	bool collectedWeaponUpgrade;
 
 private:
 };

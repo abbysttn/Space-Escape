@@ -44,7 +44,7 @@ void GameStateManager::ChangeState(GameStates newState)
 			m_currentDifficulty = m_currentState->GetGameDifficulty();
 			ItemManager::GetInstance().CreatePool(m_renderer);
 
-			//reset on game over
+			//need to keep track of weapon upgrades within the game, but reset on game over
 		}
 		if (dynamic_cast<LevelState*>(m_currentState)) {
 			m_wonGame = m_currentState->GetGameWon();
@@ -66,6 +66,7 @@ void GameStateManager::ChangeState(GameStates newState)
 			m_currentState->SetGameWon(m_wonGame);
 		}
 
+		m_renderer.ClearTextures();
 		m_currentState->Enter();
 	}
 }

@@ -16,6 +16,9 @@ public:
 	Texture* GetTexture(const char* pcFilename);
 	void DebugDraw();
 	void AddTexture(const char* key, Texture* pTexture);
+
+	//cleanup for all textures
+	void ClearAllTextures();
 protected:
 private:
 	TextureManager(const TextureManager& textureManager);

@@ -11,7 +11,6 @@
 #include "center.h"
 #include "edgeCorner.h"
 #include "water.h"
-//#include "bridge.h"
 
 #include "prop.h"
 #include "enemyspawner.h"
@@ -46,7 +45,6 @@ bool TileParser::Initialise(Renderer& renderer)
 	m_centerPool = new GameObjectPool(Center(), 100);
 	m_edgeCornerPool = new GameObjectPool(EdgeCorner(), 100);
 	m_waterPool = new GameObjectPool(Water(), 100);
-	//m_bridgePool = new GameObjectPool(Bridge(), 100);
 	m_propPool = new GameObjectPool(Prop(), 100);
 	m_spawnerPool = new GameObjectPool(EnemySpawner(), 3);
 
@@ -103,15 +101,6 @@ void TileParser::Process(float deltaTime, InputSystem& inputSystem)
 			}
 		}
 	}
-
-	/*for (size_t i = 0; i < m_bridgePool->totalCount(); i++) {
-		if (GameObject* obj = m_bridgePool->getObjectAtIndex(i)) {
-			if (obj && dynamic_cast<Bridge*>(obj)) {
-				Bridge* bridge = static_cast<Bridge*>(obj);
-				bridge->Process(deltaTime);
-			}
-		}
-	}*/
 
 	for (size_t i = 0; i < m_waterPool->totalCount(); i++) {
 		if (GameObject* obj = m_waterPool->getObjectAtIndex(i)) {
@@ -196,15 +185,6 @@ void TileParser::Draw(Renderer& renderer)
 			}
 		}
 	}
-
-	/*for (size_t i = 0; i < m_bridgePool->totalCount(); i++) {
-		if (GameObject* obj = m_bridgePool->getObjectAtIndex(i)) {
-			if (obj && obj->isActive()) {
-				Bridge* bridge = static_cast<Bridge*>(obj);
-				bridge->Draw(renderer);
-			}
-		}
-	}*/
 
 	for (size_t i = 0; i < m_propPool->totalCount(); i++) {
 		if (GameObject* obj = m_propPool->getObjectAtIndex(i)) {

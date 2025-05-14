@@ -3,6 +3,7 @@
 
 #include "vector2.h"
 #include "gameobject.h"
+#include <string>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ public:
 	HUDShipPart();
 	~HUDShipPart();
 
-	bool Initialise(Renderer& renderer);
+	bool Initialise(Renderer& renderer, int part);
 	void Process(float deltaTime);
 	void Draw(Renderer& renderer);
 	Vector2& Position();
@@ -34,6 +35,7 @@ public:
 	void SetColour(float red, float green, float blue);
 
 protected:
+	string GetFilepath(int part);
 
 private:
 	HUDShipPart(const HUDShipPart& shipPart);

@@ -31,6 +31,9 @@ public:
 	void DrawAnimatedSprite(AnimatedSprite& sprite, int frame);
 	void CreateStaticText(const char* pText, int pointSize);
 	void DebugDraw();
+
+	//cleanup
+	void ClearTextures();
 protected:
 	bool InitialiseOpenGL(int screenWidth, int screenHeight);
 	void SetFullscreen(bool fullscreen);

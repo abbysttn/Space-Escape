@@ -151,6 +151,7 @@
     <ClInclude Include="DDLevelLoad.h" />
     <ClInclude Include="difficultymenustate.h" />
     <ClInclude Include="difficultyscene.h" />
+    <ClInclude Include="dropableweapon.h" />
     <ClInclude Include="edge.h" />
     <ClInclude Include="edgeCorner.h" />
     <ClInclude Include="enemy.h" />
@@ -216,6 +217,7 @@
     <ClInclude Include="vertexarray.h" />
     <ClInclude Include="water.h" />
     <ClInclude Include="weapon.h" />
+    <ClInclude Include="weaponstate.h" />
     <ClInclude Include="xboxcontroller.h" />
   </ItemGroup>
   <ItemGroup>
@@ -228,6 +230,7 @@
     <ClCompile Include="DDLevelLoad.cpp" />
     <ClCompile Include="difficultymenustate.cpp" />
     <ClCompile Include="difficultyscene.cpp" />
+    <ClCompile Include="dropableweapon.cpp" />
     <ClCompile Include="edge.cpp" />
     <ClCompile Include="edgeCorner.cpp" />
     <ClCompile Include="enemy.cpp" />
@@ -289,6 +292,7 @@
     <ClCompile Include="vertexarray.cpp" />
     <ClCompile Include="water.cpp" />
     <ClCompile Include="weapon.cpp" />
+    <ClCompile Include="weaponstate.cpp" />
     <ClCompile Include="xboxcontroller.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
