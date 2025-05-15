@@ -1,5 +1,8 @@
 #include "weaponstate.h"
 
+#include "logmanager.h"
+#include <string>
+
 WeaponState* WeaponState::sm_wInstance = 0;
 
 WeaponState& WeaponState::GetInstance()
@@ -33,8 +36,10 @@ void WeaponState::CreateWeaponMap()
 
     if (initialWeapon != m_weaponsObtained.end()) {
         initialWeapon->second = true;
-        m_currentWeapon = 0;
     }
+
+    m_currentWeapon = 0;
+    m_nextWeapon = 1;
 }
 
 void WeaponState::SetCurrentWeapon(int weapon)
@@ -64,27 +69,39 @@ void WeaponState::AddWeapon(int weapon)
 
     m_weaponsObtained.find(weapon)->second = true;
     m_currentWeapon = weapon;
+
+    if (weapon == 3) {
+        m_endUpgrades = true;
+        LogManager::GetInstance().Log("end");
+    }
 }
 
 int WeaponState::GetWeaponUpgrade()
 {
+    if (m_endUpgrades) {
+        return -1;
+    }
+
     for (int i = 0; i < 4; i++) {
         auto weapon = m_weaponsObtained.find(i);
 
-        if (weapon == m_weaponsObtained.end()) return NULL;
+        if (weapon == m_weaponsObtained.end()) {
+            return -1;
+        }
 
         if (weapon->second == false) {
-            return i;
             m_nextWeapon = i;
+            return i;
         }
     }
 
-    return NULL;
+    return -1;
 }
 
 void WeaponState::Reset()
 {
     m_weaponsObtained.clear();
+    m_endUpgrades = false;
 }
 
 WeaponState::WeaponState()

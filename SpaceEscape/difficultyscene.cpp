@@ -8,18 +8,23 @@
 #include "button.h"
 #include "selectionarrow.h"
 #include "gameobjectpool.h"
+#include "xboxcontroller.h"
+
+#include "homebutton.h"
 
 #include "logmanager.h"
 
 #include "quadtree.h"
 
-DifficultyScene::DifficultyScene() : m_textPool(nullptr), m_buttonPool(nullptr), m_arrowPool(nullptr), m_backgroundPlanet(0), m_sceneDone(false) {}
+DifficultyScene::DifficultyScene() : m_textPool(nullptr), m_buttonPool(nullptr), m_arrowPool(nullptr), m_backgroundPlanet(0), m_sceneDone(false), m_currentSelectIndex(0)
+, m_selected(false), m_xboxUsed(false), m_homeButton(0), m_home(false) {}
 
 DifficultyScene::~DifficultyScene()
 {
 	delete m_textPool;
 	delete m_buttonPool;
 	delete m_arrowPool;
+	delete m_homeButton;
 
 	delete m_backgroundPlanet;
 	m_backgroundPlanet = 0;
@@ -42,6 +47,10 @@ bool DifficultyScene::Initialise(Renderer& renderer)
 	m_backgroundPlanet->SetScale(10.0f);
 	m_backgroundPlanet->SetX(screenWidth / 2);
 	m_backgroundPlanet->SetY(screenHeight / 2);
+
+	m_homeButton = new HomeButton();
+	m_homeButton->initialise(renderer);
+	m_homeButton->Position() = { screenWidth - 48.0f, screenHeight - 48.0f };
 
 	for (size_t i = 0; i < m_buttonPool->totalCount(); i++) {
 		if (GameObject* obj = m_buttonPool->getObjectAtIndex(i)) {
@@ -133,6 +142,16 @@ void DifficultyScene::Process(float deltaTime, InputSystem& inputSystem)
 
 	m_backgroundPlanet->Process(deltaTime);
 
+	m_homeButton->Process(deltaTime);
+	Box homeRange(
+		m_homeButton->Position().x - m_homeButton->GetSpriteWidth() / 2,
+		m_homeButton->Position().y - m_homeButton->GetSpriteHeight() / 2,
+		(float)m_homeButton->GetSpriteWidth(),
+		(float)m_homeButton->GetSpriteHeight()
+	);
+
+	m_collisionTree->insert(m_homeButton, homeRange);
+
 	for (size_t i = 0; i < m_textPool->totalCount(); i++) {
 		if (GameObject* obj = m_textPool->getObjectAtIndex(i)) {
 			if (obj && dynamic_cast<TextRenderer*>(obj)) {
@@ -170,6 +189,45 @@ void DifficultyScene::Process(float deltaTime, InputSystem& inputSystem)
 	}
 
 	bool clicked = CheckMousePos(&inputSystem);
+
+	if (inputSystem.GetNumberOfControllersAttached() > 0) {
+
+		XboxController* controller = new XboxController();
+		controller = inputSystem.GetController(0);
+
+		if (controller) {
+			if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == BS_PRESSED) {
+				m_xboxUsed = true;
+				m_currentSelectIndex++;
+				if (m_currentSelectIndex >= (int)m_buttonPool->totalCount()) {
+					m_currentSelectIndex = 0;
+				}
+			}
+			else if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_UP) == BS_PRESSED) {
+				m_xboxUsed = true;
+				m_currentSelectIndex--;
+				if (m_currentSelectIndex < 0) {
+					m_currentSelectIndex = m_buttonPool->totalCount() - 1;
+				}
+			}
+
+			if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_B) == BS_PRESSED) {
+				m_xboxUsed = true;
+				m_selected = true;
+			}
+
+			if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_START) == BS_PRESSED) {
+				m_home = true;
+			}
+
+			if (m_xboxUsed) {
+				if (GameObject* obj = m_buttonPool->getObjectAtIndex(m_currentSelectIndex)) {
+					Button* button = static_cast<Button*>(obj);
+					SetArrowPosXbox(button);
+				}
+			}
+		}
+	}
 }
 
 void DifficultyScene::Draw(Renderer& renderer)
@@ -177,6 +235,8 @@ void DifficultyScene::Draw(Renderer& renderer)
 	renderer.SetClearColour(0, 0, 0);
 
 	m_backgroundPlanet->Draw(renderer);
+
+	m_homeButton->Draw(renderer);
 
 	for (size_t i = 0; i < m_buttonPool->totalCount(); i++) {
 		if (GameObject* obj = m_buttonPool->getObjectAtIndex(i)) {
@@ -247,14 +307,29 @@ bool DifficultyScene::GetStatus()
 	return m_sceneDone;
 }
 
-bool DifficultyScene::IsColliding(const Box& box, Button* button)
+bool DifficultyScene::Home()
 {
-	if (!button) return false;
+	return m_home;
+}
 
-	float bL = button->Position().x - button->GetSpriteWidth() / 2;
-	float bR = bL + button->GetSpriteWidth();
-	float bT = button->Position().y - button->GetSpriteHeight() / 2;
-	float bB = bT + button->GetSpriteHeight();
+bool DifficultyScene::IsColliding(const Box& box, GameObject* obj)
+{
+	if (!obj) return false;
+
+	float bL, bR, bT, bB;
+
+	if (Button* button = dynamic_cast<Button*>(obj)) {
+		bL = button->Position().x - button->GetSpriteWidth() / 2;
+		bR = bL + button->GetSpriteWidth();
+		bT = button->Position().y - button->GetSpriteHeight() / 2;
+		bB = bT + button->GetSpriteHeight();
+	}
+	else if (HomeButton* home = dynamic_cast<HomeButton*>(obj)) {
+		bL = home->Position().x - home->GetSpriteWidth() / 2;
+		bR = bL + home->GetSpriteWidth();
+		bT = home->Position().y - home->GetSpriteHeight() / 2;
+		bB = bT + home->GetSpriteHeight();
+	}
 
 	return !(box.x + box.width < bL ||
 		box.x > bR ||
@@ -274,26 +349,57 @@ bool DifficultyScene::CheckMousePos(InputSystem* inputSystem)
 	auto potentialCollisions = m_collisionTree->queryRange(mouseBox);
 
 	for (auto* obj : potentialCollisions) {
-		Button* button = dynamic_cast<Button*>(obj);
-		if (button && IsColliding(mouseBox, button)) {
-			for (size_t i = 0; i < m_arrowPool->totalCount(); i++) {
-				if (GameObject* obj = m_arrowPool->getObjectAtIndex(i)) {
-					if (obj && dynamic_cast<SelectionArrow*>(obj)) {
-						SelectionArrow* arrow = static_cast<SelectionArrow*>(obj);
-						arrow->Position() = button->Position();
-						arrow->SetOffset((float)button->GetSpriteWidth());
-						if (mouseClicked) {
-							button->Pressed();
-							arrow->Pressed();
-							m_selectedButton = button->Position();
-							m_sceneDone = true;
+		if (Button* button = dynamic_cast<Button*>(obj)) {
+			if (button && IsColliding(mouseBox, button)) {
+				button->Pressed();
+				for (size_t i = 0; i < m_arrowPool->totalCount(); i++) {
+					if (GameObject* obj = m_arrowPool->getObjectAtIndex(i)) {
+						if (obj && dynamic_cast<SelectionArrow*>(obj)) {
+							SelectionArrow* arrow = static_cast<SelectionArrow*>(obj);
+							arrow->Position() = button->Position();
+							arrow->SetOffset((float)button->GetSpriteWidth());
+							if (mouseClicked) {
+								button->Pressed();
+								arrow->Pressed();
+								m_selectedButton = button->Position();
+								m_sceneDone = true;
+							}
 						}
 					}
 				}
+				break;
 			}
-			break;
+		}
+		else if (HomeButton* home = dynamic_cast<HomeButton*>(obj)) {
+			if (home && IsColliding(mouseBox, home)) {
+				home->Pressed();
+				if (mouseClicked) {
+					home->Pressed();
+					m_home = true;
+					break;
+				}
+			}
 		}
 	}
 
 	return true;
+}
+
+void DifficultyScene::SetArrowPosXbox(Button* button)
+{
+	for (size_t i = 0; i < m_arrowPool->totalCount(); i++) {
+		if (GameObject* obj = m_arrowPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<SelectionArrow*>(obj)) {
+				SelectionArrow* arrow = static_cast<SelectionArrow*>(obj);
+				arrow->Position() = button->Position();
+				arrow->SetOffset((float)button->GetSpriteWidth());
+				if (m_selected) {
+					button->Pressed();
+					arrow->Pressed();
+					m_selectedButton = button->Position();
+					m_sceneDone = true;
+				}
+			}
+		}
+	}
 }

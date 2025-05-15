@@ -36,6 +36,22 @@ int PlayerState::GetLives()
     return m_currentLives;
 }
 
+float PlayerState::GetPlayerSpeed()
+{
+    return m_playerSpeed;
+}
+
+void PlayerState::SetCurrentEffect(int effect)
+{
+    m_currentEffect = effect;
+    SetPlayerSpeed();
+}
+
+int PlayerState::CurrentEffect()
+{
+    return m_currentEffect;
+}
+
 void PlayerState::AddLife()
 {
     m_currentLives++;
@@ -72,6 +88,35 @@ void PlayerState::Reset()
     m_currentLives = m_maxLives;
 
     m_playerAlive = true;
+}
+
+void PlayerState::SetPlayerSpeed()
+{
+    switch (m_currentEffect) {
+    case 0:
+        //default or normal effect
+        m_playerSpeed = 80.0f;
+        break;
+
+    case 1:
+        //slow time
+        m_playerSpeed = 40.0f;
+        break;
+
+    case 2:
+        //reverse
+        m_playerSpeed = -80.0f;
+        break;
+
+    case 3:
+        //fast time
+        m_playerSpeed = 280.0f;
+        break;
+
+    default:
+        m_playerSpeed = 80.0f;
+        break;
+    }
 }
 
 PlayerState::PlayerState()

@@ -25,6 +25,7 @@ protected:
 	char GetDifficulty();
 	int GetRandomLevelMap();
 	string GetRandomLevelType();
+	int GetRandomPlanetEffect();
 
 private:
 	LevelState(const LevelState& levelState);
@@ -36,7 +37,7 @@ protected:
 	Level* m_scene;
 	GameStates m_nextState;
 
-	int m_levelNumber = 4;
+	int m_levelNumber = 1;
 
 private:
 };

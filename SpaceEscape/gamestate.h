@@ -17,7 +17,6 @@ enum GameStates {
 	INSTRUCTIONS,
 	GAMEPLAY,
 	TRANSITION,
-	PAUSED,
 	GAME_OVER
 };
 

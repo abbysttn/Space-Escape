@@ -17,6 +17,10 @@ void DifficultyMenuState::Update(float deltatime)
 {
 	if (m_scene && m_inputSystem) {
 		m_scene->Process(deltatime, *m_inputSystem);
+        if (m_scene->Home()) {
+            m_nextState = GameStates::START_MENU;
+        }
+
 		if (m_scene->GetStatus()) {
 			char selection = m_scene->GetSelection();
 
@@ -55,6 +59,7 @@ void DifficultyMenuState::Exit()
 {
 	delete m_scene;
 	m_scene = 0;
+    m_nextState = GameStates::NONE;
 }
 
 GameStates DifficultyMenuState::GetNextState() const

@@ -13,11 +13,12 @@
 #include "leveltransitionstate.h"
 #include "flyingcutscenestate.h"
 #include "gameoverstate.h"
+#include "instructionstate.h"
 
 #include "itemmanager.h"
 
 GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem) : m_renderer(renderer), m_inputSystem(inputSystem)
-, m_currentState(nullptr), m_gameLooping(true)
+, m_currentState(nullptr), m_gameLooping(true), m_debugging(false)
 {
 	m_states[GameStates::SPLASH_FMOD] = std::make_unique<SplashFMODState>();
 	m_states[GameStates::DIFFICULTY_MENU] = std::make_unique<DifficultyMenuState>();
@@ -27,8 +28,9 @@ GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem)
 	m_states[GameStates::TRANSITION] = std::make_unique<LevelTransitionState>();
 	m_states[GameStates::FLYING_CUTSCENE] = std::make_unique<FlyingCutsceneState>();
 	m_states[GameStates::GAME_OVER] = std::make_unique<GameOverState>();
+	m_states[GameStates::INSTRUCTIONS] = std::make_unique<InstructionState>();
 
-	ChangeState(GameStates::DIFFICULTY_MENU);
+	ChangeState(GameStates::SPLASH_AUT);
 
 #if USE_SOUND
 	m_soundSystem = new SoundSystem();
@@ -83,6 +85,10 @@ void GameStateManager::Update(float deltatime)
 		}
 	}
 
+	if (m_inputSystem.GetKeyState(SDL_SCANCODE_INSERT) == BS_PRESSED) {
+		m_debugging = !m_debugging;
+	}
+
 	m_soundSystem->playSound("background", 0.1f, true);
 	m_soundSystem->update();
 }
@@ -104,4 +110,9 @@ void GameStateManager::DebugDraw()
 bool GameStateManager::GetGameStatus()
 {
 	return m_gameLooping;
+}
+
+bool GameStateManager::GetDebuggingStatus()
+{
+	return m_debugging;
 }

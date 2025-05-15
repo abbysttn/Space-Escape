@@ -49,6 +49,12 @@ protected:
 	bool m_active;
 	bool m_collected;
 
+	Vector2 m_velocity;
+	Vector2 m_startPos;
+	float m_gravity;
+	bool m_isDropping;
+	int bounces;
+
 private:
 };
 

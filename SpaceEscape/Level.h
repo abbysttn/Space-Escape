@@ -22,6 +22,7 @@ class WeaponState;
 
 class HUDParser;
 class TileParser;
+class DifficultyBanner;
 class CollisionHelper;
 class ParticleEmitter;
 
@@ -30,11 +31,13 @@ class Water;
 class Enemy;
 class BossEnemy;
 
+class PauseScene;
+
 class RiftVial;
 
 class Level : public Scene {
 public:
-	Level(string levelType, char levelDifficulty, int levelMap, char gameDifficulty, int levelNumber);
+	Level(string levelType, char levelDifficulty, int levelMap, char gameDifficulty, int levelNumber, int planetEffect);
 	virtual ~Level();
 
 	virtual bool Initialise(Renderer& renderer);
@@ -44,12 +47,15 @@ public:
 
 	bool GameOver();
 	void NextLevel();
+	bool Quit();
+	bool Home();
 
 	bool GameStatus();
 
 protected:
 	bool PlayerInitialised(Renderer& renderer);
 	void PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime);
+	void XboxMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime);
 	bool IsColliding(const Box& playerBox, Water* water);
 	bool WeaponsInitialised(Renderer& renderer);
 	bool BulletsInitialised(Renderer& renderer);
@@ -96,12 +102,17 @@ protected:
 	GameObjectPool* m_enemyPool;
 	GameObjectPool* m_itemPool;
 
+	GameObjectPool* m_upgradePool;
+
+	PauseScene* m_pause;
+
 	BossEnemy* m_boss;
 	ParticleEmitter* m_deathParticles;
 
 	unique_ptr<QuadTree> m_boundaryCollisionTree;
 	unique_ptr<QuadTree> m_enemyCollisionTree;
 
+	DifficultyBanner* m_banner;
 	HUDParser* m_hudParser;
 	TileParser* m_tileParser;
 
@@ -154,7 +165,10 @@ protected:
 	float m_particleMaxTime;
 	bool m_particleSpawned;
 
+	bool m_paused;
+
 	bool collectedWeaponUpgrade;
+	int m_planetEffect;
 
 private:
 };

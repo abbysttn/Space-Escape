@@ -25,6 +25,7 @@ void StartMenuState::Update(float deltatime)
 				break;
 
 			case 'I':
+				m_nextState = GameStates::INSTRUCTIONS;
 				break;
 
 			case 'E':
@@ -50,6 +51,7 @@ void StartMenuState::Exit()
 {
 	delete m_scene;
 	m_scene = 0;
+	m_nextState = GameStates::NONE;
 }
 
 GameStates StartMenuState::GetNextState() const

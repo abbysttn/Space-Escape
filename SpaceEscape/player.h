@@ -48,6 +48,10 @@ public:
 
 	void SetPlayerScale(float scale);
 
+	void SetEffect(int effect);
+
+	float GetPlayerSpeed();
+
 	
 protected:
 	void UpdatePushBack(float deltaTime);
@@ -69,6 +73,9 @@ protected:
 	bool m_alive;
 
 	bool m_canTakeDamage;
+
+	int m_currentEffect;
+	float m_playerSpeed;
 
 private:
 };

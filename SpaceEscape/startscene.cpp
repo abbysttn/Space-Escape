@@ -10,10 +10,12 @@
 #include "gameobjectpool.h"
 
 #include "logmanager.h"
+#include "xboxcontroller.h"
 
 #include "quadtree.h"
 
-StartScene::StartScene() : m_textPool(nullptr), m_buttonPool(nullptr), m_arrowPool(nullptr), m_backgroundPlanet(0), m_sceneDone(false) {}
+StartScene::StartScene() : m_textPool(nullptr), m_buttonPool(nullptr), m_arrowPool(nullptr), m_backgroundPlanet(0), m_sceneDone(false), m_currentSelectIndex(0)
+, m_selected(false), m_xboxUsed(false) {}
 
 StartScene::~StartScene()
 {
@@ -160,6 +162,41 @@ void StartScene::Process(float deltaTime, InputSystem& inputSystem)
 		}
 	}
 
+	if (inputSystem.GetNumberOfControllersAttached() > 0) {
+
+		XboxController* controller = new XboxController();
+		controller = inputSystem.GetController(0);
+
+		if (controller) {
+			if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == BS_PRESSED) {
+				m_xboxUsed = true;
+				m_currentSelectIndex++;
+				if (m_currentSelectIndex >= (int)m_buttonPool->totalCount()) {
+					m_currentSelectIndex = 0;
+				}
+			}
+			else if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_UP) == BS_PRESSED) {
+				m_xboxUsed = true;
+				m_currentSelectIndex--;
+				if (m_currentSelectIndex < 0) {
+					m_currentSelectIndex = m_buttonPool->totalCount() - 1;
+				}
+			}
+
+			if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_B) == BS_PRESSED) {
+				m_xboxUsed = true;
+				m_selected = true;
+			}
+
+			if (m_xboxUsed) {
+				if (GameObject* obj = m_buttonPool->getObjectAtIndex(m_currentSelectIndex)) {
+					Button* button = static_cast<Button*>(obj);
+					SetArrowPosXbox(button);
+				}
+			}
+		}
+	}
+
 	for (size_t i = 0; i < m_arrowPool->totalCount(); i++) {
 		if (GameObject* obj = m_arrowPool->getObjectAtIndex(i)) {
 			if (obj && dynamic_cast<SelectionArrow*>(obj)) {
@@ -168,6 +205,7 @@ void StartScene::Process(float deltaTime, InputSystem& inputSystem)
 			}
 		}
 	}
+
 
 	bool clicked = CheckMousePos(&inputSystem);
 }
@@ -276,6 +314,7 @@ bool StartScene::CheckMousePos(InputSystem* inputSystem)
 	for (auto* obj : potentialCollisions) {
 		Button* button = dynamic_cast<Button*>(obj);
 		if (button && IsColliding(mouseBox, button)) {
+			button->Pressed();
 			for (size_t i = 0; i < m_arrowPool->totalCount(); i++) {
 				if (GameObject* obj = m_arrowPool->getObjectAtIndex(i)) {
 					if (obj && dynamic_cast<SelectionArrow*>(obj)) {
@@ -296,4 +335,24 @@ bool StartScene::CheckMousePos(InputSystem* inputSystem)
 	}
 
 	return true;
+}
+
+void StartScene::SetArrowPosXbox(Button* button)
+{
+	for (size_t i = 0; i < m_arrowPool->totalCount(); i++) {
+		if (GameObject* obj = m_arrowPool->getObjectAtIndex(i)) {
+			if (obj && dynamic_cast<SelectionArrow*>(obj)) {
+				button->Pressed();
+				SelectionArrow* arrow = static_cast<SelectionArrow*>(obj);
+				arrow->Position() = button->Position();
+				arrow->SetOffset((float)button->GetSpriteWidth());
+				if (m_selected) {
+					button->Pressed();
+					arrow->Pressed();
+					m_selectedButton = button->Position();
+					m_sceneDone = true;
+				}
+			}
+		}
+	}
 }

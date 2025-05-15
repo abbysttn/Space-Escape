@@ -9,7 +9,7 @@ void LevelState::Enter()
 {
 	if (!m_renderer) return;
 
-	m_scene = new Level("spring", GetRandomLevelDifficulty(), GetRandomLevelMap(), GetDifficulty(), m_levelNumber);
+	m_scene = new Level(GetRandomLevelType(), GetRandomLevelDifficulty(), GetRandomLevelMap(), GetDifficulty(), m_levelNumber, GetRandomPlanetEffect());
 	if (m_scene) m_scene->Initialise(*m_renderer);
 }
 
@@ -17,6 +17,16 @@ void LevelState::Update(float deltatime)
 {
 	if (m_scene && m_inputSystem) {
 		m_scene->Process(deltatime, *m_inputSystem);
+
+		if (m_scene->Home()) {
+			m_nextState = GameStates::START_MENU;
+		}
+
+		if (m_scene->Quit()) {
+			m_gameLooping = false;
+			m_nextState = GameStates::NONE;
+		}
+
 		if (m_levelNumber == 5 && m_scene->GameStatus()) {
 			if (!m_scene->GameOver()) {
 				SetGameWon(true);
@@ -129,7 +139,7 @@ int LevelState::GetRandomLevelMap()
 
 string LevelState::GetRandomLevelType()
 {
-	int random = GetRandom(1, 4);
+	int random = GetRandom(1, 3);
 
 	string levelType;
 
@@ -145,12 +155,18 @@ string LevelState::GetRandomLevelType()
 	case 3:
 		levelType = "spring";
 		break;
-
-	case 4:
-		levelType = "winter";
-		break;
-
 	}
 
 	return levelType;
+}
+
+int LevelState::GetRandomPlanetEffect()
+{
+	int randomEffect = GetRandom(0, 3);
+
+	if (m_levelNumber == 5 || m_levelNumber == 1) {
+		randomEffect = 0;
+	}
+
+	return randomEffect;
 }

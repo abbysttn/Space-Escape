@@ -11,6 +11,10 @@ public:
 	float GetMaxHealth();
 	int GetLives();
 
+	float GetPlayerSpeed();
+	void SetCurrentEffect(int effect);
+	int CurrentEffect();
+
 	void AddLife();
 	void LoseLife();
 	void TakeDamage(float damage);
@@ -20,6 +24,7 @@ public:
 	void Reset();
 
 protected:
+	void SetPlayerSpeed();
 
 private:
 	PlayerState();
@@ -36,6 +41,9 @@ protected:
 	float m_currentHealth = 100.0f;
 	int m_maxLives = 3;
 	int m_currentLives = 3;
+
+	float m_playerSpeed = 80.0f;
+	int m_currentEffect = 0;
 
 	bool m_playerAlive = true;
 

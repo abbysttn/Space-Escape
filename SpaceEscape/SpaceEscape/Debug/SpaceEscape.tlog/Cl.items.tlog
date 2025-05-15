@@ -5,8 +5,10 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\button.cpp;C:\Users\a
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\center.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\center.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\corner.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\corner.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\DDLevelLoad.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\DDLevelLoad.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\difficultybanner.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\difficultybanner.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\difficultymenustate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\difficultymenustate.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\difficultyscene.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\difficultyscene.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\dropableweapon.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\dropableweapon.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\edge.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\edge.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\edgeCorner.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\edgeCorner.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\enemy.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\enemy.obj
@@ -18,6 +20,7 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\gameobjectpool.cpp;C:
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\gameoverscene.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\gameoverscene.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\gameoverstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\gameoverstate.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\gamestatemanager.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\gamestatemanager.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\homebutton.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\homebutton.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\HUDParser.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\HUDParser.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\hudshippart.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\hudshippart.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\imgui.obj
@@ -29,6 +32,9 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui_tables.cp
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\imgui\imgui_widgets.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\imgui_widgets.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\iniparser.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\iniparser.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\inputsystem.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\inputsystem.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\instruction.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\instruction.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\instructionscene.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\instructionscene.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\instructionstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\instructionstate.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\itemmanager.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\itemmanager.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\Level.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\Level.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\levelstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\levelstate.obj
@@ -40,6 +46,7 @@ C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\main.cpp;C:\Users\abb
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\matrix4.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\matrix4.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\particle.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\particle.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\particleemitter.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\particleemitter.obj
+C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\pausescene.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\pausescene.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\player.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\player.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\playership.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\playership.obj
 C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\playerstate.cpp;C:\Users\abbys\OneDrive\Documents\Space-Escape\SpaceEscape\SpaceEscape\Debug\playerstate.obj

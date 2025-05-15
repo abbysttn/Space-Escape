@@ -24,6 +24,8 @@ public:
 
 	bool GetGameStatus();
 
+	bool GetDebuggingStatus();
+
 protected:
 
 private:
@@ -43,6 +45,8 @@ protected:
 	bool m_wonGame;
 
 	bool m_gameLooping;
+
+	bool m_debugging;
 
 private:
 };

@@ -252,6 +252,24 @@
     <ClInclude Include="dropableweapon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="difficultybanner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pausescene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="instructionscene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="instructionstate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="instruction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="homebutton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="animatedsprite.cpp">
@@ -471,6 +489,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dropableweapon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="difficultybanner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pausescene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="instructionscene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="instructionstate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="instruction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="homebutton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

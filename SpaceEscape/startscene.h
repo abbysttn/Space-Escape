@@ -31,6 +31,7 @@ public:
 protected:
 	bool IsColliding(const Box& box, Button* button);
 	bool CheckMousePos(InputSystem* inputSystem);
+	void SetArrowPosXbox(Button* button);
 
 private:
 	StartScene(const StartScene& startScene);
@@ -50,6 +51,11 @@ protected:
 
 	Vector2 m_selectedButton;
 	char m_selectedOption;
+
+	int m_currentSelectIndex;
+
+	bool m_selected;
+	bool m_xboxUsed;
 
 private:
 };

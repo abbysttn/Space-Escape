@@ -39,7 +39,7 @@ protected:
 	int m_currentWeapon;
 	int m_nextWeapon;
 
-	bool m_playerAlive = true;
+	bool m_endUpgrades = false;
 
 private:
 };

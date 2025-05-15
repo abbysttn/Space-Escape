@@ -16,6 +16,7 @@
 
 #include "HUDParser.h"
 #include "TileParser.h"
+#include "difficultybanner.h"
 
 #include "water.h"
 #include "player.h"
@@ -26,22 +27,29 @@
 #include "riftvial.h"
 #include "itemmanager.h"
 #include "bossenemy.h"
+#include "dropableweapon.h"
 
-Level::Level(string levelType, char levelDifficulty, int levelMap, char gameDifficulty, int levelNumber) : m_playerSize(48.0f), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
+#include "pausescene.h"
+#include "weaponstate.h"
+
+Level::Level(string levelType, char levelDifficulty, int levelMap, char gameDifficulty, int levelNumber, int planetEffect) : m_playerSize(48.0f), m_playerPrevPosition(0, 0), m_playerPosition(0, 0), m_currentPlayer(0), m_playerPool(nullptr),
 m_waterPool(nullptr), m_tileSize(48.0f), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
 m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_gameOver(false), m_levelDone(false), m_invulnerability(false), m_levelType(levelType), m_levelDifficulty(levelDifficulty),
 m_levelNumber(levelNumber), m_levelMap(levelMap), m_gameDifficulty(gameDifficulty), m_riftVial(0), m_boss(0), m_deathParticles(0), m_particleTime(0.0f), m_particleMaxTime(0.5f),
-m_particleSpawned(false), m_sounds(0) {}
+m_particleSpawned(false), m_sounds(0), m_banner(0), m_planetEffect(planetEffect), m_paused(false), m_pause(0), m_upgradePool(nullptr) {}
 
 Level::~Level()
 {
 	delete m_playerPool;
 	delete m_waterPool;
 	delete m_hudParser;
+	delete m_banner;
 	delete m_bulletPool;
 	delete m_weaponPool;
 	delete m_spawnerPool;
 	delete m_enemyPool;
+
+	delete m_pause;
 
 	delete m_riftVial;
 	delete m_boss;
@@ -51,6 +59,9 @@ Level::~Level()
 bool Level::Initialise(Renderer& renderer)
 {
 	SetRenderColour(m_levelType);
+
+	m_pause = new PauseScene();
+	m_pause->Initialise(renderer);
 
 	m_cooldownTime = 0.2f;
 	m_currentCooldown = 0.0f;
@@ -64,6 +75,9 @@ bool Level::Initialise(Renderer& renderer)
 	m_sounds->loadSound("hit", "..\\assets\\hit.wav", false);
 	m_sounds->loadSound("collect", "..\\assets\\collect.wav", false);
 	m_sounds->loadSound("shoot", "..\\assets\\shoot.wav", false);
+
+	m_banner = new DifficultyBanner(m_planetEffect, m_levelDifficulty, m_levelNumber);
+	m_banner->Initialise(renderer);
 	
 	m_itemPool = ItemManager::GetInstance().GetPool();
 
@@ -76,6 +90,7 @@ bool Level::Initialise(Renderer& renderer)
 	m_weaponPool = new GameObjectPool(Weapon(), 6);
 	m_bulletPool = new GameObjectPool(Bullet(), 20);
 	m_enemyPool = new GameObjectPool(Enemy(), m_maxEnemies);
+	m_upgradePool = new GameObjectPool(DropableWeapon(), 4);
 	m_boss = new BossEnemy();
 
 	m_riftVial = new RiftVial();
@@ -138,150 +153,177 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 	m_boundaryCollisionTree->clear();
 	m_enemyCollisionTree->clear();
 
-	//timers
-
-	if (m_currentCooldown > 0.0f) {
-		m_currentCooldown -= deltaTime;
+	if (inputSystem.GetKeyState(SDL_SCANCODE_ESCAPE) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_ESCAPE) == BS_PRESSED) {
+		m_paused = true;
 	}
 
-	if (m_levelNumber != 5) {
-		m_enemySpawnTimer += deltaTime;
-
-		if (m_enemySpawnTimer >= m_enemySpawnTime && m_currentEnemies < m_maxEnemies) {
-			SpawnEnemy();
-			m_enemySpawnTimer = 0.0f;
+	if (m_paused) {
+		m_pause->Paused();
+		m_pause->Process(deltaTime, inputSystem);
+		if (m_pause->Resume()) {
+			m_paused = false;
 		}
 	}
+	else {
 
-	if (m_particleTime < m_particleMaxTime) {
-		m_particleTime += deltaTime;
-	}
+		m_tileParser->Process(deltaTime, inputSystem);
 
-	if (m_particleTime >= m_particleMaxTime) {
-		m_particleSpawned = false;
-		m_deathParticles->Reset();
-	}
+		AddWaterCollision();
 
-	//
+		m_banner->Process(deltaTime, inputSystem);
 
-	m_tileParser->Process(deltaTime, inputSystem);
+		if (m_banner->GetStatus()) {
+			//timers
 
-	AddWaterCollision();
+			if (m_currentCooldown > 0.0f) {
+				m_currentCooldown -= deltaTime;
+			}
 
-	if (m_particleSpawned) {
-		m_deathParticles->Process(deltaTime);
-	}
+			if (m_levelNumber != 5) {
+				m_enemySpawnTimer += deltaTime;
 
-	PlayerMovement(inputSystem, m_currentPlayer, deltaTime);
-
-	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
-		if (obj && dynamic_cast<Player*>(obj)) {
-			Player* player = static_cast<Player*>(obj);
-			if (player->isActive()) {
-
-				bool colliding = CheckWaterCollision(player);
-				if (!colliding) {
-					player->Process(deltaTime);
-				}
-
-				m_playerPushed = player->IsPushedBack();
-
-				if (!player->IsRunning()) {
-					m_currentPlayer = 0;
+				if (m_enemySpawnTimer >= m_enemySpawnTime && m_currentEnemies < m_maxEnemies) {
+					SpawnEnemy();
+					m_enemySpawnTimer = 0.0f;
 				}
 			}
-			else {
-				m_playerAlive = false;
-				m_gameOver = true;
-				NextLevel();
+
+			if (m_particleTime < m_particleMaxTime) {
+				m_particleTime += deltaTime;
 			}
-		}
-	}
 
-	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
-		if (obj && dynamic_cast<Weapon*>(obj)) {
-			Weapon* weapon = static_cast<Weapon*>(obj);
-			weapon->Process(deltaTime);
+			if (m_particleTime >= m_particleMaxTime) {
+				m_particleSpawned = false;
+				m_deathParticles->Reset();
+			}
 
-			weapon->Position() = m_playerPosition;
-			weapon->Position().y += weapon->GetSpriteHeight() * 1.5f;
-			weapon->Position().x += weapon->GetSpriteWidth() * 0.2f;
-		}
-	}
+			//
 
-	if (m_levelNumber != 5) {
-		for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
-			if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
-				if (obj && dynamic_cast<Enemy*>(obj)) {
-					Enemy* enemy = static_cast<Enemy*>(obj);
+			if (m_particleSpawned) {
+				m_deathParticles->Process(deltaTime);
+			}
 
-					float enemySize = (float)enemy->GetSpriteWidth();
-					Box enemyRange(
-						enemy->Position().x,
-						enemy->Position().y,
-						enemySize,
-						enemySize
-					);
+			PlayerMovement(inputSystem, m_currentPlayer, deltaTime);
 
-					m_enemyCollisionTree->insert(enemy, enemyRange);
+			if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+				if (obj && dynamic_cast<Player*>(obj)) {
+					Player* player = static_cast<Player*>(obj);
+					if (player->isActive()) {
 
-					bool colliding = CheckWaterCollision(enemy);
-					if (!colliding) {
-						enemy->Process(deltaTime, m_playerPrevPosition);
+						bool colliding = CheckWaterCollision(player);
+						if (!colliding) {
+							player->Process(deltaTime);
+						}
+
+						m_playerPushed = player->IsPushedBack();
+
+						if (!player->IsRunning()) {
+							m_currentPlayer = 0;
+						}
+					}
+					else {
+						m_playerAlive = false;
+						m_gameOver = true;
+						NextLevel();
 					}
 				}
 			}
-		}
-	}
 
-	if (m_boss->isActive()) {
-		float bossSize = (float)m_boss->GetSpriteWidth();
-		Box bossRange(
-			m_boss->Position().x,
-			m_boss->Position().y,
-			bossSize,
-			bossSize
-		);
+			if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+				if (obj && dynamic_cast<Weapon*>(obj)) {
+					Weapon* weapon = static_cast<Weapon*>(obj);
+					weapon->Process(deltaTime);
 
-		m_enemyCollisionTree->insert(m_boss, bossRange);
-
-		bool colliding = CheckWaterCollision(m_boss);
-		if (!colliding) {
-			m_boss->Process(deltaTime, m_playerPosition);
-		}
-	}
-
-	for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
-		if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
-			if (obj && dynamic_cast<Bullet*>(obj)) {
-				Bullet* bullet = static_cast<Bullet*>(obj);
-				bullet->Process(deltaTime);
-
-				if (!bullet->isActive()) {
-					m_bulletPool->release(bullet);
+					weapon->Position() = m_playerPosition;
+					weapon->Position().y += weapon->GetSpriteHeight() * 1.5f;
+					weapon->Position().x += weapon->GetSpriteWidth() * 0.2f;
 				}
 			}
-		}
-	}
 
-	DoDamage();
-
-	if (AllEnemiesDefeated()) {
-		m_riftVial->Drop(m_centerPos);
-	}
-
-	m_riftVial->Process(deltaTime);
-
-	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
-		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
-			if (obj && dynamic_cast<ShipPart*>(obj)) {
-				ShipPart* part = static_cast<ShipPart*>(obj);
-				if (part->isActive()) part->Process(deltaTime);
+			for (size_t i = 0; i < m_upgradePool->totalCount(); i++) {
+				if (GameObject* obj = m_upgradePool->getObjectAtIndex(i)) {
+					if (obj && dynamic_cast<DropableWeapon*>(obj)) {
+						DropableWeapon* weapon = static_cast<DropableWeapon*>(obj);
+						weapon->Process(deltaTime);
+					}
+				}
 			}
+
+			if (m_levelNumber != 5) {
+				for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
+					if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+						if (obj && dynamic_cast<Enemy*>(obj)) {
+							Enemy* enemy = static_cast<Enemy*>(obj);
+
+							float enemySize = (float)enemy->GetSpriteWidth();
+							Box enemyRange(
+								enemy->Position().x,
+								enemy->Position().y,
+								enemySize,
+								enemySize
+							);
+
+							m_enemyCollisionTree->insert(enemy, enemyRange);
+
+							bool colliding = CheckWaterCollision(enemy);
+							if (!colliding) {
+								enemy->Process(deltaTime, m_playerPrevPosition);
+							}
+						}
+					}
+				}
+			}
+
+			if (m_boss->isActive()) {
+				float bossSize = (float)m_boss->GetSpriteWidth();
+				Box bossRange(
+					m_boss->Position().x,
+					m_boss->Position().y,
+					bossSize,
+					bossSize
+				);
+
+				m_enemyCollisionTree->insert(m_boss, bossRange);
+
+				bool colliding = CheckWaterCollision(m_boss);
+				if (!colliding) {
+					m_boss->Process(deltaTime, m_playerPosition);
+				}
+			}
+
+			for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
+				if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
+					if (obj && dynamic_cast<Bullet*>(obj)) {
+						Bullet* bullet = static_cast<Bullet*>(obj);
+						bullet->Process(deltaTime);
+
+						if (!bullet->isActive()) {
+							m_bulletPool->release(bullet);
+						}
+					}
+				}
+			}
+
+			DoDamage();
+
+			if (AllEnemiesDefeated()) {
+				m_riftVial->Drop(m_centerPos);
+			}
+
+			m_riftVial->Process(deltaTime);
+
+			for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+				if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+					if (obj && dynamic_cast<ShipPart*>(obj)) {
+						ShipPart* part = static_cast<ShipPart*>(obj);
+						if (part->isActive()) part->Process(deltaTime);
+					}
+				}
+			}
+
+			m_hudParser->Process(deltaTime, inputSystem);
 		}
 	}
-
-	m_hudParser->Process(deltaTime, inputSystem);
 }
 
 void Level::Draw(Renderer& renderer)
@@ -289,59 +331,77 @@ void Level::Draw(Renderer& renderer)
 	renderer.SetClearColour(m_renderColour1, m_renderColour2, m_renderColour3);
 	m_tileParser->Draw(renderer);
 
-	m_deathParticles->Draw(renderer);
-
-	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
-		if (obj && obj->isActive()) {
-			Player* player = static_cast<Player*>(obj);
-			player->Draw(renderer);
-		}
+	if (!m_banner->GetStatus()) {
+		m_banner->Draw(renderer);
 	}
+	else if (m_banner->GetStatus()) {
+		m_deathParticles->Draw(renderer);
 
-	if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
-		if (obj && obj->isActive()) {
-			Weapon* weapon = static_cast<Weapon*>(obj);
-			weapon->Draw(renderer);
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			if (obj && obj->isActive()) {
+				Player* player = static_cast<Player*>(obj);
+				player->Draw(renderer);
+			}
 		}
-	}
 
-
-	if (m_levelNumber != 5) {
-		for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
-			if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+		
+		if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+			if (obj && obj->isActive()) {
+				Weapon* weapon = static_cast<Weapon*>(obj);
+				weapon->Draw(renderer);
+			}
+		}
+		
+		for (size_t i = 0; i < m_upgradePool->totalCount(); i++) {
+			if (GameObject* obj = m_upgradePool->getObjectAtIndex(i)) {
 				if (obj && obj->isActive()) {
-					Enemy* enemy = static_cast<Enemy*>(obj);
-					enemy->Draw(renderer);
+					DropableWeapon* weapon = static_cast<DropableWeapon*>(obj);
+					weapon->Draw(renderer);
 				}
 			}
 		}
-	}
 
-	m_boss->Draw(renderer);
-
-	for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
-		if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
-			if (obj && obj->isActive()) {
-				Bullet* bullet = static_cast<Bullet*>(obj);
-				bullet->Draw(renderer);
+		if (m_levelNumber != 5) {
+			for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
+				if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+					if (obj && obj->isActive()) {
+						Enemy* enemy = static_cast<Enemy*>(obj);
+						enemy->Draw(renderer);
+					}
+				}
 			}
 		}
-	}
 
-	if (AllEnemiesDefeated()) {
-		m_riftVial->Draw(renderer);
-	}
+		m_boss->Draw(renderer);
 
-	for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
-		if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
-			if (obj && obj->isActive()) {
-				ShipPart* part = static_cast<ShipPart*>(obj);
-				if (part->isActive()) part->Draw(renderer);
+		for (size_t i = 0; i < m_bulletPool->totalCount(); i++) {
+			if (GameObject* obj = m_bulletPool->getObjectAtIndex(i)) {
+				if (obj && obj->isActive()) {
+					Bullet* bullet = static_cast<Bullet*>(obj);
+					bullet->Draw(renderer);
+				}
 			}
 		}
+
+		if (AllEnemiesDefeated()) {
+			m_riftVial->Draw(renderer);
+		}
+
+		for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+			if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+				if (obj && obj->isActive()) {
+					ShipPart* part = static_cast<ShipPart*>(obj);
+					if (part->isActive()) part->Draw(renderer);
+				}
+			}
+		}
+
+		m_hudParser->Draw(renderer);
 	}
 
-	m_hudParser->Draw(renderer);
+	if (m_paused) {
+		m_pause->Draw(renderer);
+	}
 }
 
 void Level::DebugDraw()
@@ -433,6 +493,8 @@ bool Level::PlayerInitialised(Renderer& renderer)
 			if (m_levelNumber == 1) {
 				player->reset();
 			}
+
+			player->SetEffect(m_planetEffect);
 		}
 	}
 
@@ -463,15 +525,25 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 		}
 	}
 
+	float speed;
+
+	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+		Player* player = static_cast<Player*>(obj);
+		speed = player->GetPlayerSpeed();
+	}
+
 	Vector2 updatedPos = m_playerPosition;
-	XboxController* controller = inputSystem.GetController(0);
+	
+	if (inputSystem.GetNumberOfControllersAttached() > 0) {
+		XboxMovement(inputSystem, m_currentPlayer, deltaTime);
+	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_RIGHT) == BS_PRESSED
 		|| inputSystem.GetKeyState(SDL_SCANCODE_D) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_D) == BS_PRESSED) {
 		m_currentPlayer = 1;
 		m_currentDirection = 'R';
 		SwitchDirection(m_currentDirection);
-		updatedPos.x += 80.0f * deltaTime;
+		updatedPos.x += speed * deltaTime;
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_PRESSED
@@ -479,7 +551,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 		m_currentPlayer = 2;
 		m_currentDirection = 'L';
 		SwitchDirection(m_currentDirection);
-		updatedPos.x -= 80.0f * deltaTime;
+		updatedPos.x -= speed * deltaTime;
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_PRESSED
@@ -489,7 +561,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			m_currentPlayer = 1;
 		}
 
-		updatedPos.y -= 80.0f * deltaTime;
+		updatedPos.y -= speed * deltaTime;
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_PRESSED
@@ -499,7 +571,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			m_currentPlayer = 2;
 		}
 
-		updatedPos.y += 80.0f * deltaTime;
+		updatedPos.y += speed * deltaTime;
 	}
 
 	//detect any collision from the potential movement:
@@ -578,6 +650,182 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_E) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_E) == BS_PRESSED) {
+		m_currentPlayer = 3;
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetRunning();
+			player->Position() = m_playerPosition;
+
+			if (AllEnemiesDefeated() && ItemsCollected()) {
+				if (CollectItem(player, m_centerPos)) {
+					if (m_levelNumber == 5) {
+						m_sounds->playSound("collect", 0.9f, false);
+						m_riftVial->SetCollected(true);
+						m_gameOver = false;
+						NextLevel();
+					}
+					else {
+						m_sounds->playSound("collect", 0.9f, false);
+						m_riftVial->SetCollected(true);
+						NextLevel();
+					}
+				}
+			}
+
+			for (size_t i = 0; i < m_itemPool->totalCount(); i++) {
+				if (GameObject* obj = m_itemPool->getObjectAtIndex(i)) {
+					if (obj && dynamic_cast<ShipPart*>(obj)) {
+						ShipPart* part = static_cast<ShipPart*>(obj);
+						if (part->isActive() && !part->IsCollected() && CollectItem(player, part->Position())) {
+							m_sounds->playSound("collect", 0.9f, false);
+							ItemManager::GetInstance().MarkCollected(part);
+							part->SetActive(false);
+						}
+					}
+				}
+			}
+
+			if (GameObject* obj = m_upgradePool->getObjectAtIndex(WeaponState::GetInstance().GetNextWeapon())) {
+				if (obj && dynamic_cast<DropableWeapon*>(obj)) {
+					DropableWeapon* weapon = static_cast<DropableWeapon*>(obj);
+					if (weapon->isActive() && !weapon->IsCollected() && CollectItem(player, weapon->Position())) {
+						int nextWeapon = WeaponState::GetInstance().GetNextWeapon();
+
+						SetWeapon(nextWeapon);
+						WeaponState::GetInstance().AddWeapon(nextWeapon);
+						WeaponState::GetInstance().SetCurrentWeapon(nextWeapon);
+						m_sounds->playSound("collect", 0.9f, false);
+						weapon->SetActive(false);
+					}
+				}
+			}
+		}
+	}
+}
+
+void Level::XboxMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime)
+{
+	float speed;
+
+	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+		Player* player = static_cast<Player*>(obj);
+		speed = player->GetPlayerSpeed();
+	}
+
+	Vector2 updatedPos = m_playerPosition;
+	XboxController* controller = inputSystem.GetController(0);
+
+	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_START) == BS_HELD || controller->GetButtonState(SDL_CONTROLLER_BUTTON_START) == BS_PRESSED) {
+		m_paused = true;
+	}
+
+	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_RIGHT) == BS_PRESSED || controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_RIGHT) == BS_HELD) {
+		m_currentPlayer = 1;
+		m_currentDirection = 'R';
+		SwitchDirection(m_currentDirection);
+		updatedPos.x += speed * deltaTime;
+	}
+
+	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_LEFT) == BS_PRESSED || controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_LEFT) == BS_HELD) {
+		m_currentPlayer = 2;
+		m_currentDirection = 'L';
+		SwitchDirection(m_currentDirection);
+		updatedPos.x -= speed * deltaTime;
+	}
+
+	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_UP) == BS_PRESSED || controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_UP) == BS_HELD) {
+
+		if (m_currentPlayer != 2) {
+			m_currentPlayer = 1;
+		}
+
+		updatedPos.y -= speed * deltaTime;
+	}
+
+	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == BS_PRESSED || controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == BS_HELD) {
+
+		if (m_currentPlayer != 1) {
+			m_currentPlayer = 2;
+		}
+
+		updatedPos.y += speed * deltaTime;
+	}
+
+	//detect any collision from the potential movement:
+
+	bool collision = false;
+
+	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+		Player* player = static_cast<Player*>(obj);
+		collision = CheckWaterCollision(player);
+	}
+
+	if (!collision) {
+		m_playerPosition = updatedPos;
+	}
+	else {
+	}
+
+	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+		Player* player = static_cast<Player*>(obj);
+		player->Position() = m_playerPosition;
+	}
+
+	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_X) == BS_PRESSED) { // weapon swing
+		m_currentPlayer = 3;
+
+		m_sounds->playSound("shoot", 0.9f, false);
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetRunning();
+			player->Position() = m_playerPosition;
+		}
+
+		char weaponType;
+
+		if (GameObject* obj = m_weaponPool->getObjectAtIndex(m_currentWeapon)) {
+			Weapon* weapon = static_cast<Weapon*>(obj);
+			weaponType = weapon->GetWeaponType();
+
+			if (weaponType == 'M') {
+				weapon->Swing();
+			}
+			else if (weaponType == 'G') {
+				if (m_bulletPool->hasAvailableObjects()) {
+					if (GameObject* obj = m_bulletPool->getObject()) {
+						Bullet* bullet = static_cast<Bullet*>(obj);
+						if (bullet && m_currentCooldown <= 0.0f) {
+							bullet->Fire(weapon->Position(), inputSystem.GetMousePosition());
+							m_currentCooldown = m_cooldownTime;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == BS_RELEASED || controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_UP) == BS_RELEASED ||
+		controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_LEFT) == BS_RELEASED || controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_RIGHT) == BS_RELEASED) {
+		m_currentPlayer = 3;
+		m_currentDirection = 'R';
+		SwitchDirection(m_currentDirection);
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetRunning();
+		}
+
+		m_currentPlayer = 0;
+
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->Position() = m_playerPosition;
+		}
+	}
+
+	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_Y) == BS_HELD || controller->GetButtonState(SDL_CONTROLLER_BUTTON_Y) == BS_PRESSED) {
 		m_currentPlayer = 3;
 
 		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
@@ -700,6 +948,22 @@ bool Level::WeaponsInitialised(Renderer& renderer)
 			}
 		}
 	}
+
+	for (size_t i = 0; i < m_upgradePool->totalCount(); i++) {
+		if (GameObject* obj = m_upgradePool->getObjectAtIndex(i)) {
+			DropableWeapon* weapon = static_cast<DropableWeapon*>(obj);
+			weapon->Initialise(renderer, i);
+		}
+	}
+
+	if (m_levelNumber == 1) {
+		WeaponState::GetInstance().Reset();
+		WeaponState::GetInstance().CreateWeaponMap();
+		WeaponState::GetInstance().SetCurrentWeapon(0);
+	}
+
+	m_currentWeapon = WeaponState::GetInstance().GetCurrentWeapon();
+	m_hudParser->SetWeaponHUD(m_currentWeapon);
 
 	return true;
 }
@@ -894,10 +1158,10 @@ void Level::SpawnEnemy()
 
 	m_currentEnemies++;
 
-	//5% chance for boss to spawn
+	//10% chance for boss to spawn
 	if (!m_boss->isActive()) {
 		float chance = GetRandomPercentage();
-		if (chance <= 0.05f) {
+		if (chance <= 0.1f) {
 			m_boss->Position() = spawnerPos;
 			m_boss->SetActive(true);
 		}
@@ -1137,8 +1401,8 @@ void Level::DoDamage()
 									}
 								}
 								else {
-									if (GameObject* obj = m_weaponPool->getObject()) {
-										Weapon* weapon = static_cast<Weapon*>(obj);
+									if (GameObject* obj = m_upgradePool->getObjectAtIndex(WeaponState::GetInstance().GetWeaponUpgrade())) {
+										DropableWeapon* weapon = static_cast<DropableWeapon*>(obj);
 										if (weapon) {
 											weapon->Drop(boss->Position());
 										}
@@ -1237,8 +1501,8 @@ void Level::DoDamage()
 											}
 										}
 										else {
-											if (GameObject* obj = m_weaponPool->getObject()) {
-												Weapon* weapon = static_cast<Weapon*>(obj);
+											if (GameObject* obj = m_upgradePool->getObjectAtIndex(WeaponState::GetInstance().GetWeaponUpgrade())) {
+												DropableWeapon* weapon = static_cast<DropableWeapon*>(obj);
 												if (weapon) {
 													weapon->Drop(boss->Position());
 												}
@@ -1319,10 +1583,6 @@ bool Level::AllEnemiesDefeated()
 		}
 	}
 
-	if (m_boss->isActive()) {
-		return false;
-	}
-
 	return true;
 }
 
@@ -1397,6 +1657,16 @@ bool Level::GameOver()
 void Level::NextLevel()
 {
 	m_levelDone = true;
+}
+
+bool Level::Quit()
+{
+	return m_pause->Quit();
+}
+
+bool Level::Home()
+{
+	return m_pause->Home();
 }
 
 bool Level::GameStatus()

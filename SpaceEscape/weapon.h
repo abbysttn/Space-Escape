@@ -45,10 +45,6 @@ public:
 	void SetWeaponDamage(int weaponNum);
 	float GetWeaponDamage();
 
-	void Drop(Vector2 position);
-	void SetCollected(bool collected);
-	bool IsCollected();
-
 protected:
 
 private:
@@ -77,14 +73,6 @@ protected:
 	float weaponOffset;
 
 	float m_damage;
-
-	Vector2 m_velocity;
-	Vector2 m_startPos;
-	float m_gravity;
-	bool m_isDropping;
-	int bounces;
-
-	bool m_collected;
 
 private:
 

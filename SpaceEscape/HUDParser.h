@@ -8,7 +8,7 @@ class Scene;
 class Renderer;
 class DDLevelLoad;
 class GameObjectPool;
-//class ItemManager;
+class ItemManager;
 
 class HUDParser : public Scene {
 public:

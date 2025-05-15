@@ -9,7 +9,7 @@
 #include <cstdlib>
 
 Weapon::Weapon() : m_isLeft(false), m_sprite(0), m_isSwinging(false), m_swingSpeed(500.0f), m_swingAngle(0.0f), m_swingDirection(1.0f), m_maxRightSwingAngle(90.0f), 
-m_maxLeftSwingAngle(90.0f), m_returnSpeed(300.0f), m_collected(false), m_isDropping(false), m_gravity(500.0f) {}
+m_maxLeftSwingAngle(90.0f), m_returnSpeed(300.0f) {}
 
 Weapon::~Weapon()
 {
@@ -37,31 +37,6 @@ void Weapon::Process(float deltaTime)
 {
     if (!m_sprite || !m_isWeapon) {
         return;
-    }
-
-    if (!m_collected) {
-        if (m_isDropping) {
-            LogManager::GetInstance().Log("Dropping");
-            m_velocity.y += m_gravity * deltaTime;
-
-            m_position += m_velocity * deltaTime;
-
-            float ground = m_startPos.y + 30.0f;
-
-            if (m_position.y >= ground && m_velocity.y > 0) {
-                if (bounces > 0) {
-                    m_position.y = ground;
-                    m_velocity.y = -m_velocity.y * 0.6f;
-                    m_velocity.x *= 0.8f;
-                    bounces--;
-                }
-                else {
-                    m_position.y = ground;
-                    m_velocity = { 0, 0 };
-                    //m_isDropping = false;
-                }
-            }
-        }
     }
     
     if (m_isSwinging && m_weaponType == 'M') {
@@ -231,25 +206,4 @@ void Weapon::SetWeaponDamage(int weaponNum)
 float Weapon::GetWeaponDamage()
 {
     return m_damage;
-}
-
-void Weapon::Drop(Vector2 position)
-{
-    m_position = position;
-    m_startPos = position;
-    bounces = 2;
-    m_velocity = { 0, -100.0f };
-    m_isDropping = true;
-    m_isWeapon = true;
-    m_collected = false;
-}
-
-void Weapon::SetCollected(bool collected)
-{
-    m_collected = collected;
-}
-
-bool Weapon::IsCollected()
-{
-    return m_collected;
 }

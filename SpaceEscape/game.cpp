@@ -96,6 +96,8 @@ void Game::Process(float deltaTime)
 {
     ProcessFrameCounting(deltaTime);
 
+    m_bShowDebugWindow = (m_stateManager->GetDebuggingStatus()) ? true : false;
+
 #if DEBUG
     if (m_bPauseSimulation) {
         deltaTime = 0.0f;

@@ -11,9 +11,11 @@ class Renderer;
 class InputSystem;
 class Sprite;
 class GameObjectPool;
+class GameObject;
 class QuadTree;
 struct Box;
 class Button;
+class HomeButton;
 
 class DifficultyScene : public Scene {
 public:
@@ -27,10 +29,12 @@ public:
 
 	char GetSelection();
 	bool GetStatus();
+	bool Home();
 
 protected:
-	bool IsColliding(const Box& box, Button* button);
+	bool IsColliding(const Box& box, GameObject* obj);
 	bool CheckMousePos(InputSystem* inputSystem);
+	void SetArrowPosXbox(Button* button);
 
 private:
 	DifficultyScene(const DifficultyScene& difficultyScene);
@@ -39,6 +43,7 @@ private:
 public:
 
 protected:
+	HomeButton* m_homeButton;
 	GameObjectPool* m_textPool;
 	GameObjectPool* m_buttonPool;
 	GameObjectPool* m_arrowPool;
@@ -50,6 +55,13 @@ protected:
 
 	Vector2 m_selectedButton;
 	char m_selectedOption;
+
+	int m_currentSelectIndex;
+
+	bool m_selected;
+
+	bool m_xboxUsed;
+	bool m_home;
 
 private:
 };

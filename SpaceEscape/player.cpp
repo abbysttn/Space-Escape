@@ -9,7 +9,7 @@
 #include "playerstate.h"
 
 
-Player::Player() : m_sprite(0), m_isPushed(false), m_pushbackComplete(true), m_canTakeDamage(true) {}
+Player::Player() : m_sprite(0), m_isPushed(false), m_pushbackComplete(true), m_canTakeDamage(true), m_playerSpeed(80.0f) {}
 
 Player::~Player()
 {
@@ -192,6 +192,18 @@ void Player::SetDamageTaken(bool taken)
 void Player::SetPlayerScale(float scale)
 {
     m_sprite->SetScale(scale);
+}
+
+void Player::SetEffect(int effect)
+{
+    m_currentEffect = effect;
+    PlayerState::GetInstance().SetCurrentEffect(effect);
+    m_playerSpeed = PlayerState::GetInstance().GetPlayerSpeed();
+}
+
+float Player::GetPlayerSpeed()
+{
+    return m_playerSpeed;
 }
 
 void Player::UpdatePushBack(float deltaTime)
