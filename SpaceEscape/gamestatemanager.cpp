@@ -17,6 +17,10 @@
 
 #include "itemmanager.h"
 
+#include "imgui/imgui.h"
+
+#include "logmanager.h"
+
 GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem) : m_renderer(renderer), m_inputSystem(inputSystem)
 , m_currentState(nullptr), m_gameLooping(true), m_debugging(false)
 {
@@ -32,11 +36,9 @@ GameStateManager::GameStateManager(Renderer& renderer, InputSystem& inputSystem)
 
 	ChangeState(GameStates::SPLASH_AUT);
 
-#if USE_SOUND
 	m_soundSystem = new SoundSystem();
 	m_soundSystem->initialise();
 	m_soundSystem->loadSound("background", "..\\assets\\background.wav", true);
-#endif
 }
 
 void GameStateManager::ChangeState(GameStates newState)
@@ -102,6 +104,16 @@ void GameStateManager::Draw()
 
 void GameStateManager::DebugDraw()
 {
+	ImGui::Text("Current Scene: %s", GetCurrentScene().c_str());
+
+	ImGui::Text("Current Frame Rate: %.2f", ImGui::GetIO().Framerate);
+
+	ImGui::Separator();
+
+	LogManager::GetInstance().DebugDraw();
+
+	ImGui::Separator();
+
 	if (m_currentState) {
 		m_currentState->DebugDraw();
 	}
@@ -115,4 +127,39 @@ bool GameStateManager::GetGameStatus()
 bool GameStateManager::GetDebuggingStatus()
 {
 	return m_debugging;
+}
+
+string GameStateManager::GetCurrentScene()
+{
+	if (!m_currentState) return "No State";
+
+	if (dynamic_cast<SplashAUTState*>(m_currentState)) {
+		return "Splash (AUT)";
+	}
+	else if (dynamic_cast<SplashFMODState*>(m_currentState)) {
+		return "Splash (FMOD)";
+	}
+	else if (dynamic_cast<StartMenuState*>(m_currentState)) {
+		return "Start Menu";
+	}
+	else if (dynamic_cast<DifficultyMenuState*>(m_currentState)) {
+		return "Difficulty Menu";
+	}
+	else if (dynamic_cast<LevelState*>(m_currentState)) {
+		return "Gameplay Level";
+	}
+	else if (dynamic_cast<LevelTransitionState*>(m_currentState)) {
+		return "Level Transition";
+	}
+	else if (dynamic_cast<FlyingCutsceneState*>(m_currentState)) {
+		return "Flying Cutscene";
+	}
+	else if (dynamic_cast<GameOverState*>(m_currentState)) {
+		return "Game Over";
+	}
+	else if (dynamic_cast<InstructionState*>(m_currentState)) {
+		return "Instructions";
+	}
+
+	return "Unknown State";
 }

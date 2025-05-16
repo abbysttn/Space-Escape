@@ -141,24 +141,19 @@ void Game::DebugDraw
     {
         bool open = true;
         ImGui::Begin("Debug Window", &open, ImGuiWindowFlags_MenuBar);
-        ImGui::Text("COMP710 GP Framework (%s)", "2024, S2");
-        if (ImGui::Button("Quit"))
+        ImGui::Text("COMP710 GP Framework (%s)", "2025, S1, Space Escape");
+        if (ImGui::Button("Quit Game"))
         {
             Quit();
         }
 
-        ImGui::Separator();
-        LogManager::GetInstance().DebugDraw();
-        ImGui::Separator();
-
+        m_stateManager->DebugDraw();
 
         ImGui::Checkbox("Show Loaded Textures", &m_bShowTextures);
         if (m_bShowTextures)
         {
             m_pRenderer->DebugDraw();
         }
-
-        m_stateManager->DebugDraw();
 
         if (ImGui::Button("Pause simulation"))
         {

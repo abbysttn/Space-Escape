@@ -16,6 +16,7 @@ public:
 	int CurrentEffect();
 
 	void AddLife();
+	void AddHealth();
 	void LoseLife();
 	void TakeDamage(float damage);
 

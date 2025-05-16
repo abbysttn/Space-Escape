@@ -1,10 +1,11 @@
 #ifndef _GAMESTATEMANAGER_H__
 #define _GAMESTATEMANAGER_H__
 
-#define USE_SOUND 1
-
 #include <unordered_map>
 #include <memory>
+#include <string>
+
+using namespace std;
 
 class Renderer;
 class InputSystem;
@@ -27,6 +28,7 @@ public:
 	bool GetDebuggingStatus();
 
 protected:
+	string GetCurrentScene();
 
 private:
 	GameStateManager(const GameStateManager& gameStateManager);

@@ -71,3 +71,17 @@ void ItemManager::ResetAllItems()
 	m_itemStates.clear();
 }
 
+int ItemManager::GetItemCollectedCount()
+{
+	int count = 0;
+
+	for (size_t i = 0; i < m_allItems->totalCount(); i++) {
+		if (GameObject* obj = m_allItems->getObjectAtIndex(i)) {
+			ShipPart* part = static_cast<ShipPart*>(obj);
+			if (m_itemStates.find(part)->second == true) count++;
+		}
+	}
+
+	return count;
+}
+

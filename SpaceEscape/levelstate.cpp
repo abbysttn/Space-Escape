@@ -3,14 +3,32 @@
 #include "level.h"
 #include "inlinehelpers.h"
 
+#include "logmanager.h"
+#include "imgui/imgui.h"
+
 LevelState::LevelState() : m_scene(nullptr), m_nextState(GameStates::NONE) {}
 
 void LevelState::Enter()
 {
 	if (!m_renderer) return;
 
-	m_scene = new Level(GetRandomLevelType(), GetRandomLevelDifficulty(), GetRandomLevelMap(), GetDifficulty(), m_levelNumber, GetRandomPlanetEffect());
+	if (m_selectedLevelMap != -1) {
+		m_levelMap = m_selectedLevelMap;
+	}
+
+	if (m_selectedPlanet != "") {
+		m_levelType = m_selectedPlanet;
+	}
+
+	int levelMap = (m_selectedLevelMap != -1) ? m_selectedLevelMap : GetRandomLevelMap();
+	string planetType = (m_selectedPlanet != "") ? m_selectedPlanet : GetRandomLevelType();
+
+	m_scene = new Level(planetType, GetRandomLevelDifficulty(), levelMap, GetDifficulty(), m_levelNumber, GetRandomPlanetEffect());
+
 	if (m_scene) m_scene->Initialise(*m_renderer);
+
+	m_selectedLevelMap = -1;
+	m_selectedPlanet = "";
 }
 
 void LevelState::Update(float deltatime)
@@ -51,8 +69,74 @@ void LevelState::Draw()
 
 void LevelState::DebugDraw()
 {
+	ImGui::Text("Level Details:");
+	ImGui::Text("Game Difficulty - %c", m_gameDifficulty);
+	ImGui::Text("Level Difficulty - %c", m_levelDifficulty);
+	ImGui::Text("Level Map - %d", m_levelMap);
+	ImGui::Text("Level Number - %d", m_levelNumber);
+	ImGui::Text("Level Type - %s", m_levelType.c_str());
+
 	if (m_scene) m_scene->DebugDraw();
 
+	ImGui::Separator();
+
+	ImGui::Text("Level Select:");
+	if (ImGui::Button("Level 1")) {
+		m_nextState = GameStates::TRANSITION;
+		m_levelNumber = 1;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Level 2")) {
+		m_nextState = GameStates::TRANSITION;
+		m_levelNumber = 2;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Level 3")) {
+		m_nextState = GameStates::TRANSITION;
+		m_levelNumber = 3;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Level 4")) {
+		m_nextState = GameStates::TRANSITION;
+		m_levelNumber = 4;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Level 5")) {
+		m_nextState = GameStates::TRANSITION;
+		m_levelNumber = 5;
+	}
+
+	ImGui::Separator();
+
+	ImGui::Text("Next Level Map:");
+	ImGui::RadioButton("Map 1", &m_selectedLevelMap, 1); ImGui::SameLine();
+	ImGui::RadioButton("Map 2", &m_selectedLevelMap, 2); ImGui::SameLine();
+	ImGui::RadioButton("Map 3", &m_selectedLevelMap, 3); ImGui::SameLine();
+	ImGui::RadioButton("Map 4", &m_selectedLevelMap, 4);
+	ImGui::RadioButton("Map 5", &m_selectedLevelMap, 5); ImGui::SameLine();
+	ImGui::RadioButton("Map 6", &m_selectedLevelMap, 6); ImGui::SameLine();
+	ImGui::RadioButton("Map 7", &m_selectedLevelMap, 7); ImGui::SameLine();
+	ImGui::RadioButton("Map 8", &m_selectedLevelMap, 8);
+
+	ImGui::Separator();
+
+	ImGui::Text("Next Planet Select:");
+	if (ImGui::Button("Asteria")) {
+		m_selectedPlanet = "asteria";
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Thule")) {
+		m_selectedPlanet = "thule";
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Sigurd")) {
+		m_selectedPlanet = "sigurd";
+	}
+
+	ImGui::Text("Selected Planet: %s", m_selectedPlanet.c_str());
+
+	ImGui::Separator();
+	
 }
 
 void LevelState::Exit()
@@ -71,68 +155,88 @@ char LevelState::GetRandomLevelDifficulty()
 {
 	int randomDifficulty;
 
+	char difficulty;
+
 	switch (m_levelNumber) {
 	case 1:
-		return 'E';
+		difficulty = 'E';
+		break;
 
 	case 2:
 		randomDifficulty = GetRandom(1, 2);
 		if (randomDifficulty == 1) {
-			return 'E';
+			difficulty = 'E';
 		}
 		else {
-			return 'M';
+			difficulty = 'M';
 		}
 		break;
 
 	case 3:
 		randomDifficulty = GetRandom(1, 3);
 		if (randomDifficulty == 1) {
-			return 'E';
+			difficulty = 'E';
 		}
 		else if (randomDifficulty == 2) {
-			return 'M';
+			difficulty = 'M';
 		}
 		else {
-			return 'H';
+			difficulty = 'H';
 		}
 		break;
 
 	case 4:
 		randomDifficulty = GetRandom(1, 2);
 		if (randomDifficulty == 1) {
-			return 'M';
+			difficulty = 'M';
 		}
 		else {
-			return 'H';
+			difficulty = 'H';
 		}
 		break;
 
 	case 5:
-		return 'H';
+		difficulty = 'H';
+		break;
 
 	default:
-		return 'M';
+		difficulty = 'M';
+		break;
 	}
+
+	m_levelDifficulty = difficulty;
+	return difficulty;
 }
 
 char LevelState::GetDifficulty()
 {
+	char gameDifficulty;
+
 	switch (GetGameDifficulty()) {
 	case GameDifficulty::EASY:
-		return 'E';
+		gameDifficulty = 'E';
+		break;
 	case GameDifficulty::NORMAL:
-		return 'N';
+		gameDifficulty = 'N';
+		break;
 	case GameDifficulty::HARD:
-		return 'H';
+		gameDifficulty = 'H';
+		break;
 	default:
-		return 'N';
+		gameDifficulty = 'N';
+		break;
 	}
+
+	m_gameDifficulty = gameDifficulty;
+
+	return gameDifficulty;
 }
 
 int LevelState::GetRandomLevelMap()
 {
 	int levelNum = GetRandom(1, 8);
+
+	m_levelMap = levelNum;
 
 	return levelNum;
 }
@@ -145,17 +249,19 @@ string LevelState::GetRandomLevelType()
 
 	switch (random) {
 	case 1:
-		levelType = "summer";
+		levelType = "sigurd";
 		break;
 
 	case 2:
-		levelType = "fall";
+		levelType = "asteria";
 		break;
 
 	case 3:
-		levelType = "spring";
+		levelType = "thule";
 		break;
 	}
+
+	m_levelType = levelType;
 
 	return levelType;
 }
@@ -166,6 +272,24 @@ int LevelState::GetRandomPlanetEffect()
 
 	if (m_levelNumber == 5 || m_levelNumber == 1) {
 		randomEffect = 0;
+	}
+
+	switch (randomEffect) {
+	case 0:
+		m_planetEffect = "Normal Planet";
+		break;
+
+	case 1:
+		m_planetEffect = "Low Gravity Planet";
+		break;
+
+	case 2:
+		m_planetEffect = "Backwards Planet";
+		break;
+
+	case 3:
+		m_planetEffect = "High Gravity Planet";
+		break;
 	}
 
 	return randomEffect;

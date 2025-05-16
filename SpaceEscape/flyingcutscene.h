@@ -9,6 +9,7 @@ class Renderer;
 class InputSystem;
 class PlayerShip;
 class ParticleEmitter;
+class TextRenderer;
 
 class FlyingCutscene : public Scene {
 public:
@@ -33,10 +34,15 @@ public:
 protected:
 	PlayerShip* m_ship;
 	ParticleEmitter* m_exhaustEmitter;
+	TextRenderer* m_gameMessage1;
+	TextRenderer* m_gameMessage2;
 
 	float m_particleOffset;
 
 	bool m_sceneDone;
+
+	float m_textTime;
+	float m_textTimer;
 
 private:
 };

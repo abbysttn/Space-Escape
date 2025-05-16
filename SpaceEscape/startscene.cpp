@@ -40,7 +40,7 @@ bool StartScene::Initialise(Renderer& renderer)
 
 	int buttonIndex = 0;
 
-	m_backgroundPlanet = renderer.CreateSprite("..\\assets\\Lava.png");
+	m_backgroundPlanet = renderer.CreateSprite("..\\assets\\lava.png");
 	m_backgroundPlanet->SetScale(10.0f);
 	m_backgroundPlanet->SetX(screenWidth / 2);
 	m_backgroundPlanet->SetY(screenHeight / 2);
@@ -212,7 +212,7 @@ void StartScene::Process(float deltaTime, InputSystem& inputSystem)
 
 void StartScene::Draw(Renderer& renderer)
 {
-	renderer.SetClearColour(0, 0, 0);
+	renderer.SetClearColour(19, 0, 31);
 
 	m_backgroundPlanet->Draw(renderer);
 

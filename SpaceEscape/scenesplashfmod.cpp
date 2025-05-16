@@ -16,7 +16,7 @@ SceneSplashFMOD::~SceneSplashFMOD()
 
 bool SceneSplashFMOD::Initialise(Renderer& renderer)
 {
-	m_pFMOD = renderer.CreateSprite("..\\assets\\FMOD Logo White - Black Background.png");
+	m_pFMOD = renderer.CreateSprite("..\\assets\\fmod_logo.png");
 
 	const int halfSpriteW = m_pFMOD->GetWidth() / 2;
 	const int halfSpriteH = m_pFMOD->GetHeight() / 2;

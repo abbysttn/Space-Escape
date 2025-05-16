@@ -16,7 +16,7 @@ SceneSplashAUT::~SceneSplashAUT()
 
 bool SceneSplashAUT::Initialise(Renderer& renderer)
 {
-	m_pAUT = renderer.CreateSprite("..\\assets\\aut.png");
+	m_pAUT = renderer.CreateSprite("..\\assets\\aut_logo.png");
 
 	const int halfSpriteW = m_pAUT->GetWidth() / 2;
 	const int halfSpriteH = m_pAUT->GetHeight() / 2;

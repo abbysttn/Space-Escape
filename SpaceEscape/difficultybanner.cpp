@@ -4,6 +4,7 @@
 #include "sprite.h"
 #include "Renderer.h"
 #include "inputsystem.h"
+#include "logmanager.h"
 
 DifficultyBanner::DifficultyBanner(int effect, char diff, int level) : m_banner(0), m_difficulty(0), m_planetEffect(0),
 difficultyChar(diff), planetEffectNumber(effect), m_sceneDone(false), m_timer(0.0f), m_maxTime(3.0f), m_levelNumber(level) {}
@@ -45,6 +46,10 @@ bool DifficultyBanner::Initialise(Renderer& renderer)
 	m_difficulty->Position().y -= m_difficulty->GetSpriteHeight() / 2.0f;
 	m_planetEffect->Position() = textPos;
 	m_planetEffect->Position().y += m_planetEffect->GetSpriteHeight() / 2.0f;
+
+	string log = "Current Planet Effect: " + planetEffect;
+	LogManager::GetInstance().Log(log.c_str());
+	LogManager::GetInstance().Log("");
 
 	return false;
 }

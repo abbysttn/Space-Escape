@@ -1,5 +1,8 @@
 #include "playerstate.h"
 
+#include "logmanager.h"
+#include <string>
+
 PlayerState* PlayerState::sm_pInstance = 0;
 
 PlayerState& PlayerState::GetInstance()
@@ -55,6 +58,19 @@ int PlayerState::CurrentEffect()
 void PlayerState::AddLife()
 {
     m_currentLives++;
+
+    if (m_currentLives >= m_maxLives) {
+        m_currentLives = 3;
+    }
+}
+
+void PlayerState::AddHealth()
+{
+    m_currentHealth += 50.0f;
+
+    if (m_currentHealth >= m_maxHealth) {
+        m_currentHealth = 100.0f;
+    }
 }
 
 void PlayerState::LoseLife()

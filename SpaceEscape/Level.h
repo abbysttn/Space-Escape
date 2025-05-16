@@ -34,6 +34,7 @@ class BossEnemy;
 class PauseScene;
 
 class RiftVial;
+class PlayerState;
 
 class Level : public Scene {
 public:
@@ -86,6 +87,8 @@ protected:
 	bool ItemsCollected();
 
 	void SetRenderColour(string levelType);
+
+	string GetPlanetEffect(int planetEffect);
 
 private:
 	Level(const Level& level);
@@ -159,6 +162,8 @@ protected:
 	bool m_levelDone;
 	bool m_gameOver;
 
+	float m_playerSpeed;
+
 
 	RiftVial* m_riftVial;
 	float m_particleTime;
@@ -166,9 +171,12 @@ protected:
 	bool m_particleSpawned;
 
 	bool m_paused;
+	bool m_bossSpawned;
 
-	bool collectedWeaponUpgrade;
 	int m_planetEffect;
+
+	bool m_spawnEnemies;
+	bool m_enemiesRemoved = false;
 
 private:
 };

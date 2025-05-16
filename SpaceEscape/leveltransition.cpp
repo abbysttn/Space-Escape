@@ -4,8 +4,9 @@
 #include "player.h"
 #include "sprite.h"
 #include "inputsystem.h"
+#include "soundsystem.h"
 
-LevelTransition::LevelTransition() : m_player(0), m_blackHole(0), m_sceneDone(false) {}
+LevelTransition::LevelTransition() : m_player(0), m_blackHole(0), m_sceneDone(false), m_sounds(0) {}
 
 LevelTransition::~LevelTransition()
 {
@@ -14,10 +15,16 @@ LevelTransition::~LevelTransition()
 
 	delete m_blackHole;
 	m_blackHole = 0;
+
+	delete m_sounds;
 }
 
 bool LevelTransition::Initialise(Renderer& renderer)
 {
+	m_sounds = new SoundSystem();
+	m_sounds->initialise();
+	m_sounds->loadSound("warp", "..\\assets\\warp.wav", false);
+
 	int screenWidth = renderer.GetWidth();
 	int screenHeight = renderer.GetHeight();
 
@@ -46,6 +53,9 @@ bool LevelTransition::Initialise(Renderer& renderer)
 
 void LevelTransition::Process(float deltaTime, InputSystem& inputSystem)
 {
+	m_sounds->update();
+	m_sounds->playSound("warp", 0.9f, false);
+
 	if (m_swirlProgress < 1.0f) {
 		m_swirlProgress += deltaTime / m_swirlTime;
 

@@ -28,6 +28,8 @@ public:
 
 	void ResetAllItems();
 
+	int GetItemCollectedCount();
+
 protected:
 
 private:

@@ -38,6 +38,14 @@ protected:
 	GameStates m_nextState;
 
 	int m_levelNumber = 1;
+	char m_levelDifficulty;
+	char m_gameDifficulty;
+	int m_levelMap;
+	string m_levelType;
+	string m_planetEffect;
+
+	int m_selectedLevelMap = -1;
+	string m_selectedPlanet = "";
 
 private:
 };

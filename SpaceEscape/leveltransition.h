@@ -12,6 +12,7 @@ class Renderer;
 class InputSystem;
 class Player;
 class Sprite;
+class SoundSystem;
 
 class LevelTransition : public Scene {
 public:
@@ -46,6 +47,8 @@ protected:
 	float m_swirlProgress;
 	float m_swirlTime;
 	Vector2 m_startPos;
+
+	SoundSystem* m_sounds;
 
 private:
 };

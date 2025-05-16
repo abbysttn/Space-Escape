@@ -43,7 +43,7 @@ bool DifficultyScene::Initialise(Renderer& renderer)
 
 	int buttonIndex = 0;
 
-	m_backgroundPlanet = renderer.CreateSprite("..\\assets\\Lava.png");
+	m_backgroundPlanet = renderer.CreateSprite("..\\assets\\terran.png");
 	m_backgroundPlanet->SetScale(10.0f);
 	m_backgroundPlanet->SetX(screenWidth / 2);
 	m_backgroundPlanet->SetY(screenHeight / 2);
@@ -232,7 +232,7 @@ void DifficultyScene::Process(float deltaTime, InputSystem& inputSystem)
 
 void DifficultyScene::Draw(Renderer& renderer)
 {
-	renderer.SetClearColour(0, 0, 0);
+	renderer.SetClearColour(0, 27, 30);
 
 	m_backgroundPlanet->Draw(renderer);
 

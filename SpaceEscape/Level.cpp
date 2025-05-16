@@ -7,6 +7,7 @@
 #include "inputsystem.h"
 #include "xboxcontroller.h"
 #include "quadtree.h"
+#include "playerstate.h"
 
 #include "imgui/imgui.h"
 #include "inlinehelpers.h"
@@ -36,7 +37,7 @@ Level::Level(string levelType, char levelDifficulty, int levelMap, char gameDiff
 m_waterPool(nullptr), m_tileSize(48.0f), m_hudParser(0), m_tileParser(0), m_weaponPool(nullptr), m_bulletPool(nullptr), m_spawnerPool(nullptr), 
 m_enemyPool(nullptr), m_playerPushed(false), m_playerAlive(true), m_gameOver(false), m_levelDone(false), m_invulnerability(false), m_levelType(levelType), m_levelDifficulty(levelDifficulty),
 m_levelNumber(levelNumber), m_levelMap(levelMap), m_gameDifficulty(gameDifficulty), m_riftVial(0), m_boss(0), m_deathParticles(0), m_particleTime(0.0f), m_particleMaxTime(0.5f),
-m_particleSpawned(false), m_sounds(0), m_banner(0), m_planetEffect(planetEffect), m_paused(false), m_pause(0), m_upgradePool(nullptr) {}
+m_particleSpawned(false), m_sounds(0), m_banner(0), m_planetEffect(planetEffect), m_paused(false), m_pause(0), m_upgradePool(nullptr), m_bossSpawned(false), m_spawnEnemies(true) {}
 
 Level::~Level()
 {
@@ -89,7 +90,7 @@ bool Level::Initialise(Renderer& renderer)
 	m_playerPool = new GameObjectPool(Player(), 4);
 	m_weaponPool = new GameObjectPool(Weapon(), 6);
 	m_bulletPool = new GameObjectPool(Bullet(), 20);
-	m_enemyPool = new GameObjectPool(Enemy(), m_maxEnemies);
+	m_enemyPool = new GameObjectPool(Enemy(), 20);
 	m_upgradePool = new GameObjectPool(DropableWeapon(), 4);
 	m_boss = new BossEnemy();
 
@@ -306,7 +307,10 @@ void Level::Process(float deltaTime, InputSystem& inputSystem)
 
 			DoDamage();
 
-			if (AllEnemiesDefeated()) {
+			if (AllEnemiesDefeated() && m_levelNumber != 5) {
+				m_riftVial->Drop(m_centerPos);
+			}
+			else if (m_levelNumber == 5 && !m_boss->isActive()) {
 				m_riftVial->Drop(m_centerPos);
 			}
 
@@ -416,6 +420,28 @@ void Level::DebugDraw()
 	}
 	ImGui::End();
 
+	string effect = GetPlanetEffect(m_planetEffect);
+
+	ImGui::Text("Level Effect - %s", effect.c_str());
+
+	ImGui::Separator();
+
+	ImGui::Text("Player Info:");
+
+	ImGui::Text("Player Coords: %.2f, %.2f", m_playerPosition.x, m_playerPosition.y);
+
+	ImGui::Text("Player Lives: %d lives", PlayerState::GetInstance().GetLives());
+
+	if (ImGui::Button("Add Life")) {
+		PlayerState::GetInstance().AddLife();
+	}
+
+	ImGui::Text("Player Health: %.1f health", PlayerState::GetInstance().GetHealth());
+
+	if (ImGui::Button("Add Health")) {
+		PlayerState::GetInstance().AddHealth();
+	}
+
 	ImGui::Checkbox("Invulnerability", &m_invulnerability);
 	if (m_invulnerability)
 	{
@@ -430,6 +456,115 @@ void Level::DebugDraw()
 			player->SetDamageTaken(true);
 		}
 	}
+
+	ImGui::Separator();
+
+	ImGui::Text("Enemy Information:");
+	ImGui::SliderInt("Max Enemy Count", &m_maxEnemies, 1, 20);
+	if (ImGui::Button("Remove All Enemies")) {
+		if (m_levelNumber != 5) {
+			for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
+				if (GameObject* obj = m_enemyPool->getObjectAtIndex(i)) {
+					if (obj && dynamic_cast<Enemy*>(obj)) {
+						Enemy* enemy = static_cast<Enemy*>(obj);
+						enemy->SetActive(false);
+					}
+				}
+			}
+			m_boss->SetActive(false);
+			if (m_itemPool->hasAvailableObjects()) {
+				if (GameObject* obj = m_itemPool->getObject()) {
+					ShipPart* part = static_cast<ShipPart*>(obj);
+					if (part) {
+						part->Drop(m_playerPrevPosition);
+					}
+				}
+			}
+		}
+		else {
+			m_boss->SetActive(false);
+			if (m_itemPool->hasAvailableObjects()) {
+				int offset = -48;
+				for (size_t i = 0; i < 3; i++) {
+					if (GameObject* obj = m_itemPool->getObject()) {
+						ShipPart* part = static_cast<ShipPart*>(obj);
+						if (part) {
+							Vector2 position = m_boss->Position();
+							position.x += offset;
+							part->Drop(position);
+							offset += 48;
+						}
+					}
+				}
+			}
+		}
+		m_spawnEnemies = false;
+		m_enemiesRemoved = true;
+	}
+	ImGui::Text("Spawn Enemies: %s", m_spawnEnemies ? "ON" : "OFF");
+	if (ImGui::Button("Toggle")) {
+		m_spawnEnemies = !m_spawnEnemies;
+	}
+	ImGui::SliderFloat("Enemy spawn rate:", &m_enemySpawnTime, 1.0f, 10.0f);
+	ImGui::Separator();
+
+	ImGui::Text("Item Information:");
+	ImGui::Text("Collected Items - %d", ItemManager::GetInstance().GetItemCollectedCount());
+	if (ImGui::Button("Add Collected Item")) {
+		if (GameObject* obj = m_itemPool->getObject()) {
+			if (obj && dynamic_cast<ShipPart*>(obj)) {
+				ShipPart* part = static_cast<ShipPart*>(obj);
+				if (!part->IsCollected()) {
+					m_sounds->playSound("collect", 0.9f, false);
+					ItemManager::GetInstance().MarkCollected(part);
+					part->SetActive(false);
+				}
+			}
+		}
+	}
+
+	ImGui::Separator();
+
+	ImGui::Text("Select Planet Effect:");
+
+	//not working
+	if (ImGui::Button("Normal")) {
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetEffect(0);
+			m_playerSpeed = player->GetPlayerSpeed();
+			LogManager::GetInstance().Log("Effect set to Normal");
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Low Gravity")) {
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetEffect(1);
+			m_playerSpeed = player->GetPlayerSpeed();
+			LogManager::GetInstance().Log("Effect set to low");
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Backwards")) {
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetEffect(2);
+			m_playerSpeed = player->GetPlayerSpeed();
+			LogManager::GetInstance().Log("Effect set to reverse");
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("High Gravity")) {
+		if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
+			Player* player = static_cast<Player*>(obj);
+			player->SetEffect(3);
+			m_playerSpeed = player->GetPlayerSpeed();
+			LogManager::GetInstance().Log("Effect set to high");
+		}
+	}
+
+	ImGui::Separator();
 }
 
 bool Level::PlayerInitialised(Renderer& renderer)
@@ -495,6 +630,7 @@ bool Level::PlayerInitialised(Renderer& renderer)
 			}
 
 			player->SetEffect(m_planetEffect);
+			m_playerSpeed = player->GetPlayerSpeed();
 		}
 	}
 
@@ -525,13 +661,6 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 		}
 	}
 
-	float speed;
-
-	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
-		Player* player = static_cast<Player*>(obj);
-		speed = player->GetPlayerSpeed();
-	}
-
 	Vector2 updatedPos = m_playerPosition;
 	
 	if (inputSystem.GetNumberOfControllersAttached() > 0) {
@@ -543,7 +672,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 		m_currentPlayer = 1;
 		m_currentDirection = 'R';
 		SwitchDirection(m_currentDirection);
-		updatedPos.x += speed * deltaTime;
+		updatedPos.x += m_playerSpeed * deltaTime;
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_LEFT) == BS_PRESSED
@@ -551,7 +680,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 		m_currentPlayer = 2;
 		m_currentDirection = 'L';
 		SwitchDirection(m_currentDirection);
-		updatedPos.x -= speed * deltaTime;
+		updatedPos.x -= m_playerSpeed * deltaTime;
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_UP) == BS_PRESSED
@@ -561,7 +690,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			m_currentPlayer = 1;
 		}
 
-		updatedPos.y -= speed * deltaTime;
+		updatedPos.y -= m_playerSpeed * deltaTime;
 	}
 
 	if (inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_HELD || inputSystem.GetKeyState(SDL_SCANCODE_DOWN) == BS_PRESSED
@@ -571,7 +700,7 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 			m_currentPlayer = 2;
 		}
 
-		updatedPos.y += speed * deltaTime;
+		updatedPos.y += m_playerSpeed * deltaTime;
 	}
 
 	//detect any collision from the potential movement:
@@ -706,13 +835,6 @@ void Level::PlayerMovement(InputSystem& inputSystem, int& m_currentPlayer, float
 
 void Level::XboxMovement(InputSystem& inputSystem, int& m_currentPlayer, float deltaTime)
 {
-	float speed;
-
-	if (GameObject* obj = m_playerPool->getObjectAtIndex(m_currentPlayer)) {
-		Player* player = static_cast<Player*>(obj);
-		speed = player->GetPlayerSpeed();
-	}
-
 	Vector2 updatedPos = m_playerPosition;
 	XboxController* controller = inputSystem.GetController(0);
 
@@ -724,14 +846,14 @@ void Level::XboxMovement(InputSystem& inputSystem, int& m_currentPlayer, float d
 		m_currentPlayer = 1;
 		m_currentDirection = 'R';
 		SwitchDirection(m_currentDirection);
-		updatedPos.x += speed * deltaTime;
+		updatedPos.x += m_playerSpeed * deltaTime;
 	}
 
 	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_LEFT) == BS_PRESSED || controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_LEFT) == BS_HELD) {
 		m_currentPlayer = 2;
 		m_currentDirection = 'L';
 		SwitchDirection(m_currentDirection);
-		updatedPos.x -= speed * deltaTime;
+		updatedPos.x -= m_playerSpeed * deltaTime;
 	}
 
 	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_UP) == BS_PRESSED || controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_UP) == BS_HELD) {
@@ -740,7 +862,7 @@ void Level::XboxMovement(InputSystem& inputSystem, int& m_currentPlayer, float d
 			m_currentPlayer = 1;
 		}
 
-		updatedPos.y -= speed * deltaTime;
+		updatedPos.y -= m_playerSpeed * deltaTime;
 	}
 
 	if (controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == BS_PRESSED || controller->GetButtonState(SDL_CONTROLLER_BUTTON_DPAD_DOWN) == BS_HELD) {
@@ -749,7 +871,7 @@ void Level::XboxMovement(InputSystem& inputSystem, int& m_currentPlayer, float d
 			m_currentPlayer = 2;
 		}
 
-		updatedPos.y += speed * deltaTime;
+		updatedPos.y += m_playerSpeed * deltaTime;
 	}
 
 	//detect any collision from the potential movement:
@@ -1139,31 +1261,34 @@ void Level::SpawnEnemy()
 
 	Vector2 spawnerPos;
 
-	if (GameObject* obj = m_enemyPool->getObject()) {
-		Enemy* enemy = dynamic_cast<Enemy*>(obj);
-		if (enemy) {
+	if (m_spawnEnemies) {
+		if (GameObject* obj = m_enemyPool->getObject()) {
+			Enemy* enemy = dynamic_cast<Enemy*>(obj);
+			if (enemy) {
 
-			int spawner = GetRandom(0, m_spawnerPool->totalCount() - 1);
+				int spawner = GetRandom(0, m_spawnerPool->totalCount() - 1);
 
-			if (GameObject* spawnObj = m_spawnerPool->getObjectAtIndex(spawner)) {
-				if (EnemySpawner* spawner = dynamic_cast<EnemySpawner*>(spawnObj)) {
-					enemy->Position() = spawner->Position();
-					spawnerPos = spawner->Position();
+				if (GameObject* spawnObj = m_spawnerPool->getObjectAtIndex(spawner)) {
+					if (EnemySpawner* spawner = dynamic_cast<EnemySpawner*>(spawnObj)) {
+						enemy->Position() = spawner->Position();
+						spawnerPos = spawner->Position();
+					}
 				}
+
+				enemy->SetActive(true);
 			}
-
-			enemy->SetActive(true);
 		}
-	}
 
-	m_currentEnemies++;
+		m_currentEnemies++;
 
-	//10% chance for boss to spawn
-	if (!m_boss->isActive()) {
-		float chance = GetRandomPercentage();
-		if (chance <= 0.1f) {
-			m_boss->Position() = spawnerPos;
-			m_boss->SetActive(true);
+		//10% chance for boss to spawn
+		if (!m_boss->isActive() && !m_bossSpawned) {
+			float chance = GetRandomPercentage();
+			if (chance <= 0.1f) {
+				m_boss->Position() = spawnerPos;
+				m_boss->SetActive(true);
+				m_bossSpawned = true;
+			}
 		}
 	}
 }
@@ -1205,11 +1330,9 @@ bool Level::CheckWaterCollision(GameObject* obj)
 				}
 				else if (Enemy* enemy = dynamic_cast<Enemy*>(obj)) {
 					HandleEnemyCollision(waterBox, enemy);
-					LogManager::GetInstance().Log("Enemy Collides");
 				}
 				else if (BossEnemy* boss = dynamic_cast<BossEnemy*>(obj)) {
 					HandleEnemyCollision(waterBox, boss);
-					LogManager::GetInstance().Log("Boss Collides");
 				}
 
 				return true;
@@ -1570,6 +1693,8 @@ void Level::DoDamage()
 
 bool Level::AllEnemiesDefeated()
 {
+	if (m_enemiesRemoved) return true;
+
 	if (m_maxEnemies != m_currentEnemies && m_levelNumber != 5) return false;
 
 	for (size_t i = 0; i < m_enemyPool->totalCount(); i++) {
@@ -1627,17 +1752,17 @@ bool Level::ItemsCollected()
 
 void Level::SetRenderColour(string levelType)
 {
-	if (levelType == "fall") {
+	if (levelType == "asteria") {
 		m_renderColour1 = 91;
 		m_renderColour2 = 61;
 		m_renderColour3 = 142;
 	}
-	else if (levelType == "spring") {
+	else if (levelType == "thule") {
 		m_renderColour1 = 33;
 		m_renderColour2 = 35;
 		m_renderColour3 = 78;
 	}
-	else if (levelType == "summer") {
+	else if (levelType == "sigurd") {
 		m_renderColour1 = 71;
 		m_renderColour2 = 171;
 		m_renderColour3 = 169;
@@ -1647,6 +1772,30 @@ void Level::SetRenderColour(string levelType)
 		m_renderColour2 = 108;
 		m_renderColour3 = 55;
 	}
+}
+
+string Level::GetPlanetEffect(int planetEffect)
+{
+	string effect;
+	switch (planetEffect) {
+	case 0:
+		effect = "Normal Planet";
+		break;
+
+	case 1:
+		effect = "Low Gravity Planet";
+		break;
+
+	case 2:
+		effect = "Backwards Planet";
+		break;
+
+	case 3:
+		effect = "High Gravity Planet";
+		break;
+	}
+
+	return effect;
 }
 
 bool Level::GameOver()
